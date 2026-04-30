@@ -3,19 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ContaMais - Estoque Nuvem</title>
+    <title>ContaMais - Gestão de Estoque</title>
     <style>
-        /* ESTILO DO SITE */
         :root {
-            --primary: #2563eb; --primary-hover: #1d4ed8; 
+            --primary: #2563eb; --primary-hover: #1d4ed8;
             --bg: #f1f5f9; --sidebar-dark: #0f172a;
             --white: #ffffff; --text-main: #334155; --border: #e2e8f0;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body { display: flex; background-color: var(--bg); color: var(--text-main); min-height: 100vh; }
         
-        aside { width: 260px; background: var(--sidebar-dark); color: white; padding: 2rem 1rem; position: fixed; height: 100vh; z-index: 10; }
-        aside h2 { font-size: 1.5rem; margin-bottom: 2rem; text-align: center; color: #60a5fa; }
+        aside { width: 260px; background: var(--sidebar-dark); color: white; padding: 1rem; position: fixed; height: 100vh; z-index: 10; }
+        aside h2 { font-size: 1.5rem; margin: 1rem 0 2rem; text-align: center; color: #60a5fa; }
         
         .nav-btn {
             width: 100%; padding: 0.8rem 1rem; background: transparent; border: none;
@@ -44,16 +43,19 @@
         input[type="text"], input[type="number"] { width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 6px; }
         
         .checkbox-group { display: grid; grid-template-columns: 1fr; gap: 0.5rem; background: #f8fafc; padding: 1rem; border-radius: 6px; }
-        .btn-main { background: var(--primary); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 6px; cursor: pointer; font-weight: 600; width: 100%; }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 6px; cursor: pointer; font-weight: 600; width: 100%; margin-top: 10px; }
         
         table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; margin-top: 1rem;}
         th { background: #f8fafc; padding: 1rem; text-align: left; border-bottom: 2px solid var(--border); }
         td { padding: 1rem; border-bottom: 1px solid var(--border); }
+
+        .login-box { border-bottom: 1px solid #334155; padding-bottom: 1rem; margin-bottom: 1rem; text-align: center; }
+        .user-info { font-size: 0.8rem; color: #60a5fa; margin-bottom: 10px; word-break: break-all; }
         
         @media (max-width: 768px) {
-            aside { width: 70px; padding: 1rem 0.5rem; }
-            aside h2, .nav-btn span { display: none; }
-            main { margin-left: 70px; padding: 1rem; }
+            aside { width: 80px; padding: 1rem 0.5rem; }
+            aside h2, .nav-btn span, .user-info, .login-box button { font-size: 0.7rem; }
+            main { margin-left: 80px; padding: 1rem; }
         }
     </style>
 </head>
@@ -61,51 +63,42 @@
 
     <aside>
         <h2>ContaMais</h2>
+        <div class="login-box">
+            <div id="user-display" class="user-info">Visitante</div>
+            <button id="btn-login" class="btn-main" style="font-size: 0.8rem; padding: 8px;" onclick="fazerLogin()">Login Google</button>
+        </div>
         <nav>
             <button class="nav-btn active" onclick="navegar('home')">🏠 <span>Home</span></button>
-            <button class="nav-btn" onclick="navegar('novo-produto')">📦 <span>Novo Produto</span></button>
-            <button class="nav-btn" onclick="navegar('nova-area')">➕ <span>Nova Área</span></button>
+            <button class="nav-btn" id="menu-novo-prod" onclick="navegar('novo-produto')" style="display: none;">📦 <span>Novo Produto</span></button>
+            <button class="nav-btn" id="menu-nova-area" onclick="navegar('nova-area')" style="display: none;">➕ <span>Nova Área</span></button>
         </nav>
     </aside>
 
     <main>
-        <!-- SEÇÃO HOME -->
         <section id="home" class="section active">
             <h1>Áreas de Estoque</h1>
             <div id="lista-areas" class="grid-areas"></div>
         </section>
 
-        <!-- SEÇÃO NOVO PRODUTO -->
         <section id="novo-produto" class="section">
             <h1>Cadastrar Produto</h1>
             <div class="form-container">
-                <div class="form-group">
-                    <label>Nome do Produto</label>
-                    <input type="text" id="prod-nome" placeholder="Ex: Coca-Cola">
-                </div>
-                <div class="form-group">
-                    <label>Áreas Disponíveis:</label>
-                    <div id="checks-areas" class="checkbox-group"></div>
-                </div>
-                <button class="btn-main" onclick="salvarProduto()">Salvar Produto</button>
+                <div class="form-group"><label>Nome</label><input type="text" id="prod-nome"></div>
+                <div class="form-group"><label>Áreas:</label><div id="checks-areas" class="checkbox-group"></div></div>
+                <button class="btn-main" onclick="salvarProduto()">Salvar</button>
             </div>
         </section>
 
-        <!-- SEÇÃO NOVA ÁREA -->
         <section id="nova-area" class="section">
-            <h1>Criar Nova Área</h1>
+            <h1>Nova Área</h1>
             <div class="form-container">
-                <div class="form-group">
-                    <label>Nome da Área (Ex: Laje, Cozinha)</label>
-                    <input type="text" id="area-nome">
-                </div>
-                <button class="btn-main" onclick="salvarArea()">Criar Área</button>
+                <div class="form-group"><label>Nome</label><input type="text" id="area-nome"></div>
+                <button class="btn-main" onclick="salvarArea()">Criar</button>
             </div>
         </section>
 
-        <!-- SEÇÃO DETALHE DA ÁREA -->
         <section id="detalhe-area" class="section">
-            <button onclick="navegar('home')" style="margin-bottom:1rem; cursor:pointer; padding: 8px;">← Voltar</button>
+            <button onclick="navegar('home')" style="margin-bottom:1rem; cursor:pointer; padding: 5px 10px; border-radius: 5px; border: 1px solid #ccc;">← Voltar</button>
             <h1 id="titulo-area-nome">Área: <span></span></h1>
             <table>
                 <thead><tr><th>Produto</th><th>Qtd</th><th>Status</th></tr></thead>
@@ -117,9 +110,10 @@
     <!-- BIBLIOTECAS FIREBASE -->
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
 
     <script>
-        // CONFIGURAÇÃO DO SEU PROJETO
+        // CONFIGURAÇÕES DO SEU FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyC3cAzrTMwCUxDcMvl68XxrcGLkmeANtSg",
             authDomain: "contamais-411llp.firebaseapp.com",
@@ -127,33 +121,64 @@
             projectId: "contamais-411llp",
             storageBucket: "contamais-411llp.firebasestorage.app",
             messagingSenderId: "691691378209",
-            appId: "1:691691378209:web:6191b84e88ee3281b17560",
-            measurementId: "G-DD5M67BBKD"
+            appId: "1:691691378209:web:6191b84e88ee3281b17560"
         };
 
-        // INICIALIZAÇÃO
+        // LISTA DE E-MAILS QUE PODEM EDITAR
+        // Coloque seu e-mail real aqui
+        const editoresPermitidos = ["p3droplayer@gmail.com" , "pedrosoaresctt@gmail.com"]; 
+
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
+        const auth = firebase.auth();
 
+        let podeEditar = false;
         let areasLocais = [];
         let produtosLocais = {};
 
+        // LOGIN COM GOOGLE
+        function fazerLogin() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider).catch(e => alert("Erro no login: " + e.message));
+        }
+
+        // MONITOR DE ESTADO DO USUÁRIO
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                document.getElementById('user-display').innerText = user.email;
+                document.getElementById('btn-login').innerText = "Sair";
+                document.getElementById('btn-login').onclick = () => auth.signOut();
+                podeEditar = editoresPermitidos.includes(user.email);
+            } else {
+                document.getElementById('user-display').innerText = "Visitante";
+                document.getElementById('btn-login').innerText = "Login Google";
+                document.getElementById('btn-login').onclick = fazerLogin;
+                podeEditar = false;
+            }
+            ajustarPermissoesVisuais();
+        });
+
+        function ajustarPermissoesVisuais() {
+            document.getElementById('menu-novo-prod').style.display = podeEditar ? 'block' : 'none';
+            document.getElementById('menu-nova-area').style.display = podeEditar ? 'block' : 'none';
+            renderizarCards();
+        }
+
         // SINCRONIZAÇÃO EM TEMPO REAL
-        db.ref('areas').on('value', snapshot => {
-            areasLocais = snapshot.val() ? Object.values(snapshot.val()) : ["Fundo", "Câmara Fria", "Laje"];
+        db.ref('areas').on('value', snap => {
+            areasLocais = snap.val() ? Object.values(snap.val()) : ["Fundo", "Câmara Fria", "Laje"];
             renderizarCards();
         });
 
-        db.ref('produtos').on('value', snapshot => {
-            produtosLocais = snapshot.val() || {};
+        db.ref('produtos').on('value', snap => {
+            produtosLocais = snap.val() || {};
             const sectionDetalhe = document.getElementById('detalhe-area');
             if(sectionDetalhe.classList.contains('active')) {
-                const nomeAreaAtiva = document.querySelector('#titulo-area-nome span').innerText;
-                abrirArea(nomeAreaAtiva);
+                abrirArea(document.querySelector('#titulo-area-nome span').innerText);
             }
         });
 
-        // NAVEGAÇÃO
+        // FUNÇÕES DE INTERFACE
         function navegar(id) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
@@ -162,40 +187,33 @@
 
         function renderizarCards() {
             const container = document.getElementById('lista-areas');
-            container.innerHTML = areasLocais.map(a => `
-                <div class="card-area" onclick="abrirArea('${a}')"><h3>${a}</h3></div>
-            `).join('');
+            container.innerHTML = areasLocais.map(a => `<div class="card-area" onclick="abrirArea('${a}')"><h3>${a}</h3></div>`).join('');
         }
 
         function renderizarChecks() {
             const container = document.getElementById('checks-areas');
-            container.innerHTML = areasLocais.map(a => `
-                <label><input type="checkbox" value="${a}"> ${a}</label>
-            `).join('');
+            container.innerHTML = areasLocais.map(a => `<label><input type="checkbox" value="${a}"> ${a}</label>`).join('');
         }
 
-        // SALVAR DADOS
+        // FUNÇÕES DE SALVAMENTO NA NUVEM
         function salvarArea() {
-            const nome = document.getElementById('area-nome').value;
-            if(nome) {
-                db.ref('areas').push(nome);
+            const n = document.getElementById('area-nome').value;
+            if(n && podeEditar) { 
+                db.ref('areas').push(n); 
                 document.getElementById('area-nome').value = '';
-                navegar('home');
+                navegar('home'); 
             }
         }
 
         function salvarProduto() {
-            const nome = document.getElementById('prod-nome').value;
-            const selecionados = Array.from(document.querySelectorAll('#checks-areas input:checked')).map(i => i.value);
-            if(nome && selecionados.length > 0) {
-                db.ref('produtos').push({
-                    nome: nome,
-                    locais: selecionados,
-                    qtd: 0
-                });
+            const n = document.getElementById('prod-nome').value;
+            const s = Array.from(document.querySelectorAll('#checks-areas input:checked')).map(i => i.value);
+            if(n && s.length > 0 && podeEditar) {
+                db.ref('produtos').push({ nome: n, locais: s, qtd: 0 });
                 document.getElementById('prod-nome').value = '';
-                alert("Produto cadastrado na nuvem!");
                 navegar('home');
+            } else if (!podeEditar) {
+                alert("Você não tem permissão para editar.");
             } else {
                 alert("Preencha o nome e selecione pelo menos uma área.");
             }
@@ -206,23 +224,22 @@
             document.querySelector('#titulo-area-nome span').innerText = nome;
             const tbody = document.getElementById('tabela-produtos');
             tbody.innerHTML = '';
-
             Object.keys(produtosLocais).forEach(key => {
                 const p = produtosLocais[key];
-                if(p.locais && p.locais.includes(nome)) {
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>${p.nome}</td>
-                            <td><input type="number" step="0.1" value="${p.qtd}" onchange="atualizarQtd('${key}', this.value)"></td>
-                            <td><span style="color:green">Sincronizado</span></td>
-                        </tr>
-                    `;
+                if(p.locais?.includes(nome)) {
+                    // SE NÃO TIVER PERMISSÃO, O INPUT É SUBSTITUÍDO POR TEXTO
+                    const inputOuTexto = podeEditar 
+                        ? `<input type="number" step="0.1" value="${p.qtd}" onchange="atualizarQtd('${key}', this.value)">`
+                        : `<b>${p.qtd}</b>`;
+                    tbody.innerHTML += `<tr><td>${p.nome}</td><td>${inputOuTexto}</td><td>${podeEditar ? '🔓' : '🔒'}</td></tr>`;
                 }
             });
         }
 
-        function atualizarQtd(idFirebase, novaQtd) {
-            db.ref('produtos/' + idFirebase).update({ qtd: novaQtd });
+        function atualizarQtd(id, q) { 
+            if(podeEditar) {
+                db.ref('produtos/' + id).update({ qtd: parseFloat(q) }); 
+            }
         }
     </script>
 </body>
