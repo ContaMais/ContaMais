@@ -29,8 +29,9 @@
         .nav-btn { width: 100%; padding: 0.8rem 1rem; background: transparent; border: none; color: var(--text-sidebar); text-align: left; cursor: pointer; border-radius: 8px; margin-bottom: 0.5rem; font-size: 0.95rem; transition: 0.3s; display: flex; align-items: center; gap: 10px; border-left: 4px solid transparent; }
         .nav-btn.active { background: var(--bg-sidebar-active); border-left: 4px solid var(--primary); color: white; font-weight: 600; }
         
-        /* TOPO MOBILE (OCULTO NO PC) */
+        /* TOPO MOBILE E BOTÃO EXTRA (OCULTOS NO PC) */
         .mobile-topbar { display: none; }
+        .mobile-show { display: none; }
 
         /* ENGRENAGEM FIXA */
         .btn-config { position: fixed; top: 15px; left: 15px; background: var(--bg-sidebar); color: white; border: none; border-radius: 50%; width: 42px; height: 42px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 2000; font-size: 1.1rem; box-shadow: 0 4px 8px rgba(0,0,0,0.3); transition: 0.2s; }
@@ -49,6 +50,7 @@
 
         .btn-back-styled { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: var(--bg-sidebar); color: var(--primary); border-radius: 10px; border: 2px solid var(--primary); cursor: pointer; margin-bottom: 1rem; transition: 0.3s; }
         .btn-back-styled svg { width: 25px; height: 25px; fill: currentColor; }
+        .btn-back-styled:hover { background: var(--primary); color: white; transform: translateX(-3px); }
 
         .card { background: var(--card-bg); padding: 1.2rem; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); margin-bottom: 1rem; border: 1px solid var(--border-color); }
         .grid-home { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
@@ -90,9 +92,11 @@
         .check-item { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.85rem; }
         input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary); }
 
-        .fab-main { position: fixed; bottom: 20px; right: 20px; width: 55px; height: 55px; background: var(--primary); color: white; border-radius: 50%; border: none; font-size: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 100; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        /* MENU DE CADASTRO (+) */
+        .fab-container { position: fixed; bottom: 30px; right: 30px; z-index: 1500; display: flex; flex-direction: column-reverse; align-items: flex-end; gap: 15px; }
+        .fab-main { width: 55px; height: 55px; background: var(--primary); color: white; border-radius: 50%; border: none; font-size: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 100; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .fab-main:hover { transform: scale(1.05); }
-        .fab-options { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; opacity: 0; pointer-events: none; transition: 0.2s; transform: translateY(10px); position: fixed; bottom: 85px; right: 20px; z-index: 101; }
+        .fab-options { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; opacity: 0; pointer-events: none; transition: 0.2s; transform: translateY(10px); position: fixed; bottom: 95px; right: 20px; z-index: 101; }
         .fab-options.active { opacity: 1; pointer-events: all; transform: translateY(0); }
         .fab-item { background: white; border: 1px solid var(--primary); padding: 10px 16px; border-radius: 20px; cursor: pointer; font-weight: 700; white-space: nowrap; font-size: 0.9rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); color: var(--text-main); }
 
@@ -127,7 +131,7 @@
                 object-fit: contain; 
             }
 
-            /* Menu Inferior */
+            /* Menu Inferior (Bottom Nav) */
             aside { 
                 width: 100%; 
                 height: 65px; 
@@ -170,16 +174,19 @@
                 font-weight: normal; 
             }
             
+            /* Habilita o 5º Botão (+) no menu inferior e oculta o Flutuante */
+            .mobile-show { display: flex !important; }
+            .fab-main { display: none !important; }
+            
+            /* Ajuste da posição do menu suspenso de Cadastro */
+            .fab-container { bottom: 70px; right: 5px; pointer-events: none; }
+            .fab-options { pointer-events: all; right: 10px; bottom: 75px; }
+            
             /* Ajuste da tela para não cobrir topo nem fundo */
             main { 
                 margin-left: 0; 
-                padding: 5rem 0.8rem 85px 0.8rem; 
+                padding: 5rem 0.5rem 85px 0.5rem; 
             } 
-            
-            .fab-container { 
-                bottom: 85px; 
-                right: 20px; 
-            }
             
             /* Engrenagem mesclada na topbar */
             .btn-config { 
@@ -192,12 +199,12 @@
                 box-shadow: none; 
             }
 
-            .grid-home { grid-template-columns: repeat(3, 1fr); gap: 0.6rem; }
-            .grid-areas-layout { grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
+            .grid-home { grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+            .grid-areas-layout { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
             h1 { font-size: 1.2rem; }
             
             th, td { padding: 0.6rem 0.3rem; font-size: 0.75rem; white-space: nowrap; }
-            .col-item { font-size: 0.8rem; max-width: 130px; overflow: hidden; text-overflow: ellipsis; }
+            .col-item { font-size: 0.8rem; max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
             .input-qtd { width: 45px; font-size: 0.85rem; padding: 6px 2px; }
             .action-icon { width: 24px; height: 24px; font-size: 0.7rem; margin-right: 3px; }
             .total-fardos { font-size: 0.85rem; }
@@ -207,15 +214,12 @@
 </head>
 <body>
 
-    <!-- TOPO MOBILE -->
     <div class="mobile-topbar">
         <img src="contamais.svg" alt="Logo">
     </div>
 
-    <!-- Botão de Configurações Fixo -->
     <button class="btn-config" onclick="abrirConfig()">⚙️</button>
 
-    <!-- Modal de Exclusão -->
     <div id="modalDelete" class="modal-overlay">
         <div class="modal-box">
             <p id="modalMsg" style="margin-bottom: 20px; font-weight: 600;"></p>
@@ -226,7 +230,6 @@
         </div>
     </div>
 
-    <!-- Menu de Navegação (Lateral Desktop / Inferior Mobile) -->
     <aside>
         <div class="logo-container"><img src="contamais.svg" alt="Logo" class="logo-img"></div>
         <nav id="menu-navegacao">
@@ -234,11 +237,11 @@
             <button class="nav-btn" id="nav-areas" onclick="navegar('areas-lista', this)">📍 <span>Áreas</span></button>
             <button class="nav-btn" id="nav-produtos" onclick="navegar('produtos-categorias', this)">🍾 <span>Produtos</span></button>
             <button class="nav-btn" id="nav-pedidos" onclick="navegar('pedidos-metodos', this)">🛒 <span>Pedidos</span></button>
+            <button class="nav-btn mobile-show" onclick="toggleFab()">➕ <span>Novo</span></button>
         </nav>
     </aside>
 
     <main>
-        <!-- BOTÃO FLUTUANTE DE CADASTRO ➕ -->
         <div class="fab-container">
             <button class="fab-main" onclick="toggleFab()">+</button>
             <div id="fabOptions" class="fab-options">
@@ -247,7 +250,6 @@
             </div>
         </div>
 
-        <!-- INÍCIO -->
         <section id="inicio" class="section active">
             <h1>Início</h1>
             <div class="grid-home">
@@ -257,14 +259,12 @@
             </div>
         </section>
 
-        <!-- CONFIGURAÇÕES GERAIS -->
         <section id="configuracoes" class="section">
             <div class="btn-back-styled" onclick="navegar('inicio', document.getElementById('nav-inicio'))">
                 <svg viewBox="0 0 24 24"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>
             </div>
             <h1>Configurações Gerais</h1>
             
-            <!-- Categorias -->
             <div class="card">
                 <h3 style="margin-bottom: 10px; color: var(--primary); font-size: 1rem;">1. Configurar Categorias</h3>
                 <input type="hidden" id="edit-cat-id">
@@ -292,7 +292,6 @@
                 <div id="lista-categorias-config" style="margin-top:10px;"></div>
             </div>
 
-            <!-- Métodos de Compra -->
             <div class="card" style="margin-top: 1.5rem;">
                 <h3 style="margin-bottom: 10px; color: var(--primary); font-size: 1rem;">2. Métodos de Compra</h3>
                 <input type="hidden" id="edit-met-id">
@@ -307,7 +306,6 @@
             </div>
         </section>
 
-        <!-- ATRIBUIÇÃO EM MASSA (CATEGORIAS) -->
         <section id="atribuir-categoria" class="section">
             <div class="btn-back-styled" onclick="navegar('configuracoes')">
                 <svg viewBox="0 0 24 24"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>
@@ -324,7 +322,6 @@
             </div>
         </section>
 
-        <!-- ATRIBUIÇÃO EM MASSA (MÉTODOS) -->
         <section id="atribuir-metodo" class="section">
             <div class="btn-back-styled" onclick="navegar('configuracoes')">
                 <svg viewBox="0 0 24 24"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>
@@ -340,13 +337,11 @@
             </div>
         </section>
 
-        <!-- ÁREAS -->
         <section id="areas-lista" class="section">
             <h1>Áreas de Estoque</h1>
             <div id="grid-areas" class="grid-areas-layout"></div>
         </section>
 
-        <!-- PRODUTOS (AGRUPADOS) -->
         <section id="produtos-categorias" class="section">
             <div class="header-com-acao">
                 <h1 id="titulo-aba-produtos" style="font-size: 1.2rem;">Categorias</h1>
@@ -361,7 +356,6 @@
             </div>
         </section>
 
-        <!-- PRODUTOS LISTA FILTRADA -->
         <section id="produtos-lista-filtrada" class="section">
             <div class="btn-back-styled" onclick="navegar('produtos-categorias')">
                 <svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
@@ -377,7 +371,6 @@
             </div>
         </section>
 
-        <!-- DETALHE ÁREA (CONTAR ESTOQUE) -->
         <section id="detalhe-area" class="section">
             <div class="btn-back-styled" onclick="navegar('areas-lista')">
                 <svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
@@ -401,7 +394,6 @@
             </div>
         </section>
 
-        <!-- DETALHE PRODUTO (INFO i) -->
         <section id="detalhe-produto" class="section">
             <div class="btn-back-styled" onclick="navegar('produtos-categorias')">
                 <svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
@@ -420,14 +412,12 @@
             </div>
         </section>
 
-        <!-- PEDIDOS DE MERCADORIA -->
         <section id="pedidos-metodos" class="section">
             <h1 style="font-size: 1.3rem;">Pedidos de Mercadoria</h1>
             <p style="color: #64748b; font-size: 0.85rem; margin-bottom: 15px;">Selecione um método de compra para ver as sugestões de reposição.</p>
             <div id="grid-pedidos-metodos" class="grid-areas-layout"></div>
         </section>
 
-        <!-- TABELA DE PEDIDOS (SUGESTÃO) -->
         <section id="pedidos-lista" class="section">
             <div class="btn-back-styled" onclick="navegar('pedidos-metodos')">
                 <svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
@@ -448,7 +438,6 @@
             </div>
         </section>
 
-        <!-- NOVO PRODUTO -->
         <section id="novo-produto" class="section">
             <h1 style="font-size: 1.3rem;">Novo Produto</h1>
             <div class="card">
@@ -464,13 +453,12 @@
                 <p style="font-size:0.8rem; color:#64748b; margin: 12px 0 5px 0; font-weight:700;">Estoque Mínimo <span id="lbl-estoque-minimo-novo" style="color: var(--primary);">(Un.)</span>:</p>
                 <input type="number" id="prod-estoque-minimo" value="0">
 
-                <p style="font-size:0.8rem; color:#64748b; font-weight:700; margin-top: 20px;">Áreas Vinculadas:</p>
+                <p style="font-size:0.8rem; color:#64748b; margin: 15px 0 5px 0; font-weight:700;">Áreas Vinculadas:</p>
                 <div id="checks-areas" class="cat-grid-checks"></div>
                 <button class="btn-submit" onclick="salvarProduto()">CADASTRAR</button>
             </div>
         </section>
         
-        <!-- EDITAR PRODUTO -->
         <section id="editar-produto" class="section">
             <div class="btn-back-styled" onclick="navegar('produtos-categorias')">
                 <svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
@@ -490,21 +478,20 @@
                 <p style="font-size:0.8rem; color:#64748b; margin: 12px 0 5px 0; font-weight:700;">Estoque Mínimo <span id="lbl-estoque-minimo-edit" style="color: var(--primary);">(Un.)</span>:</p>
                 <input type="number" id="edit-prod-estoque-minimo" value="0">
 
-                <p style="font-size:0.8rem; color:#64748b; font-weight:700; margin-top: 20px;">Áreas Vinculadas:</p>
+                <p style="font-size:0.8rem; color:#64748b; margin: 15px 0 5px 0; font-weight:700;">Áreas Vinculadas:</p>
                 <div id="edit-checks-areas" class="cat-grid-checks"></div>
+                
                 <button class="btn-submit" onclick="salvarEdicaoProduto()">SALVAR ALTERAÇÕES</button>
                 <span style="color:var(--primary); cursor:pointer; display:block; text-align:center; margin-top:15px; font-weight:bold; font-size:0.85rem;" onclick="prepararExclusaoProd()">Excluir Produto</span>
             </div>
         </section>
 
-        <!-- NOVA ÁREA -->
         <section id="nova-area" class="section">
             <h1 style="font-size: 1.3rem;">Nova Área</h1>
             <div class="card"><input type="text" id="area-nome" placeholder="Nome da área"><button class="btn-submit" onclick="salvarArea()">CRIAR</button></div>
         </section>
     </main>
 
-    <!-- FIREBASE -->
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
 
@@ -561,7 +548,9 @@
                 }
                 if (p.categoria) return [p.categoria];
                 return []; 
-            } catch(e) { return []; }
+            } catch(e) {
+                return [];
+            }
         }
 
         // LISTENERS DO FIREBASE
@@ -579,7 +568,6 @@
                 produtos = s.val() || {}; 
                 renderizarGradeAgrupada(); 
                 
-                // Se a tabela de pedidos estiver aberta, atualiza ela dinamicamente
                 if(document.getElementById('pedidos-lista').classList.contains('active')) {
                     const titulo = document.getElementById('titulo-pedido-metodo').innerText;
                     const metodoNome = titulo.replace('Pedidos: ', '');
@@ -1158,7 +1146,7 @@
                             <button class="action-icon info-btn" onclick="document.getElementById('det-${k}').classList.toggle('active')">ⓘ</button>
                             <button class="action-icon add-btn" onclick="abrirAtribuirCategoria('${k}')">➕</button>
                             <strong style="font-size:1.05rem; color:var(--text-main); margin-left: 5px;">${obterEmoji(c.nome)} ${c.nome}</strong>
-                            <span style="margin-left:auto; color:red; cursor:pointer; font-size:0.85rem;" onclick="prepararExclusaoCat('${k}')">Excluir</span>
+                            <span style="margin-left:auto; color:red; cursor:pointer; font-size:0.9rem;" onclick="prepararExclusaoCat('${k}')">Excluir</span>
                         </div>
                         <div id="det-${k}" class="preset-details">
                             <strong style="display:block; margin-bottom: 8px; color: #280606;">Áreas vinculadas:</strong>
