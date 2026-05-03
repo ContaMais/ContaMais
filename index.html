@@ -20,32 +20,27 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { display: flex; background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
         
-        /* MODO LEITURA (TRAVA DE SEGURANÇA) */
+        /* MODO LEITURA E SEGURANÇA */
         body:not(.admin-mode) .require-auth { display: none !important; }
-        body:not(.admin-mode) .input-qtd { 
-            pointer-events: none; border: 1px solid transparent; background: transparent; 
-            color: var(--text-main); padding: 0; width: auto; text-align: center; font-size: 1rem; -moz-appearance: textfield;
-        }
-        body:not(.admin-mode) .input-qtd::-webkit-outer-spin-button,
-        body:not(.admin-mode) .input-qtd::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        body:not(.admin-mode) .input-qtd { pointer-events: none; border: 1px solid transparent; background: transparent; color: var(--text-main); padding: 0; width: auto; text-align: center; font-size: 1rem; -moz-appearance: textfield; }
+        body:not(.admin-mode) .input-qtd::-webkit-outer-spin-button, body:not(.admin-mode) .input-qtd::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
         /* MENU LATERAL E TOPBAR */
         aside { width: 260px; background: var(--bg-sidebar); color: var(--text-sidebar); padding: 2rem 0.5rem; position: fixed; height: 100vh; z-index: 1000; transition: 0.3s; }
-        .logo-container { display: flex; justify-content: center; align-items: center; margin-bottom: 2.5rem; width: 100%; }
-        .logo-img { max-width: 85%; height: auto; object-fit: contain; }
+        .logo-container { display: flex; justify-content: center; align-items: center; margin-bottom: 2.5rem; width: 100%; height: 50px; }
+        .logo-img { max-width: 85%; max-height: 100%; object-fit: contain; }
         aside nav { display: flex; flex-direction: column; width: 100%; }
         .nav-btn { width: 100%; padding: 0.8rem 1rem; background: transparent; border: none; color: var(--text-sidebar); text-align: left; cursor: pointer; border-radius: 8px; margin-bottom: 0.5rem; font-size: 0.95rem; transition: 0.3s; display: flex; align-items: center; gap: 10px; border-left: 4px solid transparent; }
         .nav-btn.active { background: var(--bg-sidebar-active); border-left: 4px solid var(--primary); color: white; font-weight: 600; }
         
         .mobile-topbar, .mobile-show { display: none; }
         .btn-config { position: fixed; top: 15px; left: 15px; background: var(--bg-sidebar); color: white; border: none; border-radius: 50%; width: 42px; height: 42px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 2000; font-size: 1.1rem; box-shadow: 0 4px 8px rgba(0,0,0,0.3); transition: 0.2s; }
-        .btn-config:hover { transform: scale(1.1); }
 
         /* GERAL */
         main { margin-left: 260px; padding: 1.5rem; width: 100%; position: relative; padding-bottom: 100px; transition: 0.3s; }
         h1 { margin-bottom: 1rem; color: var(--bg-sidebar); font-weight: 800; font-size: 1.4rem; }
-        .header-com-acao { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-        .btn-toggle-grupo { background: var(--primary); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.2s; font-size: 0.85rem; }
+        .header-com-acao { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px; }
+        .btn-toggle-grupo { background: var(--primary); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s; font-size: 0.85rem; }
         
         .section { display: none; animation: fadeIn 0.2s ease-out; }
         .section.active { display: block; }
@@ -55,25 +50,24 @@
         .btn-back-styled svg { width: 25px; height: 25px; fill: currentColor; }
 
         .card { background: var(--card-bg); padding: 1.2rem; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); margin-bottom: 1rem; border: 1px solid var(--border-color); }
-        .grid-home { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+        .grid-home { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
         .grid-areas-layout { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
         
-        .card-nav { background: var(--card-bg); padding: 1.5rem 0.5rem; border-radius: 15px; text-align: center; cursor: pointer; border: 2px solid transparent; transition: 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .card-nav { background: var(--card-bg); padding: 1.5rem 0.5rem; border-radius: 15px; text-align: center; cursor: pointer; border: 2px solid transparent; transition: 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .card-nav:hover { border-color: var(--primary); transform: translateY(-3px); }
         .card-nav i { font-size: 2.2rem; display: block; margin-bottom: 8px; font-style: normal; }
         .card-nav h3 { font-size: 0.95rem; color: var(--bg-sidebar); }
 
-        /* CALENDÁRIO */
+        /* CALENDÁRIO E TABELAS FLUIDAS */
         .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .cal-btn { background: var(--bg-sidebar); color: white; border: none; border-radius: 8px; padding: 8px 15px; cursor: pointer; font-weight: bold; }
         .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
         .cal-day-name { font-weight: bold; text-align: center; padding: 10px 0; color: var(--bg-sidebar); text-transform: uppercase; font-size: 0.9rem; }
         .cal-day { background: white; border: 1px solid var(--border-color); border-radius: 8px; text-align: center; padding: 15px 0; cursor: pointer; transition: 0.2s; position: relative; font-weight: 600; }
         .cal-day:hover:not(.closed-day) { border-color: var(--primary); color: var(--primary); }
-        .cal-day.empty { background: transparent; border: none; pointer-events: none; }
         .cal-day.has-reserva::after { content: ''; position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; background: var(--primary); border-radius: 50%; }
         .cal-day.closed-day { background: #f1f5f9; color: #cbd5e1; border-color: #e2e8f0; cursor: not-allowed; text-decoration: line-through; }
 
-        /* TABELAS FLUIDAS */
         .table-container { background: white; border-radius: 10px; overflow-x: auto; border: 1px solid var(--border-color); width: 100%; }
         table { width: 100%; border-collapse: collapse; }
         th { background: #fffaf7; padding: 0.8rem 0.5rem; text-align: left; border-bottom: 2px solid var(--border-color); font-size: 0.75rem; color: #64748b; font-weight: 700; white-space: nowrap; text-transform: uppercase; }
@@ -81,37 +75,157 @@
         tbody tr:nth-child(even) { background-color: var(--row-even); }
         .col-item { font-weight: 600; min-width: 120px; }
         .input-qtd { width: 60px; padding: 8px 4px; border: 1px solid var(--border-color); border-radius: 6px; text-align: center; font-size: 0.9rem; font-weight: 700; transition: 0.2s; }
-        
         .total-container { display: flex; flex-direction: column; line-height: 1.2; text-align: right; }
         .total-fardos { font-weight: 800; color: var(--primary); font-size: 0.95rem; white-space: nowrap; }
         .total-unidades { font-weight: 600; color: #64748b; font-size: 0.75rem; white-space: nowrap; }
-
         .action-icon { width: 28px; height: 28px; border-radius: 50%; color: white; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; margin-right: 4px; font-size: 0.8rem; flex-shrink: 0; }
         .info-btn { background: #60a5fa; }
         .edit-btn { background: #f59e0b; }
         .add-btn { background: #10b981; }
 
         .cat-grid-checks { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin: 10px 0; padding: 10px; }
-        .check-item { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.85rem; }
-        input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary); }
+        .areas-check-list { display: flex; flex-direction: column; gap: 12px; margin: 10px 0; padding: 15px; background: var(--row-even); border-radius: 8px; border: 1px solid var(--border-color); }
+        .check-item { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
+        input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary); }
 
-        /* FAB (+) */
+        /* ================== CSS MAPA DE SALÃO E LAYOUT BLINDADO (SEM SCROLL) ================== */
+        
+        /* Trava o scroll global apenas quando a tela do mapa estiver ativa */
+        body:has(#mapa-salao.active) main {
+            padding-bottom: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #mapa-salao.active {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* O Grid que divide Controles e Mapa */
+        .mapa-layout-flex { 
+            display: flex; 
+            flex-direction: row; 
+            gap: 15px; 
+            flex-grow: 1; /* Preenche o resto da tela */
+            min-height: 0; /* Impede vazamento no Flexbox */
+            margin-top: 5px; 
+            overflow: hidden;
+        }
+        
+        .mapa-coluna-controles { 
+            flex: 0 0 350px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+            overflow-y: auto; 
+            padding-right: 5px;
+        }
+        
+        .mapa-coluna-mapa { 
+            flex: 1 1 0; 
+            display: flex; 
+            flex-direction: column; 
+            min-width: 0; 
+        }
+
+        /* Viewport Limitador (Quadro do Mapa) */
+        .mapa-viewport { 
+            flex-grow: 1; 
+            position: relative; 
+            width: 100%; 
+            background: white; 
+            border-radius: 12px; 
+            border: 2px solid var(--border-color); 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            overflow: hidden; 
+        }
+        
+        .planta-baixa { position: absolute; top: 0; left: 0; width: 750px; height: 950px; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); transform-origin: 0 0; }
+
+        /* Blocos Macro */
+        .bloco-macro { position: absolute; background: #f8fafc; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; border-radius: 8px; cursor: pointer; transition: 0.3s; z-index: 10; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .bloco-macro:hover { background: #f1f5f9; border-color: #cbd5e1; transform: scale(1.01); }
+        .bloco-macro.unfocused { opacity: 0.15; pointer-events: auto; background: #e2e8f0; border-color: #cbd5e1; }
+        .macro-title { color: #3d0a0a; font-weight: 900; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 2px; white-space: nowrap; pointer-events: none; }
+        
+        /* Estruturas Físicas Gerais */
+        .parede-preta-h { position: absolute; top: 315px; left: 50px; width: 450px; height: 6px; background: var(--bg-sidebar); border-radius: 4px; z-index: 2; }
+        .parede-preta-v { position: absolute; top: 315px; left: 500px; width: 6px; height: 260px; background: var(--bg-sidebar); border-radius: 4px; z-index: 2; }
+        .bloco-banheiro { position: absolute; top: 20px; left: 250px; width: 250px; height: 40px; background: var(--bg-sidebar); color: white; display: flex; justify-content: center; align-items: center; font-weight: bold; letter-spacing: 2px; font-size: 0.9rem; border-radius: 6px; z-index: 2; }
+
+        /* Mesas e Cadeiras (Micro) */
+        .planta-fileira { position: absolute; display: flex; gap: 8px; z-index: 5; animation: fadeIn 0.4s ease-out; }
+        .cadeiras-col { display: flex; flex-direction: column; justify-content: space-evenly; padding: 4px 0; transition: 0.3s; }
+        .cadeira { width: 10px; height: 10px; background: #cbd5e1; border-radius: 3px; }
+        .mesas-col { display: flex; flex-direction: column; gap: 4px; }
+        .cadeiras-row { display: flex; justify-content: space-evenly; padding: 4px 0; width: 100%; transition: 0.3s; }
+        
+        .mesa-quadrada { width: 32px; height: 32px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.75rem; cursor: pointer; transition: 0.2s; user-select: none; }
+        .mesa-redonda { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; cursor: pointer; transition: 0.2s; user-select: none; }
+
+        .status-ghost { background: transparent; border: 2px dashed #94a3b8; color: #94a3b8; cursor: pointer; }
+        .status-ghost:hover { border-color: var(--primary); background: #fff5f5; }
+        .status-ativa { background: white; border: 2px solid var(--text-main); color: var(--text-main); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .status-selecionada { background: #3b82f6; border: 2px solid #1d4ed8; color: white; transform: scale(1.1); z-index: 10; }
+        .status-reservada { background: var(--primary); border: 2px solid #7f1d1d; color: white; cursor: not-allowed; }
+        .label-vertical { position: absolute; color: var(--text-main); font-weight: bold; letter-spacing: 2px; transform: rotate(-90deg); transform-origin: left top; white-space: nowrap; font-size: 0.8rem; pointer-events: none; opacity: 0.8; }
+
+        /* FAB (+) E INPUTS */
         .fab-container { position: fixed; bottom: 30px; right: 30px; z-index: 1500; display: flex; flex-direction: column-reverse; align-items: flex-end; gap: 15px; }
         .fab-main { width: 55px; height: 55px; background: var(--primary); color: white; border-radius: 50%; border: none; font-size: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 100; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .fab-options { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; opacity: 0; pointer-events: none; transition: 0.2s; transform: translateY(10px); position: fixed; bottom: 95px; right: 20px; z-index: 101; }
         .fab-options.active { opacity: 1; pointer-events: all; transform: translateY(0); }
         .fab-item { background: white; border: 1px solid var(--primary); padding: 10px 16px; border-radius: 20px; cursor: pointer; font-weight: 700; font-size: 0.9rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); color: var(--text-main); }
 
-        .chip { background: #e2e8f0; padding: 6px 12px; border-radius: 15px; font-size: 0.8rem; cursor: pointer; font-weight: 600; margin: 3px; display: inline-block; border: 1px solid transparent; }
+        .chip { background: #e2e8f0; padding: 8px 14px; border-radius: 15px; font-size: 0.85rem; cursor: pointer; font-weight: 600; margin: 3px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid transparent; }
         .active-chip { background: var(--primary) !important; color: white !important; }
 
-        input[type="text"], input[type="number"], input[type="password"], select { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; margin: 6px 0; outline: none; font-size: 0.9rem; font-family: inherit; }
+        input[type="text"], input[type="number"], input[type="password"], input[type="date"], select { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; margin: 6px 0; outline: none; font-size: 0.9rem; font-family: inherit; }
         .btn-submit { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; font-size: 0.95rem; }
         
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(40, 6, 6, 0.7); z-index: 3000; align-items: center; justify-content: center; }
         .modal-box { background: var(--bg-body); padding: 1.5rem; border-radius: 12px; max-width: 320px; width: 90%; text-align: center; border: 2px solid var(--primary); }
 
-        /* RESPONSIVIDADE MOBILE */
+        /* ================== RESPONSIVIDADE MOBILE (Empilhamento Otimizado) ================== */
+        @media (max-width: 1024px) {
+            body:has(#mapa-salao.active) main { padding: 60px 0 0 0; } /* Ajuste pro topbar mobile */
+            
+            #mapa-salao.active { 
+                padding: 10px; 
+                height: calc(100vh - 60px); /* Ocupa exatamente a tela mobile visível */
+            }
+
+            /* Oculta textos e headers inúteis para poupar tela */
+            #mapa-salao .header-com-acao { margin-bottom: 5px; }
+            #mapa-salao .header-com-acao h1 { font-size: 1.1rem; }
+            #mapa-salao > p { display: none; } 
+
+            .mapa-layout-flex { 
+                flex-direction: column; 
+                gap: 10px; 
+                margin-top: 0;
+            }
+            
+            .mapa-coluna-controles { 
+                width: 100%; 
+                flex: 0 0 auto; /* Ajusta ao conteúdo */
+                max-height: 40vh; /* Máximo 40% da tela para sobrar pro mapa */
+                padding-right: 0;
+            }
+
+            .mapa-coluna-mapa { 
+                width: 100%; 
+                flex: 1 1 0; /* Preenche a tela restante inteira */
+            }
+            
+            .grid-home, .grid-areas-layout { grid-template-columns: repeat(2, 1fr); }
+        }
+
         @media (max-width: 768px) { 
             .mobile-topbar { display: flex; justify-content: center; align-items: center; position: fixed; top: 0; left: 0; width: 100%; height: 60px; background: var(--bg-sidebar); z-index: 1500; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
             .mobile-topbar img { height: 35px; object-fit: contain; }
@@ -121,35 +235,24 @@
             .nav-btn { flex-direction: column; justify-content: center; align-items: center; gap: 4px; padding: 5px; margin-bottom: 0; border-radius: 0; border-left: none; border-bottom: 3px solid transparent; height: 100%; }
             .nav-btn.active { border-bottom: 3px solid var(--primary); background: var(--bg-sidebar-active); }
             .nav-btn span { display: block !important; font-size: 0.60rem; font-weight: normal; }
-            
             .mobile-show { display: flex !important; }
             .fab-main { display: none !important; }
             .fab-container { bottom: 70px; right: 5px; pointer-events: none; }
             .fab-options { pointer-events: all; right: 10px; bottom: 75px; }
-            
             main { margin-left: 0; padding: 5rem 0.5rem 85px 0.5rem; } 
             .btn-config { top: 9px; left: 10px; width: 42px; height: 42px; font-size: 1.2rem; background: transparent; box-shadow: none; }
-
-            .grid-home { grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
-            .grid-areas-layout { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
             h1 { font-size: 1.2rem; }
-            
             th, td { padding: 0.6rem 0.3rem; font-size: 0.75rem; white-space: nowrap; }
             .col-item { font-size: 0.8rem; max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
-            .input-qtd { width: 45px; font-size: 0.85rem; padding: 6px 2px; }
-            .action-icon { width: 24px; height: 24px; font-size: 0.7rem; margin-right: 3px; }
         }
     </style>
 </head>
 <body class="logged-out">
 
-    <!-- TOPO MOBILE -->
-    <div class="mobile-topbar"><img src="contamais.svg" alt="Logo"></div>
+    <div class="mobile-topbar"><img src="contamais.svg" alt="ContaMais Logo"></div>
 
-    <!-- ENGRENAGEM CONFIGURAÇÕES -->
     <button class="btn-config" onclick="abrirConfig()">⚙️</button>
 
-    <!-- MODAL SENHA ADMINISTRADOR -->
     <div id="modalSenha" class="modal-overlay">
         <div class="modal-box">
             <h3 style="margin-bottom: 10px; color: var(--primary);">🔒 Acesso Restrito</h3>
@@ -172,21 +275,17 @@
         </div>
     </div>
 
-    <!-- MENU -->
     <aside>
-        <div class="logo-container"><img src="contamais.svg" alt="Logo" class="logo-img"></div>
+        <div class="logo-container"><img src="contamais.svg" alt="ContaMais Logo" class="logo-img"></div>
         <nav id="menu-navegacao">
             <button class="nav-btn active" id="nav-inicio" onclick="navegar('inicio', this)">🏠 <span>Início</span></button>
-            <button class="nav-btn" id="nav-areas" onclick="navegar('areas-lista', this)">📍 <span>Áreas</span></button>
-            <button class="nav-btn" id="nav-produtos" onclick="navegar('produtos-categorias', this)">🍾 <span>Produtos</span></button>
-            <button class="nav-btn" id="nav-pedidos" onclick="navegar('pedidos-metodos', this)">🛒 <span>Pedidos</span></button>
-            <button class="nav-btn" id="nav-agenda" onclick="navegar('agenda-view', this); renderizarCalendario();">📅 <span>Agenda</span></button>
+            <button class="nav-btn" id="nav-produtos-hub" onclick="navegar('produtos-hub', this)">🍾 <span>Produtos</span></button>
+            <button class="nav-btn" id="nav-reservas-hub" onclick="navegar('reservas-hub', this)">📅 <span>Reservas</span></button>
             <button class="nav-btn mobile-show require-auth" onclick="toggleFab()">➕ <span>Novo</span></button>
         </nav>
     </aside>
 
     <main>
-        <!-- FAB (+) -->
         <div class="fab-container require-auth">
             <button class="fab-main" onclick="toggleFab()">+</button>
             <div id="fabOptions" class="fab-options">
@@ -195,19 +294,103 @@
             </div>
         </div>
 
-        <!-- INÍCIO -->
         <section id="inicio" class="section active">
             <h1>Início</h1>
+            <p style="color:#64748b; margin-bottom:20px;">Bem-vindo ao ContaMais. Selecione um dos módulos abaixo ou no menu lateral.</p>
             <div class="grid-home">
-                <div class="card-nav" onclick="document.getElementById('nav-areas').click()"><i>📍</i><h3>Áreas</h3></div>
-                <div class="card-nav" onclick="document.getElementById('nav-produtos').click()"><i>🍾</i><h3>Produtos</h3></div>
-                <div class="card-nav" onclick="document.getElementById('nav-pedidos').click()"><i>🛒</i><h3>Pedidos</h3></div>
-                <div class="card-nav" onclick="document.getElementById('nav-agenda').click()"><i>📅</i><h3>Agenda</h3></div>
+                <div class="card-nav" onclick="navegar('produtos-hub', document.getElementById('nav-produtos-hub'))"><i>🍾</i><h3>Produtos e Pedidos</h3></div>
+                <div class="card-nav" onclick="navegar('reservas-hub', document.getElementById('nav-reservas-hub'))"><i>📅</i><h3>Reservas e Mapa</h3></div>
             </div>
         </section>
 
-        <!-- AGENDA (CALENDÁRIO) -->
+        <section id="produtos-hub" class="section">
+            <h1>Produtos e Logística</h1>
+            <div class="grid-home">
+                <div class="card-nav" onclick="navegar('areas-lista')"><i>📍</i><h3>Áreas</h3></div>
+                <div class="card-nav" onclick="navegar('produtos-categorias')"><i>🍾</i><h3>Itens</h3></div>
+                <div class="card-nav" onclick="navegar('pedidos-metodos')"><i>🛒</i><h3>Pedidos</h3></div>
+            </div>
+        </section>
+
+        <section id="reservas-hub" class="section">
+            <h1>Gestão de Reservas</h1>
+            <div class="grid-home">
+                <div class="card-nav" onclick="navegar('agenda-view'); renderizarCalendario();"><i>📅</i><h3>Agenda</h3></div>
+                <div class="card-nav" onclick="navegar('mapa-setup')"><i>🗺️</i><h3>Mapa de Salão</h3></div>
+            </div>
+        </section>
+
+        <section id="mapa-setup" class="section">
+            <div class="btn-back-styled" onclick="navegar('reservas-hub')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
+            <h1>Acessar Mapa de Salão</h1>
+            <div class="card" style="max-width: 400px;">
+                <p style="font-weight: 700; margin-bottom: 5px; color: var(--bg-sidebar);">Data da Operação:</p>
+                <input type="date" id="setup-mapa-data" style="margin-bottom: 15px;">
+                <p style="font-weight: 700; margin-bottom: 5px; color: var(--bg-sidebar);">Turno:</p>
+                <select id="setup-mapa-turno" style="margin-bottom: 20px;">
+                    <option value="dia">Dia (Almoço)</option>
+                    <option value="tarde_noite">Tarde/Noite</option>
+                </select>
+                <button class="btn-submit" onclick="abrirMapaComFiltro()">Carregar Mapa</button>
+            </div>
+        </section>
+
+        <section id="mapa-salao" class="section">
+            <div class="header-com-acao">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <button class="btn-back-styled" style="margin:0; width:40px; height:40px; border-radius:10px;" onclick="navegar('mapa-setup')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></button>
+                    <div>
+                        <h1 style="margin:0;">Mapa do Salão 2</h1>
+                        <h3 id="mapa-header-info" style="color:var(--primary); font-size: 0.95rem; margin-top: 3px;">Data - Turno</h3>
+                    </div>
+                </div>
+            </div>
+            
+            <p style="font-size:0.85rem; color:#64748b; margin-bottom: 10px;">Selecione os blocos para dar zoom nas áreas. O sistema fará o corte espacial de 1 mesa automaticamente.</p>
+
+            <div class="mapa-layout-flex">
+                
+                <div class="mapa-coluna-controles">
+                    
+                    <div id="painel-reservas-turno" class="card" style="margin-bottom:0; padding:10px; display:flex; flex-direction:column; min-height:0; border-color: var(--primary);">
+                        <h3 style="color:var(--primary); font-size:1rem; margin-bottom: 8px;">📋 Reservas do Turno</h3>
+                        <div id="lista-reservas-turno-mapa" style="display:flex; flex-direction:column; gap:6px; overflow-y:auto; flex-grow:1;">
+                            </div>
+                    </div>
+
+                    <div id="painel-controles-mapa" class="card require-auth" style="display:none; margin-bottom:0; padding:10px; border-color: var(--primary);">
+                        <button class="btn-submit" id="btn-voltar-mapa" style="margin-top:0; margin-bottom:10px; background:#64748b; font-size:0.85rem;" onclick="desfocarArea()">⬅️ Voltar Visão Geral</button>
+                        
+                        <button class="btn-toggle-grupo" id="btn-edit-layout" style="margin-bottom:10px; width:100%; justify-content:center;" onclick="toggleModoLayoutMapa()">✏️ Modo Montagem</button>
+                        
+                        <div style="display:flex; gap:8px; margin-bottom:5px;">
+                            <button class="btn-submit" style="margin:0; flex:1; background:#10b981; font-size:0.8rem; padding:8px;" onclick="adicionarMesaFileira()">➕ Add Ponta</button>
+                            <button class="btn-submit" style="margin:0; flex:1; background:#f59e0b; font-size:0.8rem; padding:8px;" onclick="subtrairMesaFileira()">➖ Sub Ponta</button>
+                        </div>
+                        
+                        <div id="dynamic-selected-controls" style="display:none; flex-direction:column; gap:8px; margin-top:10px; padding-top:10px; border-top:1px solid #e2e8f0;">
+                            <strong style="color:var(--bg-sidebar); font-size:0.85rem;">Seleção (<span id="qtd-selecionadas">0</span> mesas)</strong>
+                            <input type="text" id="mapa-reserva-nome" placeholder="Nome do Cliente" style="padding:8px; font-size:0.85rem; margin:0;">
+                            <div style="display:flex; gap:8px;">
+                                <button class="btn-submit" style="margin:0; flex:1; background:#3b82f6; padding:8px; font-size:0.85rem;" onclick="salvarReservaMapa()">💾 Salvar</button>
+                                <button class="btn-submit" style="margin:0; flex:1; background:#ef4444; padding:8px; font-size:0.85rem;" onclick="apagarMesasSelecionadas()">✂️ Cortar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mapa-coluna-mapa">
+                    <div id="mapa-viewport" class="mapa-viewport">
+                        <div id="mapa-container" class="planta-baixa">
+                            </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
         <section id="agenda-view" class="section">
+            <div class="btn-back-styled" onclick="navegar('reservas-hub')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
             <h1>Agenda de Reservas</h1>
             <div class="card" style="padding: 1.5rem 1rem;">
                 <div class="cal-header">
@@ -223,172 +406,697 @@
             </div>
         </section>
 
-        <!-- AGENDA DETALHE DIA (LISTA + FORMULÁRIO) -->
         <section id="agenda-detalhe" class="section">
-            <div class="btn-back-styled" onclick="navegar('agenda-view', document.getElementById('nav-agenda')); renderizarCalendario();">
-                <svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
-            </div>
+            <div class="btn-back-styled" onclick="navegar('agenda-view'); renderizarCalendario();"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
             <h1 id="titulo-data-reserva" style="font-size: 1.3rem;">Reservas</h1>
-            
-            <div class="card">
-                <h3 style="margin-bottom:10px; color:var(--primary); font-size:1rem;">Reservas do Dia</h3>
-                <div id="lista-reservas-dia" style="display:flex; flex-direction:column; gap:8px;"></div>
-            </div>
-
+            <div class="card"><div id="lista-reservas-dia"></div></div>
             <div class="card require-auth">
-                <h3 style="margin-bottom: 10px; color: var(--primary); font-size: 1rem;">Criar Nova Reserva</h3>
-                
-                <p style="font-size:0.8rem; color:#64748b; margin: 10px 0 5px 0; font-weight:700;">Período:</p>
-                <select id="res-periodo" onchange="atualizarFormReserva()">
-                    <option value="dia">Dia</option>
-                    <option value="tarde_noite">Tarde/Noite</option>
-                </select>
-
-                <p style="font-size:0.8rem; color:#64748b; margin: 10px 0 5px 0; font-weight:700;">Horário:</p>
-                <div id="res-time-dia" style="padding: 10px; background: #e2e8f0; border-radius: 8px; font-weight: bold; text-align: center; color: #64748b;">12:00 - 18:00</div>
-                <div id="res-time-tarde" style="display: none; align-items: center; gap: 10px;">
-                    <input type="text" id="res-horario-tarde" list="lista-horarios" placeholder="18:00" style="flex:1;">
-                    <datalist id="lista-horarios">
-                        <option value="18:00"><option value="18:30"><option value="19:00"><option value="19:30"><option value="20:00">
-                    </datalist>
-                    <span id="res-time-tarde-end" style="font-weight: bold; color: var(--primary); white-space: nowrap;">- 01:00</span>
-                </div>
-
-                <p style="font-size:0.8rem; color:#64748b; margin: 10px 0 5px 0; font-weight:700;">Área:</p>
+                <h3 style="margin-bottom: 10px; color: var(--primary); font-size: 1rem;">Criar Nova Reserva (Manual)</h3>
+                <select id="res-periodo" onchange="atualizarFormReserva()"><option value="dia">Dia</option><option value="tarde_noite">Tarde/Noite</option></select>
+                <div id="res-time-dia" style="padding: 10px; background: #e2e8f0; border-radius: 8px; font-weight: bold; text-align: center; color: #64748b; margin: 6px 0;">12:00 - 18:00</div>
+                <div id="res-time-tarde" style="display: none; align-items: center; gap: 10px;"><input type="text" id="res-horario-tarde" list="lista-horarios" placeholder="18:00" style="flex:1;"><datalist id="lista-horarios"><option value="18:00"><option value="18:30"><option value="19:00"><option value="19:30"><option value="20:00"></datalist><span id="res-time-tarde-end" style="font-weight: bold; color: var(--primary); white-space: nowrap;">- 01:00</span></div>
                 <select id="res-area" onchange="atualizarFormReserva()">
-                    <option value="Varanda">Varanda</option>
-                    <option value="Salão 1 - Frente">Salão 1 - Frente</option>
-                    <option value="Salão 1 - Corredor">Salão 1 - Corredor</option>
-                    <option value="Salão 2 - Parede">Salão 2 - Parede</option>
-                    <option value="Salão 2 - Meio">Salão 2 - Meio</option>
-                    <option value="Salão 2 - Corrimão">Salão 2 - Corrimão</option>
-                    <option value="Salão 2 - Mesas Redondas">Salão 2 - Mesas Redondas</option>
-                    <option value="Salão 2 - Bistrôs">Salão 2 - Bistrôs</option>
-                    <option value="Salão 2 - Brinquedão">Salão 2 - Brinquedão</option>
-                    <option value="Laje">Laje</option>
+                    <option value="Varanda">Varanda</option><option value="Salão 1 - Frente">Salão 1 - Frente</option><option value="Salão 1 - Corredor">Salão 1 - Corredor</option><option value="Salão 2 - Parede">Salão 2 - Parede</option><option value="Salão 2 - Meio">Salão 2 - Meio</option><option value="Salão 2 - Corrimão">Salão 2 - Corrimão</option><option value="Salão 2 - Mesas Redondas">Salão 2 - Mesas Redondas</option><option value="Salão 2 - Bistrôs">Salão 2 - Bistrôs</option><option value="Salão 2 - Brinquedão">Salão 2 - Brinquedão</option><option value="Laje">Laje</option>
                 </select>
-
-                <p style="font-size:0.8rem; color:#64748b; margin: 10px 0 5px 0; font-weight:700;">Número (<span id="res-lbl-max" style="color: var(--primary);"></span>):</p>
-                <input type="number" id="res-lugares" placeholder="Ex: 10">
-
-                <p style="font-size:0.8rem; color:#64748b; margin: 10px 0 5px 0; font-weight:700;">Nome da Reserva:</p>
+                <input type="number" id="res-lugares" placeholder="Lugares (Qtd de pessoas)">
                 <input type="text" id="res-nome" placeholder="Ex: Aniversário do João">
-
                 <button class="btn-submit" onclick="salvarReserva()" style="margin-top: 15px;">CADASTRAR RESERVA</button>
             </div>
         </section>
 
-        <!-- CONFIGURAÇÕES GERAIS (SÓ ABRE SE FOR ADMIN) -->
-        <section id="configuracoes" class="section">
-            <div class="btn-back-styled" onclick="navegar('inicio', document.getElementById('nav-inicio'))">
-                <svg viewBox="0 0 24 24"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>
-            </div>
-            <h1>Configurações Admin</h1>
-            
-            <div class="card" style="border-color: #10b981; background: #f0fdf4; margin-bottom: 1.5rem;">
-                <h3 style="color: #047857;">🔓 Acesso de Administrador Liberado</h3>
-                <button class="btn-submit" style="background: #047857; margin-top: 15px;" onclick="sairModoAdmin()">Sair do Modo Admin (Trancar)</button>
-            </div>
-
-            <div class="card">
-                <h3 style="margin-bottom: 10px; color: var(--primary); font-size: 1rem;">1. Configurar Categorias</h3>
-                <input type="hidden" id="edit-cat-id"><input type="text" id="cat-nome" placeholder="Nome da Categoria">
-                <p style="font-size:0.8rem; color:#64748b; margin-top:10px; font-weight:700;">Áreas vinculadas:</p>
-                <div id="cat-checks-areas" class="cat-grid-checks"></div>
-                <div style="margin: 10px 0; padding: 12px; background: #fffaf7; border-radius: 8px; border: 1px solid var(--border-color);">
-                    <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:700; font-size: 0.85rem;"><input type="checkbox" id="cat-uso-fardo" onchange="toggleFardoInput()"> Usa Fardos?</label>
-                    <div id="div-unidades-fardo" style="display:none; margin-top:10px;"><input type="number" id="cat-qtd-fardo" placeholder="Unidades por fardo"></div>
-                </div>
-                <button class="btn-submit" id="btn-salvar-cat" onclick="salvarCategoria()">Salvar Categoria</button>
-                <button class="btn-submit" id="btn-cancelar-cat" onclick="resetarFormCategoria()" style="display:none; background:#e2e8f0; color:#280606;">Cancelar</button>
-            </div>
-            <div class="card"><h3 style="font-size: 1rem;">Categorias Existentes</h3><div id="lista-categorias-config" style="margin-top:10px;"></div></div>
-
-            <div class="card" style="margin-top: 1.5rem;">
-                <h3 style="margin-bottom: 10px; color: var(--primary); font-size: 1rem;">2. Métodos de Compra</h3>
-                <input type="hidden" id="edit-met-id"><input type="text" id="met-nome" placeholder="Ex: Atacadão...">
-                <button class="btn-submit" id="btn-salvar-met" onclick="salvarMetodo()">Salvar Método</button>
-                <button class="btn-submit" id="btn-cancelar-met" onclick="resetarFormMetodo()" style="display:none; background:#e2e8f0; color:#280606;">Cancelar</button>
-            </div>
-            <div class="card"><h3 style="font-size: 1rem;">Métodos Existentes</h3><div id="lista-metodos-config" style="margin-top:10px;"></div></div>
+        <section id="areas-lista" class="section">
+            <div class="btn-back-styled" onclick="navegar('produtos-hub')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
+            <h1>Áreas de Estoque</h1><div id="grid-areas" class="grid-areas-layout"></div>
         </section>
-
-        <!-- OUTRAS TELAS -->
-        <section id="atribuir-categoria" class="section require-auth"><div class="btn-back-styled" onclick="navegar('configuracoes')">✕</div><h1 id="titulo-atribuir-cat" style="font-size: 1.2rem;">Atribuir</h1><div class="card"><input type="hidden" id="atribuir-cat-id"><div id="lista-produtos-atribuir" style="display: flex; flex-direction: column; gap: 8px; max-height: 55vh; overflow-y: auto;"></div><button class="btn-submit" onclick="salvarAtribuicaoCategoria()">SALVAR</button></div></section>
-        <section id="atribuir-metodo" class="section require-auth"><div class="btn-back-styled" onclick="navegar('configuracoes')">✕</div><h1 id="titulo-atribuir-met" style="font-size: 1.2rem;">Atribuir Método</h1><div class="card"><input type="hidden" id="atribuir-met-id"><div id="lista-produtos-atribuir-met" style="display: flex; flex-direction: column; gap: 8px; max-height: 55vh; overflow-y: auto;"></div><button class="btn-submit" onclick="salvarAtribuicaoMetodo()">SALVAR</button></div></section>
-        <section id="areas-lista" class="section"><h1>Áreas de Estoque</h1><div id="grid-areas" class="grid-areas-layout"></div></section>
         
         <section id="produtos-categorias" class="section">
-            <div class="header-com-acao"><h1 id="titulo-aba-produtos" style="font-size: 1.2rem;">Categorias</h1><button class="btn-toggle-grupo" onclick="toggleAgrupamentoProdutos()">🔄 Agrupar</button></div>
+            <div class="header-com-acao">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div class="btn-back-styled" style="margin:0;" onclick="navegar('produtos-hub')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
+                    <h1 id="titulo-aba-produtos" style="margin:0; font-size: 1.2rem;">Categorias</h1>
+                </div>
+                <button class="btn-toggle-grupo" onclick="toggleAgrupamentoProdutos()">🔄 Agrupar</button>
+            </div>
             <div id="grid-produtos-agrupados" class="grid-areas-layout"></div>
             <h2 id="titulo-sem-grupo" style="margin-top:1.5rem; font-size: 1.1rem;">Sem Categoria</h2>
             <div class="table-container"><table><tbody id="tabela-produtos-sem-grupo"></tbody></table></div>
         </section>
 
-        <section id="produtos-lista-filtrada" class="section"><div class="btn-back-styled" onclick="navegar('produtos-categorias')">✕</div><h1 id="titulo-categoria-filtrada" style="font-size: 1.2rem;">Produtos</h1><div class="table-container"><table><thead><tr><th>Item</th><th style="text-align:right">Total</th></tr></thead><tbody id="tabela-produtos-filtrada"></tbody></table></div></section>
-        <section id="detalhe-area" class="section"><div class="btn-back-styled" onclick="navegar('areas-lista')">✕</div><div class="card" style="padding: 1rem;"><div style="display:flex; align-items:center; gap:8px;"><h2 id="area-display-name" style="font-size: 1.2rem; margin:0;">Área</h2><button class="action-icon edit-btn require-auth" onclick="habilitarEdicaoArea()" style="width:24px; height:24px; font-size:0.7rem;">✎</button></div><div id="area-edit-box" style="display:none; margin-top:10px;"><input type="text" id="edit-area-input"><button class="btn-submit" onclick="salvarNovoNomeArea()" style="padding:8px;">Salvar</button></div><span class="require-auth" style="color:var(--primary); cursor:pointer; font-size:0.75rem; display:block; margin-top:8px;" onclick="prepararExclusaoArea()">Excluir Área</span></div><div class="table-container"><table><thead id="head-area-itens"></thead><tbody id="tabela-area-itens"></tbody></table></div></section>
-        <section id="detalhe-produto" class="section"><div class="btn-back-styled" onclick="navegar('produtos-categorias')">✕</div><div class="card"><h2 id="span-titulo-prod" style="font-size: 1.2rem;">Produto</h2><div id="info-extra-prod"></div></div><div class="table-container"><table><thead><tr><th>Área</th><th style="text-align:right">Total Consolidado</th></tr></thead><tbody id="tabela-locais-produto"></tbody></table></div></section>
-        
-        <section id="pedidos-metodos" class="section"><h1>Pedidos</h1><div id="grid-pedidos-metodos" class="grid-areas-layout"></div></section>
-        <section id="pedidos-lista" class="section"><div class="btn-back-styled" onclick="navegar('pedidos-metodos')">✕</div><h1 id="titulo-pedido-metodo" style="font-size: 1.2rem;">Pedidos</h1><div class="table-container"><table><thead><tr><th>Item</th><th style="text-align:center;">Atual</th><th style="text-align:center;">Mín.</th><th style="text-align:center; color: var(--primary);">Pedir</th></tr></thead><tbody id="tabela-pedidos-filtrada"></tbody></table></div></section>
+        <section id="produtos-lista-filtrada" class="section">
+            <div class="btn-back-styled" onclick="navegar('produtos-categorias')">✕</div>
+            <h1 id="titulo-categoria-filtrada" style="font-size: 1.2rem;">Produtos</h1>
+            <div class="table-container"><table><thead><tr><th>Item</th><th style="text-align:right">Total</th></tr></thead><tbody id="tabela-produtos-filtrada"></tbody></table></div>
+        </section>
 
-        <!-- FORMULÁRIOS DE CRIAÇÃO (REQUER AUTH) -->
+        <section id="detalhe-area" class="section">
+            <div class="btn-back-styled" onclick="navegar('areas-lista')">✕</div>
+            <div class="card" style="padding: 1rem;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <h2 id="area-display-name" style="font-size: 1.2rem; margin:0;">Área</h2>
+                    <button class="action-icon edit-btn require-auth" onclick="habilitarEdicaoArea()" style="width:24px; height:24px; font-size:0.7rem;">✎</button>
+                </div>
+                <div id="area-edit-box" style="display:none; margin-top:10px;">
+                    <input type="text" id="edit-area-input">
+                    <button class="btn-submit" onclick="salvarNovoNomeArea()" style="padding:8px;">Salvar</button>
+                </div>
+                <span class="require-auth" style="color:var(--primary); cursor:pointer; font-size:0.75rem; display:block; margin-top:8px;" onclick="prepararExclusaoArea()">Excluir Área</span>
+            </div>
+            <div class="table-container"><table><thead id="head-area-itens"></thead><tbody id="tabela-area-itens"></tbody></table></div>
+        </section>
+
+        <section id="detalhe-produto" class="section">
+            <div class="btn-back-styled" onclick="navegar('produtos-categorias')">✕</div>
+            <div class="card"><h2 id="span-titulo-prod" style="font-size: 1.2rem;">Produto</h2><div id="info-extra-prod"></div></div>
+            <div class="table-container"><table><thead><tr><th>Área</th><th style="text-align:right">Total Consolidado</th></tr></thead><tbody id="tabela-locais-produto"></tbody></table></div>
+        </section>
+        
+        <section id="pedidos-metodos" class="section">
+            <div class="btn-back-styled" onclick="navegar('produtos-hub')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
+            <h1>Pedidos de Mercadoria</h1><div id="grid-pedidos-metodos" class="grid-areas-layout"></div>
+        </section>
+
+        <section id="pedidos-lista" class="section">
+            <div class="btn-back-styled" onclick="navegar('pedidos-metodos')">✕</div>
+            <h1 id="titulo-pedido-metodo" style="font-size: 1.2rem;">Pedidos</h1>
+            <div class="table-container"><table><thead><tr><th>Item</th><th style="text-align:center;">Atual</th><th style="text-align:center;">Mín.</th><th style="text-align:center; color: var(--primary);">Pedir</th></tr></thead><tbody id="tabela-pedidos-filtrada"></tbody></table></div>
+        </section>
+
+        <section id="configuracoes" class="section">
+            <div class="btn-back-styled" onclick="navegar('inicio')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
+            <h1>Configurações Admin</h1>
+            <div class="card" style="border-color: #10b981; background: #f0fdf4; margin-bottom: 1.5rem;"><h3 style="color: #047857;">🔓 Acesso Administrador</h3><button class="btn-submit" style="background: #047857; margin-top: 15px;" onclick="sairModoAdmin()">Sair do Modo Admin (Trancar)</button></div>
+            
+            <div class="card">
+                <h3>1. Categorias de Produtos</h3><input type="hidden" id="edit-cat-id"><input type="text" id="cat-nome" placeholder="Nome da Categoria">
+                <div id="cat-checks-areas" class="cat-grid-checks"></div>
+                <div style="margin: 10px 0; padding: 12px; background: #fffaf7; border-radius: 8px; border: 1px solid var(--border-color);"><label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:700; font-size: 0.85rem;"><input type="checkbox" id="cat-uso-fardo" onchange="toggleFardoInput()"> Usa Fardos?</label><div id="div-unidades-fardo" style="display:none; margin-top:10px;"><input type="number" id="cat-qtd-fardo" placeholder="Unidades por fardo"></div></div>
+                <button class="btn-submit" id="btn-salvar-cat" onclick="salvarCategoria()">Salvar Categoria</button>
+            </div>
+            <div class="card"><h3>Categorias Existentes</h3><div id="lista-categorias-config" style="margin-top:10px;"></div></div>
+            
+            <div class="card" style="margin-top: 1.5rem;">
+                <h3>2. Métodos de Compra</h3><input type="hidden" id="edit-met-id"><input type="text" id="met-nome" placeholder="Ex: Atacadão...">
+                <button class="btn-submit" id="btn-salvar-met" onclick="salvarMetodo()">Salvar Método</button>
+            </div>
+            <div class="card"><h3>Métodos Existentes</h3><div id="lista-metodos-config" style="margin-top:10px;"></div></div>
+        </section>
+
+        <section id="atribuir-categoria" class="section require-auth"><div class="btn-back-styled" onclick="navegar('configuracoes')">✕</div><h1 id="titulo-atribuir-cat">Atribuir</h1><div class="card"><input type="hidden" id="atribuir-cat-id"><div id="lista-produtos-atribuir" style="display: flex; flex-direction: column; gap: 8px; max-height: 55vh; overflow-y: auto;"></div><button class="btn-submit" onclick="salvarAtribuicaoCategoria()">SALVAR</button></div></section>
+        <section id="atribuir-metodo" class="section require-auth"><div class="btn-back-styled" onclick="navegar('configuracoes')">✕</div><h1 id="titulo-atribuir-met">Atribuir Método</h1><div class="card"><input type="hidden" id="atribuir-met-id"><div id="lista-produtos-atribuir-met" style="display: flex; flex-direction: column; gap: 8px; max-height: 55vh; overflow-y: auto;"></div><button class="btn-submit" onclick="salvarAtribuicaoMetodo()">SALVAR</button></div></section>
+
         <section id="novo-produto" class="section require-auth">
-            <h1 style="font-size: 1.3rem;">Novo Produto</h1><div class="card"><input type="text" id="prod-nome" placeholder="Ex: Coca-Cola"><p style="font-size:0.8rem; margin: 10px 0 5px 0;">Categorias:</p><div id="presets-container" style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"></div><p style="font-size:0.8rem; margin: 10px 0 5px 0;">Método *:</p><div id="metodos-container" style="display:flex; flex-wrap:wrap; gap:5px;"></div><input type="hidden" id="prod-metodo-selecionado"><p style="font-size:0.8rem; margin: 10px 0 5px 0;">Mínimo <span id="lbl-estoque-minimo-novo" style="color:var(--primary);">(Un.)</span>:</p><input type="number" id="prod-estoque-minimo" value="0"><p style="font-size:0.8rem; margin: 15px 0 5px 0;">Áreas:</p><div id="checks-areas" class="cat-grid-checks"></div><button class="btn-submit" onclick="salvarProduto()">CADASTRAR</button></div>
+            <h1 style="font-size: 1.3rem;">Novo Produto</h1>
+            <div class="card">
+                <input type="text" id="prod-nome" placeholder="Ex: Coca-Cola">
+                <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">1. Assinale as Categorias <span style="font-size:0.75rem; font-weight:normal; color:#64748b;">(Pode ser mais de uma)</span>:</p>
+                <div id="presets-container" style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"></div>
+                <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">2. Selecione o Método de Compra <span style="font-size:0.75rem; font-weight:normal; color:var(--primary);">*(Apenas um)*</span>:</p>
+                <div id="metodos-container" style="display:flex; flex-wrap:wrap; gap:5px;"></div>
+                <input type="hidden" id="prod-metodo-selecionado">
+                <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">3. Estoque Mínimo <span id="lbl-estoque-minimo-novo" style="font-size:0.75rem; font-weight:normal; color:var(--primary);">(Un.)</span>:</p>
+                <input type="number" id="prod-estoque-minimo" value="0">
+                <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">4. Onde este produto fica armazenado?</p>
+                <div id="checks-areas" class="areas-check-list"></div>
+                <button class="btn-submit" onclick="salvarProduto()">CADASTRAR</button>
+            </div>
         </section>
         
         <section id="editar-produto" class="section require-auth">
-            <div class="btn-back-styled" onclick="navegar('produtos-categorias')">✕</div><h1 style="font-size: 1.3rem;">Editar Produto</h1><div class="card"><input type="hidden" id="edit-prod-id"><input type="text" id="edit-prod-nome"><p style="font-size:0.8rem; margin: 10px 0 5px 0;">Categorias:</p><div id="edit-presets-container" style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"></div><p style="font-size:0.8rem; margin: 10px 0 5px 0;">Método *:</p><div id="edit-metodos-container" style="display:flex; flex-wrap:wrap; gap:5px;"></div><input type="hidden" id="edit-prod-metodo-selecionado"><p style="font-size:0.8rem; margin: 10px 0 5px 0;">Mínimo <span id="lbl-estoque-minimo-edit" style="color:var(--primary);">(Un.)</span>:</p><input type="number" id="edit-prod-estoque-minimo"><p style="font-size:0.8rem; margin: 15px 0 5px 0;">Áreas:</p><div id="edit-checks-areas" class="cat-grid-checks"></div><button class="btn-submit" onclick="salvarEdicaoProduto()">SALVAR</button><span style="color:var(--primary); cursor:pointer; display:block; text-align:center; margin-top:15px; font-weight:bold; font-size:0.85rem;" onclick="prepararExclusaoProd()">Excluir Produto</span></div>
+            <div class="btn-back-styled" onclick="navegar('produtos-categorias')">✕</div><h1 style="font-size: 1.3rem;">Editar Produto</h1>
+            <div class="card">
+                <input type="hidden" id="edit-prod-id"><input type="text" id="edit-prod-nome">
+                <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">1. Assinale as Categorias <span style="font-size:0.75rem; font-weight:normal; color:#64748b;">(Pode ser mais de uma)</span>:</p>
+                <div id="edit-presets-container" style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"></div>
+                <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">2. Selecione o Método de Compra <span style="font-size:0.75rem; font-weight:normal; color:var(--primary);">*(Apenas um)*</span>:</p>
+                <div id="edit-metodos-container" style="display:flex; flex-wrap:wrap; gap:5px;"></div>
+                <input type="hidden" id="edit-prod-metodo-selecionado">
+                <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">3. Estoque Mínimo <span id="lbl-estoque-minimo-edit" style="font-size:0.75rem; font-weight:normal; color:var(--primary);">(Un.)</span>:</p>
+                <input type="number" id="edit-prod-estoque-minimo">
+                <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">4. Onde este produto fica armazenado?</p>
+                <div id="edit-checks-areas" class="areas-check-list"></div>
+                <button class="btn-submit" onclick="salvarEdicaoProduto()">SALVAR</button>
+                <span style="color:var(--primary); cursor:pointer; display:block; text-align:center; margin-top:15px; font-weight:bold; font-size:0.85rem;" onclick="prepararExclusaoProd()">Excluir Produto</span>
+            </div>
         </section>
-
+        
         <section id="nova-area" class="section require-auth"><h1>Nova Área</h1><div class="card"><input type="text" id="area-nome" placeholder="Nome da área"><button class="btn-submit" onclick="salvarArea()">CRIAR</button></div></section>
     </main>
 
-    <!-- FIREBASE E SCRIPT PRINCIPAL -->
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
 
     <script>
+        // CONFIGURAÇÕES FIREBASE
         const firebaseConfig = { apiKey: "AIzaSyC3cAzrTMwCUxDcMvl68XxrcGLkmeANtSg", authDomain: "contamais-411llp.firebaseapp.com", databaseURL: "https://contamais-411llp-default-rtdb.firebaseio.com", projectId: "contamais-411llp", storageBucket: "contamais-411llp.firebasestorage.app", messagingSenderId: "691691378209", appId: "1:691691378209:web:6191b84e88ee3281b17560" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
+        // ESTADOS GLOBAIS
         let areas = [], produtos = {}, categorias = {}, metodosCompra = {}, reservasApp = {};
         let areaAtualKey = "", catsNovo = [], catsEdit = [], agrupamentoAtual = 'categorias'; 
         
-        // ADMIN E SENHA
+        let mapasApp = {};
+        let modoMontagemMapa = false;
+        let mesasSelecionadasMapa = [];
+        let areaFocadaMapa = null;
+        let mapaAtualData = "";
+        let mapaAtualTurno = "";
+
+        // ESTRUTURA DO MAPA (COORDENADAS E MACROS EQUILIBRADOS)
+        const macroAreas = {
+            "Brinquedão": { top: "80px", left: "60px", w: 600, h: 220 },
+            "Parede": { top: "340px", left: "60px", w: 110, h: 500 },
+            "Meio": { top: "340px", left: "210px", w: 110, h: 500 },
+            "Mesas Redondas": { top: "360px", left: "370px", w: 120, h: 180 },
+            "Corrimão": { top: "560px", left: "370px", w: 120, h: 250 },
+            "Bistrôs": { top: "620px", left: "550px", w: 110, h: 200 }
+        };
+
+        const configMapa = {
+            "Brinq. 1": { macro: "Brinquedão", max: 6, chairsL: 10, chairsR: 10, top: "90px", left: "80px", tipo: "normal" },
+            "Brinq. 2": { macro: "Brinquedão", max: 5, chairsL: 8, chairsR: 8, top: "90px", left: "245px", tipo: "normal" },
+            "Brinq. 3": { macro: "Brinquedão", max: 4, chairsL: 7, chairsR: 7, top: "90px", left: "410px", tipo: "normal" },
+            "Brinq. 4": { macro: "Brinquedão", max: 4, chairsL: 6, chairsT: 2, chairsB: 2, top: "90px", left: "580px", tipo: "parede-direita" },
+            "Parede": { macro: "Parede", max: 13, chairsL: 20, chairsR: 20, top: "350px", left: "80px", tipo: "normal" },
+            "Meio": { macro: "Meio", max: 13, chairsL: 20, chairsR: 20, top: "350px", left: "230px", tipo: "normal" },
+            "Mesas Redondas": { macro: "Mesas Redondas", max: 3, top: "380px", left: "410px", tipo: "redonda" },
+            "Corrimão": { macro: "Corrimão", max: 6, chairsL: 10, chairsR: 10, top: "580px", left: "390px", tipo: "normal" },
+            "Bistrôs": { macro: "Bistrôs", max: 3, top: "640px", left: "580px", tipo: "bistro" }
+        };
+        
+        // ADMIN
         let isAdmin = false; const SENHA_ADMIN = "411 J@nder114";
         function fecharModalSenha() { document.getElementById('modalSenha').style.display = 'none'; }
-        function verificarSenha() { const dig = document.getElementById('input-senha-admin').value; if(dig === SENHA_ADMIN) { isAdmin = true; document.body.classList.remove('logged-out'); document.body.classList.add('admin-mode'); fecharModalSenha(); abrirConfig(); } else alert("Senha incorreta!"); }
-        function sairModoAdmin() { isAdmin = false; document.body.classList.remove('admin-mode'); document.body.classList.add('logged-out'); navegar('inicio', document.getElementById('nav-inicio')); alert("Modo Leitura ativado."); }
+        function verificarSenha() { 
+            try {
+                const dig = document.getElementById('input-senha-admin').value; 
+                if(dig === SENHA_ADMIN) { 
+                    isAdmin = true; 
+                    document.body.classList.remove('logged-out'); 
+                    document.body.classList.add('admin-mode'); 
+                    fecharModalSenha(); 
+                    abrirConfig(); 
+                } else {
+                    alert("Senha incorreta!"); 
+                }
+            } catch(e) { console.error(e); }
+        }
+        function sairModoAdmin() { isAdmin = false; document.body.classList.remove('admin-mode'); document.body.classList.add('logged-out'); navegar('inicio', document.getElementById('nav-inicio')); alert("Modo Leitura Ativado."); }
 
-        // REGRAS AGENDA E CAPACIDADE
-        const areasAgenda = { "Varanda": 20, "Salão 1 - Frente": 30, "Salão 1 - Corredor": 30, "Salão 2 - Parede": 40, "Salão 2 - Meio": 40, "Salão 2 - Corrimão": 15, "Salão 2 - Mesas Redondas": 3, "Salão 2 - Bistrôs": 3, "Salão 2 - Brinquedão": 60, "Laje": 60 };
         let navDate = new Date(); let dataAtualReserva = "";
 
-        // CORE FIREBASE
-        db.ref('areas').on('value', s => { areas = s.val() ? Object.entries(s.val()).map(([key, nome]) => ({key, nome})) : []; renderizarAreas(); renderizarChecksConfig(); });
-        db.ref('produtos').on('value', s => { produtos = s.val() || {}; renderizarGradeAgrupada(); if(document.getElementById('pedidos-lista').classList.contains('active')){ const metKey = Object.keys(metodosCompra).find(k => metodosCompra[k].nome === document.getElementById('titulo-pedido-metodo').innerText.replace('Pedidos: ', '')); if(metKey) verPedidoPorMetodo(metKey); } });
-        db.ref('categorias').on('value', s => { categorias = s.val() || {}; renderizarPresets(); renderizarGradeAgrupada(); });
-        db.ref('metodos').on('value', s => { metodosCompra = s.val() || {}; renderizarMetodosConfig(); renderizarPresetsMetodos(); renderizarGradeAgrupada(); renderizarPedidosMetodos(); });
-        db.ref('reservas').on('value', s => { 
-            reservasApp = s.val() || {}; 
-            if(document.getElementById('agenda-view').classList.contains('active')) renderizarCalendario(); 
-            if(document.getElementById('agenda-detalhe').classList.contains('active')) { renderizarReservasDia(); atualizarFormReserva(); }
-        });
+        // LISTENERS FIREBASE (BLINDADOS)
+        db.ref('areas').on('value', s => { try { areas = s.val() ? Object.entries(s.val()).map(([key, nome]) => ({key, nome})) : []; renderizarAreas(); renderizarChecksConfig(); } catch(e){console.error(e);} });
+        db.ref('produtos').on('value', s => { try { produtos = s.val() || {}; renderizarGradeAgrupada(); if(document.getElementById('pedidos-lista').classList.contains('active')){ const metKey = Object.keys(metodosCompra).find(k => metodosCompra[k].nome === document.getElementById('titulo-pedido-metodo').innerText.replace('Pedidos: ', '')); if(metKey) verPedidoPorMetodo(metKey); } } catch(e){console.error(e);} });
+        db.ref('categorias').on('value', s => { try { categorias = s.val() || {}; renderizarPresets(); renderizarGradeAgrupada(); } catch(e){console.error(e);} });
+        db.ref('metodos').on('value', s => { try { metodosCompra = s.val() || {}; renderizarMetodosConfig(); renderizarPresetsMetodos(); renderizarGradeAgrupada(); renderizarPedidosMetodos(); } catch(e){console.error(e);} });
+        db.ref('reservas').on('value', s => { try { reservasApp = s.val() || {}; if(document.getElementById('agenda-view').classList.contains('active')) renderizarCalendario(); if(document.getElementById('agenda-detalhe').classList.contains('active')) renderizarReservasDia(); if(document.getElementById('mapa-salao').classList.contains('active')) carregarReservasMapa(); } catch(e){console.error(e);} });
+        db.ref('mapas').on('value', s => { try { mapasApp = s.val() || {}; if(document.getElementById('mapa-salao').classList.contains('active')) { carregarMapa(); carregarReservasMapa(); } } catch(e){console.error(e);} });
 
+        document.getElementById('setup-mapa-data').value = new Date().toISOString().split('T')[0];
+
+        // FUNÇÕES GERAIS E EMOJIS
         const mapaEmojis = { "refrigerantes": "🥤", "cervejas": "🍺", "vinhos bar": "🍷", "camara fria": "🧊", "geladeira red bull": "🐂", "chopps bar": "🍻", "laje": "🪜", "atacadao": "🛒", "mercado": "🛒", "distribuidora": "🚚" };
         function removerAcentos(str) { return str ? str.normalize("NFD").replace(/[\u0300-\u036f]/g, "") : ""; }
         function obterEmoji(nome) { const limpo = removerAcentos((nome||"").toLowerCase().trim()); for(let key in mapaEmojis) if(limpo.includes(key)) return mapaEmojis[key]; return "📦"; }
         function getCategoriasProduto(p) { if (!p) return []; if (p.categorias) return Array.isArray(p.categorias) ? [...p.categorias] : (typeof p.categorias==='string' ? [p.categorias] : Object.values(p.categorias)); return p.categoria ? [p.categoria] : []; }
 
-        function navegar(id, btn) { document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); if(btn) { document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); } window.scrollTo(0, 0); }
-        function abrirConfig() { if(isAdmin) { resetarFormCategoria(); resetarFormMetodo(); navegar('configuracoes'); } else { document.getElementById('input-senha-admin').value = ""; document.getElementById('modalSenha').style.display = 'flex'; } }
+        function navegar(id, btn) { 
+            try {
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); 
+                const alvo = document.getElementById(id);
+                if(alvo) alvo.classList.add('active'); 
+                if(btn) { document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); } 
+                window.scrollTo(0, 0); 
+                
+                // Trata a escala do mapa ao entrar nele
+                if(id === 'mapa-salao') ajustarEscalaMapa();
+            } catch(e) { console.error(e); }
+        }
+        function abrirConfig() { 
+            if(isAdmin) { 
+                resetarFormCategoria(); 
+                resetarFormMetodo(); 
+                navegar('configuracoes'); 
+            } else { 
+                document.getElementById('input-senha-admin').value = ""; 
+                document.getElementById('modalSenha').style.display = 'flex'; 
+            } 
+        }
         function toggleFab() { document.getElementById('fabOptions').classList.toggle('active'); }
-        function toggleFardoInput() { document.getElementById('div-unidades-fardo').style.display = document.getElementById('cat-uso-fardo').checked ? 'block' : 'none'; }
         function fecharModal() { document.getElementById('modalDelete').style.display = 'none'; }
+        
 
-        // ----- SISTEMA DE AGENDA E CALENDÁRIO -----
+        // ==========================================
+        // SISTEMA MAPA DE SALÃO E RESPONSIVIDADE
+        // ==========================================
+        function abrirMapaComFiltro() {
+            const dt = document.getElementById('setup-mapa-data').value;
+            const tn = document.getElementById('setup-mapa-turno').value;
+            if(!dt) { alert("Selecione uma data para o mapa."); return; }
+            
+            mapaAtualData = dt;
+            mapaAtualTurno = tn;
+            const [y, m, d] = dt.split('-');
+            const turnoStr = tn === 'dia' ? 'Dia (Almoço)' : 'Tarde/Noite';
+            document.getElementById('mapa-header-info').innerText = `${d}/${m}/${y} - ${turnoStr}`;
+            
+            areaFocadaMapa = null;
+            mesasSelecionadasMapa = [];
+            document.getElementById('btn-voltar-mapa').style.display = 'none';
+            document.getElementById('painel-controles-mapa').style.display = 'none';
+            
+            navegar('mapa-salao');
+            carregarReservasMapa();
+        }
+
+        // CARREGA A LISTA DE RESERVAS PARA MONTAR NO MAPA
+        function carregarReservasMapa() {
+            try {
+                const lista = reservasApp[mapaAtualData] || {};
+                const periodoFiltro = mapaAtualTurno; 
+                
+                let resHtml = '';
+                for(let k in lista) {
+                    const r = lista[k];
+                    if(r.periodo === periodoFiltro) {
+                        
+                        let isMontada = false;
+                        const layout = (mapasApp[mapaAtualData] && mapasApp[mapaAtualData][mapaAtualTurno]) ? mapasApp[mapaAtualData][mapaAtualTurno] : {};
+                        for(let mId in layout) {
+                            if(layout[mId].status === 'reservada' && layout[mId].nome === r.nome) {
+                                isMontada = true; break;
+                            }
+                        }
+
+                        if(!isMontada) {
+                             resHtml += `
+                             <div style="padding:12px; border:1px solid var(--border-color); border-radius:8px; background:var(--row-even); display:flex; justify-content:space-between; align-items:center;">
+                                 <div>
+                                     <strong style="font-size:0.95rem; color:var(--bg-sidebar);">${r.nome}</strong><br>
+                                     <span style="font-size:0.75rem; color:#64748b;">📍 ${r.area} | 👥 ${r.lugares} lug.</span>
+                                 </div>
+                                 <button class="btn-submit require-auth" style="width:auto; margin:0; padding:8px 15px; font-size:0.8rem; background:var(--primary); border-radius:6px;" onclick="montarReservaNoMapa('${r.nome}', '${r.area}')">Montar</button>
+                             </div>`;
+                        } else {
+                             resHtml += `
+                             <div style="padding:10px; border:1px solid #10b981; border-radius:8px; background:#f0fdf4; display:flex; justify-content:space-between; align-items:center; opacity:0.8;">
+                                 <div>
+                                     <strong style="font-size:0.95rem; color:#047857;">${r.nome}</strong><br>
+                                     <span style="font-size:0.75rem; color:#047857;">✅ Já montada no salão</span>
+                                 </div>
+                             </div>`;
+                        }
+                    }
+                }
+                document.getElementById('lista-reservas-turno-mapa').innerHTML = resHtml || '<p style="font-size:0.85rem; color:#64748b; text-align:center; margin-top:10px;">Nenhuma reserva pendente para este turno.</p>';
+            } catch(e) { console.error(e); }
+        }
+
+        // AÇÃO DO BOTÃO "MONTAR"
+        function montarReservaNoMapa(nome, areaOriginal) {
+            let macroNome = "";
+            if(areaOriginal.includes("Parede")) macroNome = "Parede";
+            else if(areaOriginal.includes("Meio")) macroNome = "Meio";
+            else if(areaOriginal.includes("Brinquedão")) macroNome = "Brinquedão";
+            else if(areaOriginal.includes("Corrimão")) macroNome = "Corrimão";
+            else if(areaOriginal.includes("Redondas")) macroNome = "Mesas Redondas";
+            else if(areaOriginal.includes("Bistrôs")) macroNome = "Bistrôs";
+
+            if(!macroNome) {
+                alert("Esta reserva pertence a uma área fora do Salão 2. Por favor, monte-a fisicamente no local adequado.");
+                return;
+            }
+
+            document.getElementById('mapa-reserva-nome').value = nome;
+            focarArea(macroNome);
+        }
+
+        function toggleModoLayoutMapa() {
+            modoMontagemMapa = !modoMontagemMapa;
+            mesasSelecionadasMapa = [];
+            const btn = document.getElementById('btn-edit-layout');
+            btn.innerHTML = modoMontagemMapa ? "💾 Sair Montagem" : "✏️ Modo Montagem";
+            btn.style.background = modoMontagemMapa ? "#10b981" : "var(--bg-sidebar)";
+            atualizarPainelDinamicoMapa();
+            carregarMapa();
+        }
+
+        function focarArea(macroNome) {
+            areaFocadaMapa = macroNome;
+            mesasSelecionadasMapa = [];
+            document.getElementById('btn-voltar-mapa').style.display = 'block';
+            document.getElementById('painel-controles-mapa').style.display = 'block';
+            atualizarPainelDinamicoMapa();
+            ajustarEscalaMapa();
+        }
+
+        function desfocarArea() {
+            areaFocadaMapa = null;
+            mesasSelecionadasMapa = [];
+            document.getElementById('btn-voltar-mapa').style.display = 'none';
+            document.getElementById('painel-controles-mapa').style.display = 'none';
+            atualizarPainelDinamicoMapa();
+            ajustarEscalaMapa();
+        }
+
+        // MATEMÁTICA DA ESCALA E POSICIONAMENTO DA PLANTA (SEM SCROLL)
+        function ajustarEscalaMapa() {
+            const viewport = document.getElementById('mapa-viewport');
+            const planta = document.getElementById('mapa-container');
+            if (!viewport || !planta) return;
+
+            let vw = viewport.clientWidth;
+            let vh = viewport.clientHeight;
+            if (vw === 0 || vh === 0) return; 
+
+            if (areaFocadaMapa) {
+                const macFoco = macroAreas[areaFocadaMapa];
+                let originX = parseInt(macFoco.left) + (macFoco.w / 2);
+                let originY = parseInt(macFoco.top) + (macFoco.h / 2);
+                
+                // Zoom para preencher a janela (85% da tela para deixar respiro)
+                let scaleX = vw / macFoco.w;
+                let scaleY = vh / macFoco.h;
+                let zoomScale = Math.min(scaleX, scaleY) * 0.85; 
+
+                // Limitações de Zoom
+                if(zoomScale > 2.0) zoomScale = 2.0;
+                if(zoomScale < 0.5) zoomScale = 0.5;
+
+                // Centro do Viewport
+                let cx = vw / 2;
+                let cy = vh / 2;
+                
+                // Translação matemática para o centro
+                let tx = cx - (originX * zoomScale);
+                let ty = cy - (originY * zoomScale);
+
+                planta.style.transformOrigin = `0 0`;
+                planta.style.transform = `translate(${tx}px, ${ty}px) scale(${zoomScale})`;
+            } else {
+                // Visão Geral Centralizada
+                let scaleX = vw / 750;
+                let scaleY = vh / 950;
+                let baseScale = Math.min(scaleX, scaleY) * 0.95; // 95% para não colar nas bordas
+                
+                let tx = (vw - (750 * baseScale)) / 2;
+                let ty = (vh - (950 * baseScale)) / 2;
+                
+                planta.style.transformOrigin = `0 0`;
+                planta.style.transform = `translate(${tx}px, ${ty}px) scale(${baseScale})`;
+            }
+            carregarMapa();
+        }
+
+        // Reajusta quando virar o celular ou mudar janela
+        window.addEventListener('resize', () => {
+            if(document.getElementById('mapa-salao').classList.contains('active')) {
+                ajustarEscalaMapa();
+            }
+        });
+
+        function carregarMapa() {
+            let layoutDia = {};
+            if(mapasApp[mapaAtualData] && mapasApp[mapaAtualData][mapaAtualTurno]) {
+                layoutDia = mapasApp[mapaAtualData][mapaAtualTurno];
+            }
+            
+            let html = `
+                <div class="bloco-banheiro">BANHEIRO</div>
+                <div class="parede-preta-h"></div>
+                <div class="parede-preta-v"></div>
+            `;
+
+            for(let macroNome in macroAreas) {
+                const mac = macroAreas[macroNome];
+                let textRot = mac.h > mac.w ? 'transform: rotate(-90deg);' : '';
+
+                if (!areaFocadaMapa) {
+                    html += `<div class="bloco-macro" style="top: ${mac.top}; left: ${mac.left}; width: ${mac.w}px; height: ${mac.h}px;" onclick="focarArea('${macroNome}')">
+                                <span class="macro-title" style="${textRot}">${macroNome}</span>
+                             </div>`;
+                    continue;
+                }
+
+                if (areaFocadaMapa && macroNome !== areaFocadaMapa) {
+                    html += `<div class="bloco-macro unfocused" style="top: ${mac.top}; left: ${mac.left}; width: ${mac.w}px; height: ${mac.h}px;" onclick="focarArea('${macroNome}')">
+                                <span class="macro-title" style="${textRot}">${macroNome}</span>
+                             </div>`;
+                    continue;
+                }
+
+                // ÁREA FOCADA
+                for(let subArea in configMapa) {
+                    const conf = configMapa[subArea];
+                    if (conf.macro !== macroNome) continue;
+
+                    let lbl = '';
+                    if(subArea === 'Corrimão') lbl = `<div class="label-vertical" style="top:30px; left:-30px;">CORRIMÃO</div>`;
+                    if(subArea === 'Mesas Redondas') lbl = `<div class="label-vertical" style="top:25px; left:-35px;">REDONDAS</div>`;
+                    if(subArea === 'Bistrôs') lbl = `<div class="label-vertical" style="top:25px; left:-30px;">BISTRÔS</div>`;
+
+                    let activeCount = 0;
+                    for(let i = 1; i <= conf.max; i++) {
+                        let st = layoutDia[`${subArea}_${i}`] ? layoutDia[`${subArea}_${i}`].status : 'ativa';
+                        if (st === 'ativa' || st === 'reservada' || st === 'selecionada') activeCount++;
+                    }
+
+                    let qtL = conf.chairsL ? Math.round((conf.chairsL / conf.max) * activeCount) : 0;
+                    let qtR = conf.chairsR ? Math.round((conf.chairsR / conf.max) * activeCount) : 0;
+                    let qtT = conf.chairsT && activeCount > 0 ? conf.chairsT : 0;
+                    let qtB = conf.chairsB && activeCount > 0 ? conf.chairsB : 0;
+
+                    let htmlCadeirasL = '';
+                    if(qtL > 0) {
+                        for(let c=0; c<qtL; c++) htmlCadeirasL += '<div class="cadeira"></div>';
+                        htmlCadeirasL = `<div class="cadeiras-col">${htmlCadeirasL}</div>`;
+                    }
+
+                    let htmlCadeirasR = '';
+                    if(qtR > 0) {
+                        for(let c=0; c<qtR; c++) htmlCadeirasR += '<div class="cadeira"></div>';
+                        htmlCadeirasR = `<div class="cadeiras-col">${htmlCadeirasR}</div>`;
+                    }
+
+                    let htmlMesas = '';
+                    if(qtT > 0) {
+                        htmlMesas += '<div class="cadeiras-row">';
+                        for(let c=0; c<qtT; c++) htmlMesas += '<div class="cadeira"></div>';
+                        htmlMesas += '</div>';
+                    }
+
+                    for(let i = 1; i <= conf.max; i++) {
+                        const mesaId = `${subArea}_${i}`;
+                        const estado = layoutDia[mesaId] ? layoutDia[mesaId].status : 'ativa'; 
+                        const nomeRes = layoutDia[mesaId] ? layoutDia[mesaId].nome : '';
+                        
+                        let cssStatus = 'status-ghost';
+                        if(estado === 'ativa') cssStatus = 'status-ativa';
+                        if(estado === 'reservada') cssStatus = 'status-reservada';
+                        if(mesasSelecionadasMapa.includes(mesaId)) cssStatus = 'status-selecionada';
+
+                        let textoMesa = estado === 'reservada' ? nomeRes.substring(0,3) : i;
+                        let classeFormato = (conf.tipo === 'redonda' || conf.tipo === 'bistro') ? 'mesa-redonda' : 'mesa-quadrada';
+
+                        htmlMesas += `<div id="mesa-${mesaId}" class="${classeFormato} ${cssStatus}" onclick="cliqueMesa('${mesaId}')">${textoMesa}</div>`;
+                    }
+
+                    if(qtB > 0) {
+                        htmlMesas += '<div class="cadeiras-row">';
+                        for(let c=0; c<qtB; c++) htmlMesas += '<div class="cadeira"></div>';
+                        htmlMesas += '</div>';
+                    }
+
+                    html += `
+                    <div class="planta-fileira" style="top: ${conf.top}; left: ${conf.left}; ${conf.tipo==='redonda'||conf.tipo==='bistro' ? 'flex-direction:column; gap:10px;' : ''}">
+                        ${lbl}
+                        ${htmlCadeirasL}
+                        <div class="mesas-col">${htmlMesas}</div>
+                        ${htmlCadeirasR}
+                    </div>`;
+                }
+            }
+
+            const plantaBox = document.getElementById('mapa-container');
+            if (plantaBox) {
+                plantaBox.innerHTML = html;
+            }
+        }
+
+        function cliqueMesa(mesaId) {
+            if(!isAdmin) return;
+            let layoutDia = {};
+            if(mapasApp[mapaAtualData] && mapasApp[mapaAtualData][mapaAtualTurno]) {
+                layoutDia = mapasApp[mapaAtualData][mapaAtualTurno];
+            }
+            let atual = layoutDia[mesaId] ? layoutDia[mesaId].status : 'ativa';
+
+            if(modoMontagemMapa) {
+                if(atual === 'reservada') { alert("Não pode alterar mesa reservada!"); return; }
+                let novoStatus = atual === 'ghost' ? 'ativa' : 'ghost';
+                db.ref(`mapas/${mapaAtualData}/${mapaAtualTurno}/${mesaId}`).set({status: novoStatus});
+            } else {
+                if(atual === 'ghost') {
+                    // Clicar numa mesa apagada recria ela rapidamente (ressuscitar)
+                    db.ref(`mapas/${mapaAtualData}/${mapaAtualTurno}/${mesaId}`).set({status: 'ativa'});
+                    return; 
+                }
+                
+                if(atual === 'reservada') { 
+                    if(confirm(`Excluir a reserva de: ${layoutDia[mesaId].nome}?`)) {
+                        db.ref(`mapas/${mapaAtualData}/${mapaAtualTurno}/${mesaId}`).set({status: 'ativa'});
+                    }
+                    return; 
+                }
+
+                let partes = mesaId.split('_');
+                let subAreaAtual = partes[0];
+                let idxAtual = parseInt(partes[1]);
+                let confMesa = configMapa[subAreaAtual];
+
+                if (confMesa.tipo === 'redonda' || confMesa.tipo === 'bistro') {
+                    if (mesasSelecionadasMapa.includes(mesaId)) mesasSelecionadasMapa = []; 
+                    else mesasSelecionadasMapa = [mesaId]; 
+                } 
+                else {
+                    let tinhaEspecial = mesasSelecionadasMapa.some(id => {
+                        let a = id.split('_')[0];
+                        return configMapa[a].tipo === 'redonda' || configMapa[a].tipo === 'bistro';
+                    });
+                    if (tinhaEspecial) mesasSelecionadasMapa = [];
+
+                    let selectedInSubArea = mesasSelecionadasMapa
+                        .filter(id => id.startsWith(subAreaAtual + '_'))
+                        .map(id => parseInt(id.split('_')[1]));
+
+                    const isSelected = selectedInSubArea.includes(idxAtual);
+
+                    if (isSelected) {
+                        mesasSelecionadasMapa = mesasSelecionadasMapa.filter(id => {
+                            if (!id.startsWith(subAreaAtual + '_')) return true; 
+                            return parseInt(id.split('_')[1]) < idxAtual; 
+                        });
+                    } else {
+                        if(selectedInSubArea.length > 0) {
+                            let min = Math.min(...selectedInSubArea, idxAtual);
+                            let max = Math.max(...selectedInSubArea, idxAtual);
+                            
+                            mesasSelecionadasMapa = mesasSelecionadasMapa.filter(id => !id.startsWith(subAreaAtual + '_'));
+                            for(let i = min; i <= max; i++) {
+                                let iterId = `${subAreaAtual}_${i}`;
+                                let st = layoutDia[iterId] ? layoutDia[iterId].status : 'ativa';
+                                if(st === 'ativa') mesasSelecionadasMapa.push(iterId);
+                            }
+                        } else {
+                            mesasSelecionadasMapa.push(mesaId);
+                        }
+                    }
+                }
+                
+                atualizarPainelDinamicoMapa();
+                carregarMapa(); 
+            }
+        }
+
+        function atualizarPainelDinamicoMapa() {
+            const hasSelection = mesasSelecionadasMapa.length > 0;
+            const blockDinamico = document.getElementById('dynamic-selected-controls');
+            if(blockDinamico) {
+                blockDinamico.style.display = hasSelection ? 'flex' : 'none';
+                document.getElementById('qtd-selecionadas').innerText = mesasSelecionadasMapa.length;
+            }
+        }
+
+        function obterSubAreaAtual() {
+            if (mesasSelecionadasMapa.length > 0) return mesasSelecionadasMapa[0].split('_')[0];
+            let subAreas = Object.keys(configMapa).filter(k => configMapa[k].macro === areaFocadaMapa);
+            if (subAreas.length === 1) return subAreas[0];
+            alert("Selecione pelo menos uma mesa na fileira que deseja ajustar para o sistema saber qual fileira calcular.");
+            return null;
+        }
+
+        function adicionarMesaFileira() {
+            if(!isAdmin) return;
+            let sub = obterSubAreaAtual(); if(!sub) return;
+            let layoutDia = mapasApp[mapaAtualData] && mapasApp[mapaAtualData][mapaAtualTurno] ? mapasApp[mapaAtualData][mapaAtualTurno] : {};
+            let conf = configMapa[sub];
+            for(let i = 1; i <= conf.max; i++) {
+                let st = layoutDia[`${sub}_${i}`] ? layoutDia[`${sub}_${i}`].status : 'ativa';
+                if(st === 'ghost') {
+                    db.ref(`mapas/${mapaAtualData}/${mapaAtualTurno}/${sub}_${i}`).set({status: 'ativa'});
+                    return;
+                }
+            }
+            alert("A fileira já está na capacidade máxima física!");
+        }
+
+        function subtrairMesaFileira() {
+            if(!isAdmin) return;
+            let sub = obterSubAreaAtual(); if(!sub) return;
+            let layoutDia = mapasApp[mapaAtualData] && mapasApp[mapaAtualData][mapaAtualTurno] ? mapasApp[mapaAtualData][mapaAtualTurno] : {};
+            let conf = configMapa[sub];
+            for(let i = conf.max; i >= 1; i--) {
+                let st = layoutDia[`${sub}_${i}`] ? layoutDia[`${sub}_${i}`].status : 'ativa';
+                if(st === 'ativa') {
+                    db.ref(`mapas/${mapaAtualData}/${mapaAtualTurno}/${sub}_${i}`).set({status: 'ghost'});
+                    return;
+                } else if (st === 'reservada') {
+                    alert("A última mesa ativa está reservada, não pode ser removida.");
+                    return;
+                }
+            }
+            alert("A fileira já não possui mesas ativas.");
+        }
+
+        function apagarMesasSelecionadas() {
+            if(!isAdmin || mesasSelecionadasMapa.length === 0) return;
+            let updates = {};
+            mesasSelecionadasMapa.forEach(id => updates[`mapas/${mapaAtualData}/${mapaAtualTurno}/${id}`] = { status: 'ghost' });
+            db.ref().update(updates).then(() => {
+                mesasSelecionadasMapa = [];
+                atualizarPainelDinamicoMapa();
+            });
+        }
+
+        function salvarReservaMapa() {
+            if(mesasSelecionadasMapa.length === 0) return;
+            let nome = document.getElementById('mapa-reserva-nome').value.trim();
+            if(!nome) { alert("Digite o nome para salvar a reserva!"); return; }
+
+            let updates = {};
+            mesasSelecionadasMapa.forEach(id => updates[`mapas/${mapaAtualData}/${mapaAtualTurno}/${id}`] = { status: 'reservada', nome: nome });
+
+            let porArea = {};
+            mesasSelecionadasMapa.forEach(id => {
+                let partes = id.split('_'); let subArea = partes[0]; let idx = parseInt(partes[1]);
+                if(!porArea[subArea]) porArea[subArea] = [];
+                porArea[subArea].push(idx);
+            });
+
+            // Espaçamento de 1 Mesa Exata
+            for(let subArea in porArea) {
+                if(configMapa[subArea].tipo === 'redonda' || configMapa[subArea].tipo === 'bistro') continue; 
+                let indices = porArea[subArea];
+                let min = Math.min(...indices); let max = Math.max(...indices);
+                
+                [min - 1, max + 1].forEach(i => {
+                    if(i >= 1 && i <= configMapa[subArea].max) {
+                        updates[`mapas/${mapaAtualData}/${mapaAtualTurno}/${subArea}_${i}`] = { status: 'ghost' }; 
+                    }
+                });
+            }
+
+            db.ref().update(updates).then(() => {
+                mesasSelecionadasMapa = [];
+                document.getElementById('mapa-reserva-nome').value = "";
+                atualizarPainelDinamicoMapa();
+            });
+        }
+
+        // ==========================================
+        // CALENDÁRIO E AGENDA
+        // ==========================================
         function mudarMes(dir) { navDate.setMonth(navDate.getMonth() + dir); renderizarCalendario(); }
         function renderizarCalendario() {
             const year = navDate.getFullYear(), month = navDate.getMonth();
@@ -403,9 +1111,8 @@
             for(let i=1; i<=daysInMonth; i++) {
                 const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
                 const dw = new Date(year, month, i).getDay();
-                if(dw === 1) { // Segunda
-                    html += `<div class="cal-day closed-day">${i}</div>`;
-                } else {
+                if(dw === 1) html += `<div class="cal-day closed-day">${i}</div>`;
+                else {
                     const hasReserva = reservasApp[dateStr] ? 'has-reserva' : '';
                     html += `<div class="cal-day ${hasReserva}" onclick="abrirDia('${dateStr}')">${i}</div>`;
                 }
@@ -417,11 +1124,9 @@
             dataAtualReserva = dateStr;
             const [y, m, d] = dateStr.split('-');
             document.getElementById('titulo-data-reserva').innerText = `Reservas: ${d}/${m}/${y}`;
-            
             const dw = new Date(y, m-1, d).getDay();
             const selPer = document.getElementById('res-periodo');
             selPer.innerHTML = dw === 0 ? '<option value="dia">Dia</option>' : '<option value="dia">Dia</option><option value="tarde_noite">Tarde/Noite</option>';
-            
             atualizarFormReserva(); 
             document.getElementById('res-nome').value = "";
             renderizarReservasDia();
@@ -447,43 +1152,10 @@
             document.getElementById('lista-reservas-dia').innerHTML = html;
         }
 
-        function calcDisp(data, periodo, area) {
-            let max = areasAgenda[area] || 0, ocupados = 0;
-            const resDia = reservasApp[data] || {};
-            const isTable = (area === 'Salão 2 - Mesas Redondas' || area === 'Salão 2 - Bistrôs');
-            for (let k in resDia) {
-                if (resDia[k].area === area && resDia[k].periodo === periodo) ocupados += isTable ? 1 : (Number(resDia[k].lugares) || 0);
-            }
-            return max - ocupados;
-        }
-
         function atualizarFormReserva() {
             const per = document.getElementById('res-periodo').value;
-            const area = document.getElementById('res-area').value;
-            const inputLug = document.getElementById('res-lugares');
-            
             document.getElementById('res-time-dia').style.display = per === 'dia' ? 'block' : 'none'; 
             document.getElementById('res-time-tarde').style.display = per === 'dia' ? 'none' : 'flex';
-            
-            const dw = new Date(dataAtualReserva + 'T12:00:00').getDay();
-            let endStr = "- 01:00"; if(dw===2) endStr="- 22:00"; else if(dw===3||dw===4) endStr="- 23:00";
-            document.getElementById('res-time-tarde-end').innerText = endStr;
-            
-            const maxLugs = areasAgenda[area];
-            const isTable = (area === 'Salão 2 - Mesas Redondas' || area === 'Salão 2 - Bistrôs');
-            const disponiveis = calcDisp(dataAtualReserva, per, area);
-            
-            document.getElementById('res-lbl-max').innerText = isTable ? `${Math.max(0, disponiveis)} mesas livres de ${maxLugs}` : `${Math.max(0, disponiveis)} livres de ${maxLugs}`;
-            
-            if(isTable) {
-                inputLug.value = 2; 
-                inputLug.readOnly = true; 
-                inputLug.style.background = "#e2e8f0";
-            } else {
-                inputLug.readOnly = false; 
-                inputLug.style.background = "#fff";
-                inputLug.max = disponiveis;
-            }
         }
 
         function salvarReserva() {
@@ -492,67 +1164,372 @@
             const per = document.getElementById('res-periodo').value;
             const hor = per === 'dia' ? '12:00' : document.getElementById('res-horario-tarde').value;
             const area = document.getElementById('res-area').value;
+            const lug = parseInt(document.getElementById('res-lugares').value) || 0;
             
-            const isTable = (area === 'Salão 2 - Mesas Redondas' || area === 'Salão 2 - Bistrôs');
-            let lug = isTable ? 2 : (parseInt(document.getElementById('res-lugares').value) || 0);
-            
-            if(!nome) { alert("Dê um nome para a reserva."); return; }
-            if(lug <= 0) { alert("Número de lugares inválido."); return; }
-            
-            const disponiveis = calcDisp(dataAtualReserva, per, area);
-            
-            if (isTable) {
-                if (disponiveis <= 0) { alert(`Impossível realizar reserva!\nTodas as mesas da área "${area}" já estão reservadas.`); return; }
-            } else {
-                if (lug > disponiveis) { alert(`Impossível realizar reserva!\nA área "${area}" possui apenas ${disponiveis} lugares livres.`); return; }
-            }
-
+            if(!nome || lug <= 0) { alert("Preencha corretamente!"); return; }
             db.ref(`reservas/${dataAtualReserva}`).push({ nome, periodo: per, horario: hor, area, lugares: lug });
             document.getElementById('res-nome').value = ""; document.getElementById('res-lugares').value = "";
         }
-
         function excluirReserva(k) { if(isAdmin && confirm("Excluir esta reserva?")) db.ref(`reservas/${dataAtualReserva}/${k}`).remove(); }
-        // ------------------------------------------
 
-        // OUTRAS FUNÇÕES DO SISTEMA
-        function atualizarLabelEstoqueMinimo(ctx, selectedCats) { let maxFardo=1; selectedCats.forEach(cn=>{ const c = Object.values(categorias).find(x=>x.nome===cn); if(c && c.unidadesFardo>maxFardo) maxFardo=Number(c.unidadesFardo); }); document.getElementById(ctx==='novo'?'lbl-estoque-minimo-novo':'lbl-estoque-minimo-edit').innerText=maxFardo>1?"(Fardos)":"(Un.)"; }
-        function renderizarTotalLinhaDupla(total, tam) { const tf = tam>1?tam:1; return `<div class="total-container"><span class="total-fardos">${Math.floor(total/tf)} Fardos</span><span class="total-unidades">${total%tf} Un. Soltas</span></div>`; }
-        function renderizarAreas() { document.getElementById('grid-areas').innerHTML = areas.map(a => `<div class="card-nav" onclick="verArea('${a.key}', '${a.nome}')"><i>${obterEmoji(a.nome)}</i><h3>${a.nome}</h3></div>`).join(''); }
-        function renderizarPedidosMetodos() { document.getElementById('grid-pedidos-metodos').innerHTML = Object.keys(metodosCompra).map(k => `<div class="card-nav" onclick="verPedidoPorMetodo('${k}')"><i>${obterEmoji(metodosCompra[k].nome)}</i><h3>${metodosCompra[k].nome}</h3></div>`).join(''); }
-        function verPedidoPorMetodo(key) { navegar('pedidos-lista'); const met = metodosCompra[key].nome; document.getElementById('titulo-pedido-metodo').innerText = `Pedidos: ${met}`; document.getElementById('tabela-pedidos-filtrada').innerHTML = Object.keys(produtos).filter(k=>produtos[k]&&produtos[k].metodoCompra===met).sort((a,b)=>produtos[a].nome.localeCompare(produtos[b].nome)).map(k=>{ const p=produtos[k]; let t=1; getCategoriasProduto(p).forEach(cn=>{const c=Object.values(categorias).find(x=>x.nome===cn);if(c&&c.unidadesFardo>t)t=Number(c.unidadesFardo);}); const fAt=Object.values(p.estoque||{}).reduce((ac,v)=>typeof v==='object'&&v!==null?ac+((Number(v.f)||0)*t)+(Number(v.u)||0):ac+Number(v||0),0)/t; const m=Number(p.estoqueMinimo||0); const sg=Math.ceil(Math.max(0,m-fAt)); const lb=t>1?'Fds.':'Un.'; return `<tr><td class="col-item">${p.nome}</td><td style="text-align:center;">${fAt%1===0?fAt:fAt.toFixed(1)} <br><small style="color:#64748b">${lb}</small></td><td style="text-align:center;">${m} <br><small style="color:#64748b">${lb}</small></td><td style="text-align:center; font-weight:800; font-size:1.1rem; color:${sg>0?'var(--primary)':'#10b981'}">${sg} <br><small style="font-weight:normal; font-size:0.75rem">${lb}</small></td></tr>`; }).join(''); }
-        function toggleAgrupamentoProdutos() { agrupamentoAtual = agrupamentoAtual==='categorias'?'metodos':'categorias'; document.getElementById('btn-toggle-grupo').innerHTML = agrupamentoAtual==='categorias'?'🔄 Agrupar: Categorias':'🔄 Agrupar: Métodos Compra'; renderizarGradeAgrupada(); }
-        function renderizarGradeAgrupada() { const g=document.getElementById('grid-produtos-agrupados'), ts=document.getElementById('tabela-produtos-sem-grupo'); if(!g||!ts)return; const isC=agrupamentoAtual==='categorias'; document.getElementById('titulo-aba-produtos').innerText=isC?"Categorias de Produtos":"Métodos de Compra"; document.getElementById('titulo-sem-grupo').innerText=isC?"Sem Categoria":"Sem Método de Compra"; g.innerHTML=Object.keys(isC?categorias:metodosCompra).map(k=>`<div class="card-nav" onclick="verGrupo('${k}', '${isC?'categoria':'metodo'}')"><i>${obterEmoji(isC?categorias[k].nome:metodosCompra[k].nome)}</i><h3>${isC?categorias[k].nome:metodosCompra[k].nome}</h3></div>`).join(''); ts.innerHTML=Object.keys(produtos).filter(k=>produtos[k]&&(isC?getCategoriasProduto(produtos[k]).length===0:!produtos[k].metodoCompra)).map(k=>{ const p=produtos[k]; const t=Object.values(p.estoque||{}).reduce((a,v)=>typeof v==='object'&&v!==null?a+(Number(v.f)||0)+(Number(v.u)||0):a+Number(v||0),0); return `<tr><td><div style="display:flex; align-items:center;"><button class="action-icon edit-btn require-auth" onclick="abrirEdicaoProduto('${k}')">✎</button><button class="action-icon info-btn" onclick="verDetalhesProduto('${k}')">ⓘ</button><span class="col-item">${p.nome||''}</span></div></td><td style="text-align:right">${renderizarTotalLinhaDupla(t,1)}</td></tr>`; }).join(''); }
-        function verGrupo(key, tipo) { navegar('produtos-lista-filtrada'); const n = tipo==='categoria'?categorias[key].nome:metodosCompra[key].nome; document.getElementById('titulo-categoria-filtrada').innerText = n; document.getElementById('tabela-produtos-filtrada').innerHTML = Object.keys(produtos).filter(k=>produtos[k]&&(tipo==='categoria'?getCategoriasProduto(produtos[k]).includes(n):produtos[k].metodoCompra===n)).map(k=>{ const p=produtos[k]; let t=1; getCategoriasProduto(p).forEach(cn=>{const c=Object.values(categorias).find(x=>x.nome===cn);if(c&&c.unidadesFardo>t)t=Number(c.unidadesFardo);}); const tot=Object.values(p.estoque||{}).reduce((a,v)=>typeof v==='object'&&v!==null?a+((Number(v.f)||0)*t)+(Number(v.u)||0):a+Number(v||0),0); return `<tr><td><div style="display:flex; align-items:center;"><button class="action-icon edit-btn require-auth" onclick="abrirEdicaoProduto('${k}')">✎</button><button class="action-icon info-btn" onclick="verDetalhesProduto('${k}')">ⓘ</button><span class="col-item">${p.nome||''}</span></div></td><td style="text-align:right">${renderizarTotalLinhaDupla(tot,t)}</td></tr>`; }).join(''); }
-        function verArea(key, nome) { areaAtualKey=key; navegar('detalhe-area'); document.getElementById('area-display-name').innerText=nome; let max=1; const iA=Object.keys(produtos).filter(pk=>produtos[pk]&&(produtos[pk].locais||[]).includes(nome)); iA.forEach(pk=>getCategoriasProduto(produtos[pk]).forEach(cn=>{const c=Object.values(categorias).find(x=>x.nome===cn);if(c&&c.unidadesFardo>max)max=Number(c.unidadesFardo);})); document.getElementById('head-area-itens').innerHTML=`<tr><th>Item</th><th style="text-align:center">${max>1?`Fds. (${max}u)`:'Fardos'}</th><th style="text-align:center">Un.</th><th style="text-align:right">Total</th></tr>`; document.getElementById('tabela-area-itens').innerHTML=iA.map(pk=>{ const p=produtos[pk]; let t=1; getCategoriasProduto(p).forEach(cn=>{const c=Object.values(categorias).find(x=>x.nome===cn);if(c&&c.unidadesFardo>t)t=Number(c.unidadesFardo);}); const v=p.estoque?.[nome]||{f:0,u:0}; return `<tr><td><div style="display:flex; align-items:center;"><button class="action-icon info-btn" onclick="verDetalhesProduto('${pk}')">ⓘ</button><span class="col-item">${p.nome||''}</span></div></td><td style="text-align:center"><input type="number" class="input-qtd" id="f-${pk}" value="${v.f||0}" oninput="attEst('${pk}','${nome}',${t})" ${t<=1?'disabled style="opacity:0.5"':''}></td><td style="text-align:center"><input type="number" class="input-qtd" id="u-${pk}" value="${v.u||0}" oninput="attEst('${pk}','${nome}',${t})"></td><td style="text-align:right" id="tot-cell-${pk}">${renderizarTotalLinhaDupla((v.f||0)*t+(v.u||0),t)}</td></tr>`; }).join(''); }
-        function attEst(pk, ar, tam) { if(!isAdmin)return; const f=Number(document.getElementById(`f-${pk}`).value)||0, u=Number(document.getElementById(`u-${pk}`).value)||0; db.ref(`produtos/${pk}/estoque/${ar}`).set({f,u}); document.getElementById(`tot-cell-${pk}`).innerHTML=renderizarTotalLinhaDupla(f*tam+u,tam); }
-        function verDetalhesProduto(key) { const p=produtos[key]; if(!p)return; navegar('detalhe-produto'); document.getElementById('span-titulo-prod').innerText=p.nome||''; let t=1; const pC=getCategoriasProduto(p); pC.forEach(cn=>{const c=Object.values(categorias).find(x=>x.nome===cn);if(c&&c.unidadesFardo>t)t=Number(c.unidadesFardo);}); let tG=0; document.getElementById('tabela-locais-produto').innerHTML=(p.locais||[]).map(loc=>{ const a=areas.find(x=>x.nome===loc); const v=p.estoque?.[loc]||{f:0,u:0}; const q=(v.f||0)*t+(v.u||0); tG+=q; return `<tr><td><div style="display:flex; align-items:center; gap:8px;"><button class="action-icon info-btn" onclick="verArea('${a?.key}', '${loc}')">ⓘ</button><span>${loc} ${obterEmoji(loc)}</span></div></td><td style="text-align:right">${renderizarTotalLinhaDupla(q,t)}</td></tr>`; }).join(''); document.getElementById('info-extra-prod').innerHTML=`<div style="padding:12px; background:var(--row-even); border-radius:8px; border:1px solid var(--border-color); display:flex; flex-direction:column; gap:8px; margin-top:10px;"><div><strong style="color:var(--primary);">Categorias:</strong> <span style="color:#64748b;">${pC.length>0?pC.join(', '):'Nenhuma'}</span></div><div><strong style="color:var(--primary);">Método:</strong> <span style="color:#64748b;">${p.metodoCompra||"Não atribuído"}</span></div><div><strong style="color:var(--primary);">Estoque Mín.:</strong> <span style="color:#64748b;">${p.estoqueMinimo||0} ${t>1?'Fardos':'Unidades'}</span></div><div><strong style="color:var(--primary);">Fardos Fechados:</strong> <span style="color:#64748b;">${Math.floor(tG/t)} Fardos (Geral)</span></div></div>`; }
-        function renderizarMetodosConfig() { document.getElementById('lista-metodos-config').innerHTML = Object.keys(metodosCompra).map(k=>`<div class="preset-config-item"><div style="display:flex; align-items:center;"><button class="action-icon edit-btn" onclick="editarMetodo('${k}')">✎</button><button class="action-icon add-btn" onclick="abrirAtribuirMetodo('${k}')">➕</button><strong style="font-size:1.05rem; margin-left:5px;">${obterEmoji(metodosCompra[k].nome)} ${metodosCompra[k].nome}</strong><span style="margin-left:auto; color:red; cursor:pointer;" onclick="prepararExclusaoMet('${k}')">Excluir</span></div></div>`).join(''); }
-        function salvarMetodo() { const id=document.getElementById('edit-met-id').value, n=document.getElementById('met-nome').value; if(n){ if(id){ const old=metodosCompra[id].nome; db.ref('metodos/'+id).update({nome:n}).then(()=>{if(old!==n)Object.keys(produtos).forEach(pk=>{if(produtos[pk]&&produtos[pk].metodoCompra===old)db.ref('produtos/'+pk).update({metodoCompra:n});});}); }else db.ref('metodos').push({nome:n}); resetarFormMetodo(); } }
-        function editarMetodo(k) { document.getElementById('edit-met-id').value=k; document.getElementById('met-nome').value=metodosCompra[k].nome; document.getElementById('btn-salvar-met').innerText="Atualizar"; document.getElementById('btn-cancelar-met').style.display="inline-block"; }
-        function resetarFormMetodo() { document.getElementById('edit-met-id').value=""; document.getElementById('met-nome').value=""; document.getElementById('btn-salvar-met').innerText="Salvar"; document.getElementById('btn-cancelar-met').style.display="none"; }
-        function renderizarPresetsMetodos() { const vN=document.getElementById('prod-metodo-selecionado').value, vE=document.getElementById('edit-prod-metodo-selecionado').value; document.getElementById('metodos-container').innerHTML=Object.keys(metodosCompra).map(k=>`<div class="chip ${vN===metodosCompra[k].nome?'active-chip':''}" onclick="selecionarMetodo('${k}','novo')">${obterEmoji(metodosCompra[k].nome)} ${metodosCompra[k].nome}</div>`).join(''); document.getElementById('edit-metodos-container').innerHTML=Object.keys(metodosCompra).map(k=>`<div class="chip ${vE===metodosCompra[k].nome?'active-chip':''}" onclick="selecionarMetodo('${k}','edit')">${obterEmoji(metodosCompra[k].nome)} ${metodosCompra[k].nome}</div>`).join(''); }
+        // ==========================================
+        // OUTRAS FUNÇÕES LOGÍSTICAS (ROBUSTAS)
+        // ==========================================
+        function renderizarTotalLinhaDupla(total, tam) { 
+            const tf = tam > 1 ? tam : 1; 
+            return `<div class="total-container"><span class="total-fardos">${Math.floor(total/tf)} Fardos</span><span class="total-unidades">${total%tf} Un. Soltas</span></div>`; 
+        }
+
+        function renderizarAreas() { 
+            try {
+                const grid = document.getElementById('grid-areas');
+                if(!grid) return;
+                grid.innerHTML = areas.map(a => `<div class="card-nav" onclick="verArea('${a.key}', '${a.nome}')"><i>${obterEmoji(a.nome)}</i><h3>${a.nome || 'Área'}</h3></div>`).join(''); 
+            } catch(e){console.error(e);}
+        }
+
+        function toggleAgrupamentoProdutos() { 
+            agrupamentoAtual = agrupamentoAtual === 'categorias' ? 'metodos' : 'categorias'; 
+            document.getElementById('btn-toggle-grupo').innerHTML = agrupamentoAtual === 'categorias' ? '🔄 Agrupar: Categorias' : '🔄 Agrupar: Métodos Compra'; 
+            renderizarGradeAgrupada(); 
+        }
+
+        function renderizarGradeAgrupada() { 
+            try {
+                const g = document.getElementById('grid-produtos-agrupados');
+                const ts = document.getElementById('tabela-produtos-sem-grupo'); 
+                if(!g || !ts) return; 
+                
+                const isC = agrupamentoAtual === 'categorias'; 
+                document.getElementById('titulo-aba-produtos').innerText = isC ? "Categorias de Produtos" : "Métodos de Compra"; 
+                document.getElementById('titulo-sem-grupo').innerText = isC ? "Sem Categoria" : "Sem Método de Compra"; 
+                
+                const dbFonte = isC ? categorias : metodosCompra;
+                const chavesFonte = Object.keys(dbFonte);
+
+                if(chavesFonte.length === 0) {
+                    g.innerHTML = `<p style="grid-column: 1 / -1; color:#64748b; font-size: 0.9rem;">Nenhum grupo cadastrado.</p>`;
+                } else {
+                    g.innerHTML = chavesFonte.map(k => {
+                        const n = dbFonte[k]?.nome || 'Sem Nome';
+                        return `<div class="card-nav" onclick="verGrupo('${k}', '${isC?'categoria':'metodo'}')">
+                                    ${isC ? `<i>${obterEmoji(n)}</i>` : obterIconeMetodo(n, true)}
+                                    <h3>${n}</h3>
+                                </div>`;
+                    }).join(''); 
+                }
+
+                const prodsSemGrupo = Object.keys(produtos).filter(k => {
+                    if(!produtos[k]) return false;
+                    return isC ? getCategoriasProduto(produtos[k]).length === 0 : !produtos[k].metodoCompra;
+                });
+
+                if(prodsSemGrupo.length === 0) {
+                    ts.innerHTML = `<tr><td colspan="2" style="text-align:center; color:#64748b;">Todos os produtos estão agrupados.</td></tr>`;
+                } else {
+                    ts.innerHTML = prodsSemGrupo.map(k => { 
+                        const p = produtos[k]; 
+                        const t = Object.values(p.estoque||{}).reduce((a,v)=>typeof v==='object'&&v!==null?a+(Number(v.f)||0)+(Number(v.u)||0):a+Number(v||0),0); 
+                        return `<tr><td><div style="display:flex; align-items:center;"><button class="action-icon edit-btn require-auth" onclick="abrirEdicaoProduto('${k}')">✎</button><button class="action-icon info-btn" onclick="verDetalhesProduto('${k}')">ⓘ</button><span class="col-item">${p.nome||''}</span></div></td><td style="text-align:right">${renderizarTotalLinhaDupla(t,1)}</td></tr>`; 
+                    }).join('');
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        function verGrupo(key, tipo) { 
+            try {
+                navegar('produtos-lista-filtrada'); 
+                const n = tipo === 'categoria' ? categorias[key]?.nome : metodosCompra[key]?.nome; 
+                document.getElementById('titulo-categoria-filtrada').innerText = n || 'Grupo'; 
+                
+                const prodsFiltrados = Object.keys(produtos).filter(k => {
+                    if(!produtos[k]) return false;
+                    return tipo === 'categoria' ? getCategoriasProduto(produtos[k]).includes(n) : produtos[k].metodoCompra === n;
+                });
+
+                if(prodsFiltrados.length === 0) {
+                    document.getElementById('tabela-produtos-filtrada').innerHTML = `<tr><td colspan="2" style="text-align:center; color:#64748b;">Nenhum produto neste grupo.</td></tr>`;
+                    return;
+                }
+
+                document.getElementById('tabela-produtos-filtrada').innerHTML = prodsFiltrados.map(k => { 
+                    const p = produtos[k]; 
+                    let t = 1; 
+                    getCategoriasProduto(p).forEach(cn => {
+                        const c = Object.values(categorias).find(x => x.nome === cn);
+                        if(c && c.unidadesFardo > t) t = Number(c.unidadesFardo);
+                    }); 
+                    const tot = Object.values(p.estoque||{}).reduce((a,v)=>typeof v==='object'&&v!==null?a+((Number(v.f)||0)*t)+(Number(v.u)||0):a+Number(v||0),0); 
+                    return `<tr><td><div style="display:flex; align-items:center;"><button class="action-icon edit-btn require-auth" onclick="abrirEdicaoProduto('${k}')">✎</button><button class="action-icon info-btn" onclick="verDetalhesProduto('${k}')">ⓘ</button><span class="col-item">${p.nome||''}</span></div></td><td style="text-align:right">${renderizarTotalLinhaDupla(tot,t)}</td></tr>`; 
+                }).join(''); 
+            } catch(e){ console.error(e); }
+        }
+
+        function verArea(key, nome) { 
+            try {
+                areaAtualKey = key; navegar('detalhe-area'); document.getElementById('area-display-name').innerText = nome || 'Área'; 
+                let max = 1; 
+                const iA = Object.keys(produtos).filter(pk => produtos[pk] && (produtos[pk].locais||[]).includes(nome)); 
+                
+                iA.forEach(pk => getCategoriasProduto(produtos[pk]).forEach(cn => {
+                    const c = Object.values(categorias).find(x => x.nome === cn);
+                    if(c && c.unidadesFardo > max) max = Number(c.unidadesFardo);
+                })); 
+                
+                document.getElementById('head-area-itens').innerHTML = `<tr><th>Item</th><th style="text-align:center">${max>1?`Fds.`:'Fardos'}</th><th style="text-align:center">Un.</th><th style="text-align:right">Total</th></tr>`; 
+                
+                if(iA.length === 0) {
+                    document.getElementById('tabela-area-itens').innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">Nenhum produto alocado nesta área.</td></tr>`;
+                    return;
+                }
+
+                document.getElementById('tabela-area-itens').innerHTML = iA.map(pk => { 
+                    const p = produtos[pk]; 
+                    let t = 1; 
+                    getCategoriasProduto(p).forEach(cn => {
+                        const c = Object.values(categorias).find(x => x.nome === cn);
+                        if(c && c.unidadesFardo > t) t = Number(c.unidadesFardo);
+                    }); 
+                    const v = p.estoque?.[nome] || {f:0,u:0}; 
+                    return `<tr><td><div style="display:flex; align-items:center;"><button class="action-icon info-btn" onclick="verDetalhesProduto('${pk}')">ⓘ</button><span class="col-item">${p.nome||''}</span></div></td><td style="text-align:center"><input type="number" class="input-qtd" id="f-${pk}" value="${v.f||0}" oninput="attEst('${pk}','${nome}',${t})" ${t<=1?'disabled style="opacity:0.5"':''}></td><td style="text-align:center"><input type="number" class="input-qtd" id="u-${pk}" value="${v.u||0}" oninput="attEst('${pk}','${nome}',${t})"></td><td style="text-align:right" id="tot-cell-${pk}">${renderizarTotalLinhaDupla((v.f||0)*t+(v.u||0),t)}</td></tr>`; 
+                }).join(''); 
+            } catch(e) { console.error(e); }
+        }
+
+        function attEst(pk, ar, tam) { 
+            if(!isAdmin) return; 
+            const f = Number(document.getElementById(`f-${pk}`).value)||0;
+            const u = Number(document.getElementById(`u-${pk}`).value)||0; 
+            db.ref(`produtos/${pk}/estoque/${ar}`).set({f,u}); 
+            document.getElementById(`tot-cell-${pk}`).innerHTML = renderizarTotalLinhaDupla(f*tam+u,tam); 
+        }
+
+        function verDetalhesProduto(key) { 
+            try {
+                const p = produtos[key]; 
+                if(!p) return; 
+                navegar('detalhe-produto'); 
+                document.getElementById('span-titulo-prod').innerText = p.nome || 'Produto'; 
+                
+                let t = 1; 
+                const pC = getCategoriasProduto(p); 
+                pC.forEach(cn => {
+                    const c = Object.values(categorias).find(x => x.nome === cn);
+                    if(c && c.unidadesFardo > t) t = Number(c.unidadesFardo);
+                }); 
+                
+                let tG = 0; 
+                const locaisHtml = (p.locais||[]).map(loc => { 
+                    const a = areas.find(x => x.nome === loc); 
+                    const v = p.estoque?.[loc] || {f:0,u:0}; 
+                    const q = (v.f||0)*t + (v.u||0); 
+                    tG += q; 
+                    return `<tr><td><div style="display:flex; align-items:center; gap:8px;"><button class="action-icon info-btn" onclick="verArea('${a?.key}', '${loc}')">ⓘ</button><span>${loc}</span></div></td><td style="text-align:right">${renderizarTotalLinhaDupla(q,t)}</td></tr>`; 
+                }).join(''); 
+
+                document.getElementById('tabela-locais-produto').innerHTML = locaisHtml || `<tr><td colspan="2" style="text-align:center; color:#64748b;">Não alocado em nenhuma área.</td></tr>`; 
+                
+                document.getElementById('info-extra-prod').innerHTML = `
+                    <div style="padding:12px; background:var(--row-even); border-radius:8px; border:1px solid var(--border-color); display:flex; flex-direction:column; gap:8px; margin-top:10px;">
+                        <div><strong style="color:var(--primary);">Categorias:</strong> <span style="color:#64748b;">${pC.length>0?pC.join(', '):'Nenhuma'}</span></div>
+                        <div><strong style="color:var(--primary);">Método:</strong> <span style="color:#64748b;">${p.metodoCompra||"Não atribuído"}</span></div>
+                        <div><strong style="color:var(--primary);">Estoque Mín.:</strong> <span style="color:#64748b;">${p.estoqueMinimo||0} ${t>1?'Fardos':'Unidades'}</span></div>
+                        <div><strong style="color:var(--primary);">Fardos Fechados:</strong> <span style="color:#64748b;">${Math.floor(tG/t)} Fardos (Geral)</span></div>
+                    </div>`; 
+            } catch(e) { console.error(e); }
+        }
+
+        function obterIconeMetodo(nome, isCard = false) { 
+            if (!nome) return isCard ? `<i>📦</i>` : `📦`; 
+            const limpo = removerAcentos(nome.toLowerCase().trim()); 
+            let img = null; 
+            if(limpo.includes("rr") || limpo.includes("polpa")) img = "rrpolpas.svg"; 
+            else if(limpo.includes("heineken")) img = "heinekendistri.svg"; 
+            else if(limpo.includes("coca")) img = "cocacoladistri.svg"; 
+            else if(limpo.includes("atento")) img = "atento.svg"; 
+            
+            if (img) { 
+                if (isCard) return `<img src="${img}" alt="${nome}" style="width:50px; height:50px; object-fit:contain; margin-bottom:8px; display:block;">`; 
+                return `<img src="${img}" alt="${nome}" style="width:18px; height:18px; object-fit:contain; margin-right:4px; vertical-align:middle; display:inline-block; border-radius:3px;">`; 
+            } 
+            return isCard ? `<i>${obterEmoji(nome)}</i>` : `${obterEmoji(nome)}`; 
+        }
+
+        function renderizarMetodosConfig() { 
+            try {
+                document.getElementById('lista-metodos-config').innerHTML = Object.keys(metodosCompra).map(k => `
+                    <div class="preset-config-item">
+                        <div style="display:flex; align-items:center;">
+                            <button class="action-icon edit-btn" onclick="editarMetodo('${k}')">✎</button>
+                            <button class="action-icon add-btn" onclick="abrirAtribuirMetodo('${k}')">➕</button>
+                            <strong style="font-size:1.05rem; margin-left:5px; display:flex; align-items:center;">${obterIconeMetodo(metodosCompra[k].nome)} <span style="margin-left:4px;">${metodosCompra[k].nome}</span></strong>
+                            <span style="margin-left:auto; color:red; cursor:pointer;" onclick="prepararExclusaoMet('${k}')">Excluir</span>
+                        </div>
+                    </div>`).join(''); 
+            } catch(e) { console.error(e); }
+        }
+
+        function renderizarPedidosMetodos() { 
+            try {
+                const grid = document.getElementById('grid-pedidos-metodos');
+                if(!grid) return;
+                const chaves = Object.keys(metodosCompra);
+                if(chaves.length === 0) {
+                    grid.innerHTML = `<p style="grid-column: 1 / -1; color:#64748b;">Nenhum método cadastrado.</p>`;
+                    return;
+                }
+                grid.innerHTML = chaves.map(k => `
+                    <div class="card-nav" onclick="verPedidoPorMetodo('${k}')">
+                        ${obterIconeMetodo(metodosCompra[k].nome, true)}<h3>${metodosCompra[k].nome}</h3>
+                    </div>`).join(''); 
+            } catch(e) { console.error(e); }
+        }
+
+        function verPedidoPorMetodo(key) { 
+            try {
+                navegar('pedidos-lista'); 
+                const met = metodosCompra[key]?.nome || 'Desconhecido'; 
+                document.getElementById('titulo-pedido-metodo').innerText = `Pedidos: ${met}`; 
+                
+                const prodsFiltrados = Object.keys(produtos).filter(k => produtos[k] && produtos[k].metodoCompra === met).sort((a,b) => produtos[a].nome.localeCompare(produtos[b].nome));
+                
+                if(prodsFiltrados.length === 0) {
+                    document.getElementById('tabela-pedidos-filtrada').innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">Nenhum produto usa este método.</td></tr>`;
+                    return;
+                }
+
+                document.getElementById('tabela-pedidos-filtrada').innerHTML = prodsFiltrados.map(k => { 
+                    const p = produtos[k]; 
+                    let t = 1; 
+                    getCategoriasProduto(p).forEach(cn => {
+                        const c = Object.values(categorias).find(x => x.nome === cn);
+                        if(c && c.unidadesFardo > t) t = Number(c.unidadesFardo);
+                    }); 
+                    const fAt = Object.values(p.estoque||{}).reduce((ac,v) => typeof v==='object'&&v!==null?ac+((Number(v.f)||0)*t)+(Number(v.u)||0):ac+Number(v||0),0)/t; 
+                    const m = Number(p.estoqueMinimo||0); 
+                    const sg = Math.ceil(Math.max(0, m - fAt)); 
+                    const lb = t > 1 ? 'Fds.' : 'Un.'; 
+                    return `<tr><td class="col-item">${p.nome}</td><td style="text-align:center;">${fAt%1===0?fAt:fAt.toFixed(1)} <br><small style="color:#64748b">${lb}</small></td><td style="text-align:center;">${m} <br><small style="color:#64748b">${lb}</small></td><td style="text-align:center; font-weight:800; font-size:1.1rem; color:${sg>0?'var(--primary)':'#10b981'}">${sg} <br><small style="font-weight:normal; font-size:0.75rem">${lb}</small></td></tr>`; 
+                }).join(''); 
+            } catch(e) { console.error(e); }
+        }
+
+        // CRUD METODOS E CONFIGURAÇÕES
+        function salvarMetodo() { 
+            try {
+                const id=document.getElementById('edit-met-id').value, n=document.getElementById('met-nome').value; 
+                if(n){ 
+                    if(id){ 
+                        const old=metodosCompra[id].nome; 
+                        db.ref('metodos/'+id).update({nome:n}).then(()=>{
+                            if(old!==n) Object.keys(produtos).forEach(pk=>{ if(produtos[pk]&&produtos[pk].metodoCompra===old) db.ref('produtos/'+pk).update({metodoCompra:n}); });
+                        }); 
+                    } else {
+                        db.ref('metodos').push({nome:n}); 
+                    }
+                    resetarFormMetodo(); 
+                } 
+            } catch(e){console.error(e);}
+        }
+        function editarMetodo(k) { document.getElementById('edit-met-id').value=k; document.getElementById('met-nome').value=metodosCompra[k].nome; document.getElementById('btn-salvar-met').innerText="Atualizar"; const btn = document.getElementById('btn-cancelar-met'); if(btn) btn.style.display="inline-block"; }
+        function resetarFormMetodo() { document.getElementById('edit-met-id').value=""; document.getElementById('met-nome').value=""; document.getElementById('btn-salvar-met').innerText="Salvar"; const btn = document.getElementById('btn-cancelar-met'); if(btn) btn.style.display="none"; }
+        function renderizarPresetsMetodos() { 
+            try {
+                const vN=document.getElementById('prod-metodo-selecionado').value, vE=document.getElementById('edit-prod-metodo-selecionado').value; 
+                document.getElementById('metodos-container').innerHTML=Object.keys(metodosCompra).map(k=>`<div class="chip ${vN===metodosCompra[k].nome?'active-chip':''}" onclick="selecionarMetodo('${k}','novo')">${obterIconeMetodo(metodosCompra[k].nome)} ${metodosCompra[k].nome}</div>`).join(''); 
+                document.getElementById('edit-metodos-container').innerHTML=Object.keys(metodosCompra).map(k=>`<div class="chip ${vE===metodosCompra[k].nome?'active-chip':''}" onclick="selecionarMetodo('${k}','edit')">${obterIconeMetodo(metodosCompra[k].nome)} ${metodosCompra[k].nome}</div>`).join(''); 
+            } catch(e) { console.error(e); }
+        }
         function selecionarMetodo(k, ctx) { document.getElementById(ctx==='novo'?'prod-metodo-selecionado':'edit-prod-metodo-selecionado').value=metodosCompra[k].nome; renderizarPresetsMetodos(); }
-        function salvarCategoria() { const id=document.getElementById('edit-cat-id').value, n=document.getElementById('cat-nome').value, u=document.getElementById('cat-uso-fardo').checked, t=u?Number(document.getElementById('cat-qtd-fardo').value):1, sel=Array.from(document.querySelectorAll('#cat-checks-areas input:checked')).map(i=>i.value); if(n&&sel.length){ const d={nome:n,areas:sel,unidadesFardo:t}; if(id){ const old=categorias[id].nome; db.ref('categorias/'+id).update(d).then(()=>{if(old!==n)Object.keys(produtos).forEach(pk=>{if(!produtos[pk])return;let pc=getCategoriasProduto(produtos[pk]);if(pc.includes(old))db.ref('produtos/'+pk).update({categorias:pc.map(c=>c===old?n:c),categoria:null});});}); }else db.ref('categorias').push(d); resetarFormCategoria(); } }
-        function renderizarPresets() { document.getElementById('presets-container').innerHTML=Object.keys(categorias).map(k=>`<div class="chip ${catsNovo.includes(categorias[k].nome)?'active-chip':''}" onclick="togglePreset('${k}','novo')">${obterEmoji(categorias[k].nome)} ${categorias[k].nome}</div>`).join(''); document.getElementById('edit-presets-container').innerHTML=Object.keys(categorias).map(k=>`<div class="chip ${catsEdit.includes(categorias[k].nome)?'active-chip':''}" onclick="togglePreset('${k}','edit')">${obterEmoji(categorias[k].nome)} ${categorias[k].nome}</div>`).join(''); document.getElementById('lista-categorias-config').innerHTML=Object.keys(categorias).map(k=>{ const c=categorias[k]; return `<div class="preset-config-item"><div style="display:flex; align-items:center;"><button class="action-icon edit-btn" onclick="editarCategoria('${k}')">✎</button><button class="action-icon info-btn" onclick="document.getElementById('det-${k}').classList.toggle('active')">ⓘ</button><button class="action-icon add-btn" onclick="abrirAtribuirCategoria('${k}')">➕</button><strong style="font-size:1.05rem; margin-left:5px;">${obterEmoji(c.nome)} ${c.nome}</strong><span style="margin-left:auto; color:red; cursor:pointer;" onclick="prepararExclusaoCat('${k}')">Excluir</span></div><div id="det-${k}" class="preset-details"><strong style="display:block; margin-bottom:8px;">Áreas vinculadas:</strong>${(c.areas||[]).map(a=>`<div class="preset-area-item">📍 ${a}</div>`).join('')}<div style="margin-top:10px; color:${c.unidadesFardo>1?'var(--primary)':'#64748b'}; font-weight:600;">📦 ${c.unidadesFardo>1?`Fds de ${c.unidadesFardo}u`:'Unidades'}</div></div></div>`; }).join(''); }
-        function abrirAtribuirCategoria(k) { const c=categorias[k]; document.getElementById('atribuir-cat-id').value=k; document.getElementById('titulo-atribuir-cat').innerText=`Atribuir: ${c.nome}`; document.getElementById('lista-produtos-atribuir').innerHTML=Object.keys(produtos).filter(pk=>produtos[pk]&&produtos[pk].nome).sort((a,b)=>{const hA=getCategoriasProduto(produtos[a]).includes(c.nome)?1:0; const hB=getCategoriasProduto(produtos[b]).includes(c.nome)?1:0; return hA!==hB?hB-hA:produtos[a].nome.localeCompare(produtos[b].nome);}).map(pk=>{ const p=produtos[pk], has=getCategoriasProduto(p).includes(c.nome), out=getCategoriasProduto(p).filter(x=>x!==c.nome).length; return `<label class="check-item" style="padding:15px 10px; border:1px solid ${has?'var(--primary)':'var(--border-color)'}; border-radius:10px; background:${has?'#fff5f5':'#fff'}; display:flex; align-items:center; cursor:pointer;"><input type="checkbox" value="${pk}" ${has?'checked':''} style="width:22px; height:22px; margin-right:12px;"><strong style="font-size:1.05rem;">${p.nome}</strong><span style="font-size:0.65rem; background:${out>0||has?'#e2e8f0':'#fee2e2'}; color:${out>0||has?'#64748b':'#b91c1c'}; padding:4px 8px; border-radius:12px; margin-left:auto;">${out>0?`+${out} cat`:(has?'OK':'Vazio')}</span></label>`; }).join(''); navegar('atribuir-categoria'); }
-        function salvarAtribuicaoCategoria() { const n=categorias[document.getElementById('atribuir-cat-id').value].nome, u={}; document.querySelectorAll('#lista-produtos-atribuir input:checked, #lista-produtos-atribuir input:not(:checked)').forEach(cb=>{ const p=produtos[cb.value]; if(!p)return; let pc=getCategoriasProduto(p), ch=false; if(cb.checked&&!pc.includes(n)){pc.push(n);ch=true;}else if(!cb.checked&&pc.includes(n)){pc=pc.filter(x=>x!==n);ch=true;} if(ch){u[`produtos/${cb.value}/categorias`]=pc.length?pc:null;u[`produtos/${cb.value}/categoria`]=null;} }); if(Object.keys(u).length)db.ref().update(u).then(()=>navegar('configuracoes')); else navegar('configuracoes'); }
-        function abrirAtribuirMetodo(k) { const m=metodosCompra[k]; document.getElementById('atribuir-met-id').value=k; document.getElementById('titulo-atribuir-met').innerText=`Atribuir: ${m.nome}`; document.getElementById('lista-produtos-atribuir-met').innerHTML=Object.keys(produtos).filter(pk=>produtos[pk]&&produtos[pk].nome).sort((a,b)=>{const hA=produtos[a].metodoCompra===m.nome?1:0; const hB=produtos[b].metodoCompra===m.nome?1:0; return hA!==hB?hB-hA:produtos[a].nome.localeCompare(produtos[b].nome);}).map(pk=>{ const p=produtos[pk], has=p.metodoCompra===m.nome, out=p.metodoCompra&&p.metodoCompra!==m.nome; return `<label class="check-item" style="padding:15px 10px; border:1px solid ${has?'var(--primary)':'var(--border-color)'}; border-radius:10px; background:${has?'#fff5f5':'#fff'}; display:flex; align-items:center; cursor:pointer;"><input type="checkbox" value="${pk}" ${has?'checked':''} style="width:22px; height:22px; margin-right:12px;"><strong style="font-size:1.05rem;">${p.nome}</strong><span style="font-size:0.65rem; background:${out?'#e2e8f0':(has?'#e2e8f0':'#fee2e2')}; color:${out?'#64748b':(has?'#64748b':'#b91c1c')}; padding:4px 8px; border-radius:12px; margin-left:auto;">${out?p.metodoCompra:(has?'OK':'Sem método')}</span></label>`; }).join(''); navegar('atribuir-metodo'); }
-        function salvarAtribuicaoMetodo() { const n=metodosCompra[document.getElementById('atribuir-met-id').value].nome, u={}; document.querySelectorAll('#lista-produtos-atribuir-met input').forEach(cb=>{ const p=produtos[cb.value]; if(!p)return; let nm=p.metodoCompra, ch=false; if(cb.checked&&nm!==n){nm=n;ch=true;}else if(!cb.checked&&nm===n){nm=null;ch=true;} if(ch)u[`produtos/${cb.value}/metodoCompra`]=nm; }); if(Object.keys(u).length)db.ref().update(u).then(()=>navegar('configuracoes')); else navegar('configuracoes'); }
+        
+        function salvarCategoria() { 
+            try {
+                const id=document.getElementById('edit-cat-id').value, n=document.getElementById('cat-nome').value, u=document.getElementById('cat-uso-fardo').checked, t=u?Number(document.getElementById('cat-qtd-fardo').value):1, sel=Array.from(document.querySelectorAll('#cat-checks-areas input:checked')).map(i=>i.value); 
+                if(n&&sel.length){ 
+                    const d={nome:n,areas:sel,unidadesFardo:t}; 
+                    if(id){ 
+                        const old=categorias[id].nome; 
+                        db.ref('categorias/'+id).update(d).then(()=>{
+                            if(old!==n) Object.keys(produtos).forEach(pk=>{ if(!produtos[pk])return;let pc=getCategoriasProduto(produtos[pk]);if(pc.includes(old))db.ref('produtos/'+pk).update({categorias:pc.map(c=>c===old?n:c),categoria:null}); });
+                        }); 
+                    } else {
+                        db.ref('categorias').push(d); 
+                    }
+                    resetarFormCategoria(); 
+                } 
+            } catch(e){console.error(e);}
+        }
+
+        function renderizarPresets() { 
+            try { 
+                document.getElementById('presets-container').innerHTML=Object.keys(categorias).map(k=>`<div class="chip ${catsNovo.includes(categorias[k].nome)?'active-chip':''}" onclick="togglePreset('${k}','novo')">${obterEmoji(categorias[k].nome)} ${categorias[k].nome}</div>`).join(''); 
+                document.getElementById('edit-presets-container').innerHTML=Object.keys(categorias).map(k=>`<div class="chip ${catsEdit.includes(categorias[k].nome)?'active-chip':''}" onclick="togglePreset('${k}','edit')">${obterEmoji(categorias[k].nome)} ${categorias[k].nome}</div>`).join(''); 
+                document.getElementById('lista-categorias-config').innerHTML=Object.keys(categorias).map(k=>{ const c=categorias[k]; return `<div class="preset-config-item" style="padding:12px; border:1px solid #ccc; border-radius:8px; margin-bottom:8px;"><div style="display:flex; align-items:center;"><button class="action-icon edit-btn" onclick="editarCategoria('${k}')">✎</button><button class="action-icon add-btn" onclick="abrirAtribuirCategoria('${k}')">➕</button><strong style="font-size:1.05rem; margin-left:5px;">${obterEmoji(c.nome)} ${c.nome}</strong><span style="margin-left:auto; color:red; cursor:pointer;" onclick="prepararExclusaoCat('${k}')">Excluir</span></div><div style="margin-top:8px; font-size:0.85rem; color:#64748b;">Áreas: ${(c.areas||[]).join(', ')} <br> Fardo: ${c.unidadesFardo>1?c.unidadesFardo+' un.':'Não'}</div></div>`; }).join(''); 
+            } catch(e) { console.error(e); } 
+        }
+
+        function abrirAtribuirCategoria(k) { 
+            try {
+                const c=categorias[k]; 
+                document.getElementById('atribuir-cat-id').value=k; document.getElementById('titulo-atribuir-cat').innerText=`Atribuir: ${c.nome}`; 
+                document.getElementById('lista-produtos-atribuir').innerHTML=Object.keys(produtos).filter(pk=>produtos[pk]&&produtos[pk].nome).sort((a,b)=>{const hA=getCategoriasProduto(produtos[a]).includes(c.nome)?1:0; const hB=getCategoriasProduto(produtos[b]).includes(c.nome)?1:0; return hA!==hB?hB-hA:produtos[a].nome.localeCompare(produtos[b].nome);}).map(pk=>{ const p=produtos[pk], has=getCategoriasProduto(p).includes(c.nome), out=getCategoriasProduto(p).filter(x=>x!==c.nome).length; return `<label class="check-item" style="padding:15px 10px; border:1px solid ${has?'var(--primary)':'var(--border-color)'}; border-radius:10px; background:${has?'#fff5f5':'#fff'}; display:flex; align-items:center; cursor:pointer;"><input type="checkbox" value="${pk}" ${has?'checked':''} style="width:22px; height:22px; margin-right:12px;"><strong style="font-size:1.05rem;">${p.nome}</strong><span style="font-size:0.65rem; background:${out>0||has?'#e2e8f0':'#fee2e2'}; color:${out>0||has?'#64748b':'#b91c1c'}; padding:4px 8px; border-radius:12px; margin-left:auto;">${out>0?`+${out} cat`:(has?'OK':'Vazio')}</span></label>`; }).join(''); 
+                navegar('atribuir-categoria'); 
+            } catch(e) { console.error(e); }
+        }
+
+        function salvarAtribuicaoCategoria() { 
+            try {
+                const n=categorias[document.getElementById('atribuir-cat-id').value].nome, u={}; 
+                document.querySelectorAll('#lista-produtos-atribuir input:checked, #lista-produtos-atribuir input:not(:checked)').forEach(cb=>{ const p=produtos[cb.value]; if(!p)return; let pc=getCategoriasProduto(p), ch=false; if(cb.checked&&!pc.includes(n)){pc.push(n);ch=true;}else if(!cb.checked&&pc.includes(n)){pc=pc.filter(x=>x!==n);ch=true;} if(ch){u[`produtos/${cb.value}/categorias`]=pc.length?pc:null;u[`produtos/${cb.value}/categoria`]=null;} }); 
+                if(Object.keys(u).length) db.ref().update(u).then(()=>navegar('configuracoes')); else navegar('configuracoes'); 
+            } catch(e){console.error(e);}
+        }
+
+        function abrirAtribuirMetodo(k) { 
+            try {
+                const m=metodosCompra[k]; document.getElementById('atribuir-met-id').value=k; document.getElementById('titulo-atribuir-met').innerText=`Atribuir: ${m.nome}`; document.getElementById('lista-produtos-atribuir-met').innerHTML=Object.keys(produtos).filter(pk=>produtos[pk]&&produtos[pk].nome).sort((a,b)=>{const hA=produtos[a].metodoCompra===m.nome?1:0; const hB=produtos[b].metodoCompra===m.nome?1:0; return hA!==hB?hB-hA:produtos[a].nome.localeCompare(produtos[b].nome);}).map(pk=>{ const p=produtos[pk], has=p.metodoCompra===m.nome, out=p.metodoCompra&&p.metodoCompra!==m.nome; return `<label class="check-item" style="padding:15px 10px; border:1px solid ${has?'var(--primary)':'var(--border-color)'}; border-radius:10px; background:${has?'#fff5f5':'#fff'}; display:flex; align-items:center; cursor:pointer;"><input type="checkbox" value="${pk}" ${has?'checked':''} style="width:22px; height:22px; margin-right:12px;"><strong style="font-size:1.05rem;">${p.nome}</strong><span style="font-size:0.65rem; background:${out?'#e2e8f0':(has?'#e2e8f0':'#fee2e2')}; color:${out?'#64748b':(has?'#64748b':'#b91c1c')}; padding:4px 8px; border-radius:12px; margin-left:auto;">${out?p.metodoCompra:(has?'OK':'Sem método')}</span></label>`; }).join(''); navegar('atribuir-metodo'); 
+            } catch(e) { console.error(e); }
+        }
+
+        function salvarAtribuicaoMetodo() { 
+            try {
+                const n=metodosCompra[document.getElementById('atribuir-met-id').value].nome, u={}; document.querySelectorAll('#lista-produtos-atribuir-met input').forEach(cb=>{ const p=produtos[cb.value]; if(!p)return; let nm=p.metodoCompra, ch=false; if(cb.checked&&nm!==n){nm=n;ch=true;}else if(!cb.checked&&nm===n){nm=null;ch=true;} if(ch)u[`produtos/${cb.value}/metodoCompra`]=nm; }); if(Object.keys(u).length)db.ref().update(u).then(()=>navegar('configuracoes')); else navegar('configuracoes'); 
+            } catch(e){console.error(e);}
+        }
+
         function togglePreset(k, ctx) { const n=categorias[k].nome, t=ctx==='novo'?'checks-areas':'edit-checks-areas', a=ctx==='novo'?catsNovo:catsEdit, idx=a.indexOf(n); if(idx>-1)a.splice(idx,1); else{a.push(n);document.querySelectorAll(`#${t} input`).forEach(cb=>{if(categorias[k].areas?.includes(cb.value))cb.checked=true;});} atualizarLabelEstoqueMinimo(ctx, a); renderizarPresets(); }
-        function editarCategoria(k) { const c=categorias[k]; document.getElementById('edit-cat-id').value=k; document.getElementById('cat-nome').value=c.nome; document.getElementById('cat-uso-fardo').checked=c.unidadesFardo>1; document.getElementById('cat-qtd-fardo').value=c.unidadesFardo; toggleFardoInput(); document.querySelectorAll('#cat-checks-areas input').forEach(cb=>cb.checked=c.areas?.includes(cb.value)); document.getElementById('btn-salvar-cat').innerText="Atualizar"; document.getElementById('btn-cancelar-cat').style.display="block"; window.scrollTo({top:0}); }
-        function resetarFormCategoria() { document.getElementById('edit-cat-id').value=""; document.getElementById('cat-nome').value=""; document.getElementById('cat-uso-fardo').checked=false; document.getElementById('cat-qtd-fardo').value=""; toggleFardoInput(); document.querySelectorAll('#cat-checks-areas input').forEach(cb=>cb.checked=false); document.getElementById('btn-salvar-cat').innerText="Criar"; document.getElementById('btn-cancelar-cat').style.display="none"; }
+        function editarCategoria(k) { const c=categorias[k]; document.getElementById('edit-cat-id').value=k; document.getElementById('cat-nome').value=c.nome; document.getElementById('cat-uso-fardo').checked=c.unidadesFardo>1; document.getElementById('cat-qtd-fardo').value=c.unidadesFardo; toggleFardoInput(); document.querySelectorAll('#cat-checks-areas input').forEach(cb=>cb.checked=c.areas?.includes(cb.value)); document.getElementById('btn-salvar-cat').innerText="Atualizar"; const btn = document.getElementById('btn-cancelar-cat'); if(btn) btn.style.display="block"; window.scrollTo({top:0}); }
+        function resetarFormCategoria() { document.getElementById('edit-cat-id').value=""; document.getElementById('cat-nome').value=""; document.getElementById('cat-uso-fardo').checked=false; document.getElementById('cat-qtd-fardo').value=""; toggleFardoInput(); document.querySelectorAll('#cat-checks-areas input').forEach(cb=>cb.checked=false); document.getElementById('btn-salvar-cat').innerText="Criar"; const btn = document.getElementById('btn-cancelar-cat'); if(btn) btn.style.display="none"; }
+        function toggleFardoInput() { document.getElementById('div-unidades-fardo').style.display = document.getElementById('cat-uso-fardo').checked ? 'block' : 'none'; }
         function renderizarChecksConfig() { document.getElementById('cat-checks-areas').innerHTML=areas.map(a=>`<label class="check-item"><input type="checkbox" value="${a.nome}"> <span>${a.nome}</span></label>`).join(''); }
-        function abrirCadastro(id) { if(id==='novo-produto'){ document.getElementById('checks-areas').innerHTML=areas.map(a=>`<label class="check-item"><input type="checkbox" value="${a.nome}"> <span>${a.nome}</span></label>`).join(''); document.getElementById('prod-nome').value=""; document.getElementById('prod-metodo-selecionado').value=""; document.getElementById('prod-estoque-minimo').value="0"; catsNovo=[]; atualizarLabelEstoqueMinimo('novo',catsNovo); renderizarPresets(); renderizarPresetsMetodos(); } navegar(id); }
+        function atualizarLabelEstoqueMinimo(ctx, selectedCats) { let maxFardo=1; selectedCats.forEach(cn=>{ const c = Object.values(categorias).find(x=>x.nome===cn); if(c && c.unidadesFardo>maxFardo) maxFardo=Number(c.unidadesFardo); }); document.getElementById(ctx==='novo'?'lbl-estoque-minimo-novo':'lbl-estoque-minimo-edit').innerText=maxFardo>1?"(Fardos)":"(Un.)"; }
+        
+        function abrirCadastro(id) { 
+            if(id==='novo-produto'){ 
+                document.getElementById('checks-areas').innerHTML=areas.map(a=>`<label class="check-item"><input type="checkbox" value="${a.nome}"> <span>${a.nome}</span></label>`).join(''); 
+                document.getElementById('prod-nome').value=""; 
+                document.getElementById('prod-metodo-selecionado').value=""; 
+                document.getElementById('prod-estoque-minimo').value="0"; 
+                catsNovo=[]; 
+                atualizarLabelEstoqueMinimo('novo',catsNovo); 
+                renderizarPresets(); 
+                renderizarPresetsMetodos(); 
+            } 
+            navegar(id); 
+        }
+
         function salvarArea() { const n=document.getElementById('area-nome').value; if(n){db.ref('areas').push(n); document.getElementById('area-nome').value=""; navegar('areas-lista');} }
         function salvarProduto() { const n=document.getElementById('prod-nome').value, met=document.getElementById('prod-metodo-selecionado').value, min=Number(document.getElementById('prod-estoque-minimo').value)||0; if(!met){alert("Selecione um Método.");return;} const s=Array.from(document.querySelectorAll('#checks-areas input:checked')).map(i=>i.value); if(n&&s.length){const e={}; s.forEach(x=>e[x]={f:0,u:0}); db.ref('produtos').push({nome:n, categorias:catsNovo.length?catsNovo:null, metodoCompra:met, estoqueMinimo:min, locais:s, estoque:e}); document.getElementById('prod-nome').value=""; document.getElementById('prod-metodo-selecionado').value=""; document.getElementById('prod-estoque-minimo').value="0"; navegar('produtos-categorias');}else alert("Assinale área vinculada."); }
         function abrirEdicaoProduto(k) { const p=produtos[k]; document.getElementById('edit-prod-id').value=k; document.getElementById('edit-prod-nome').value=p.nome; document.getElementById('edit-prod-metodo-selecionado').value=p.metodoCompra||""; document.getElementById('edit-prod-estoque-minimo').value=p.estoqueMinimo||0; catsEdit=getCategoriasProduto(p); atualizarLabelEstoqueMinimo('edit',catsEdit); renderizarPresets(); renderizarPresetsMetodos(); document.getElementById('edit-checks-areas').innerHTML=areas.map(a=>`<label class="check-item"><input type="checkbox" value="${a.nome}" ${(p.locais||[]).includes(a.nome)?'checked':''}> <span>${a.nome}</span></label>`).join(''); navegar('editar-produto'); }
         function salvarEdicaoProduto() { const id=document.getElementById('edit-prod-id').value, n=document.getElementById('edit-prod-nome').value, met=document.getElementById('edit-prod-metodo-selecionado').value, min=Number(document.getElementById('edit-prod-estoque-minimo').value)||0; if(!met){alert("Selecione um Método.");return;} const l=Array.from(document.querySelectorAll('#edit-checks-areas input:checked')).map(i=>i.value); db.ref('produtos/'+id).update({nome:n, categorias:catsEdit.length?catsEdit:null, categoria:null, metodoCompra:met, estoqueMinimo:min, locais:l.length?l:null}); navegar('produtos-categorias'); }
         function habilitarEdicaoArea() { document.getElementById('area-edit-box').style.display='block'; }
         function salvarNovoNomeArea() { const nv=document.getElementById('edit-area-input').value, ant=document.getElementById('area-display-name').innerText; if(nv&&areaAtualKey&&nv!==ant){ db.ref('areas/'+areaAtualKey).set(nv).then(()=>{ Object.keys(produtos).forEach(pk=>{if(!produtos[pk])return; let p=produtos[pk], u=false, l=p.locais||[], e=p.estoque||{}; if(l.includes(ant)){l=l.map(x=>x===ant?nv:x);u=true;} if(e[ant]!==undefined){e[nv]=e[ant];delete e[ant];u=true;} if(u)db.ref('produtos/'+pk).update({locais:l, estoque:e}); }); document.getElementById('area-edit-box').style.display='none'; document.getElementById('edit-area-input').value=""; }); } }
+        
         function prepararExclusaoArea() { document.getElementById('modalMsg').innerHTML=`Excluir área <strong>${document.getElementById('area-display-name').innerText}</strong>?`; document.getElementById('modalDelete').style.display='flex'; document.getElementById('confirmDeleteBtn').onclick=()=>{db.ref('areas/'+areaAtualKey).remove();fecharModal();navegar('areas-lista');}; }
         function prepararExclusaoProd() { document.getElementById('modalMsg').innerHTML=`Excluir <strong>${document.getElementById('edit-prod-nome').value}</strong>?`; document.getElementById('modalDelete').style.display='flex'; document.getElementById('confirmDeleteBtn').onclick=()=>{db.ref('produtos/'+document.getElementById('edit-prod-id').value).remove();fecharModal();navegar('produtos-categorias');}; }
         function prepararExclusaoCat(k) { document.getElementById('modalMsg').innerHTML=`Excluir preset <strong>${categorias[k].nome}</strong>?`; document.getElementById('modalDelete').style.display='flex'; document.getElementById('confirmDeleteBtn').onclick=()=>{db.ref('categorias/'+k).remove();fecharModal();}; }
         function prepararExclusaoMet(k) { document.getElementById('modalMsg').innerHTML=`Excluir método <strong>${metodosCompra[k].nome}</strong>?`; document.getElementById('modalDelete').style.display='flex'; document.getElementById('confirmDeleteBtn').onclick=()=>{db.ref('metodos/'+k).remove();fecharModal();}; }
+
     </script>
 </body>
 </html>
