@@ -23,20 +23,11 @@
         /* MODO LEITURA (TRAVA DE SEGURANÇA) */
         body:not(.admin-mode) .require-auth { display: none !important; }
         body:not(.admin-mode) .input-qtd { 
-            pointer-events: none; 
-            border: 1px solid transparent; 
-            background: transparent; 
-            color: var(--text-main); 
-            padding: 0; 
-            width: auto;
-            text-align: center;
-            font-size: 1rem;
-            -moz-appearance: textfield;
+            pointer-events: none; border: 1px solid transparent; background: transparent; 
+            color: var(--text-main); padding: 0; width: auto; text-align: center; font-size: 1rem; -moz-appearance: textfield;
         }
         body:not(.admin-mode) .input-qtd::-webkit-outer-spin-button,
-        body:not(.admin-mode) .input-qtd::-webkit-inner-spin-button {
-            -webkit-appearance: none; margin: 0;
-        }
+        body:not(.admin-mode) .input-qtd::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
         /* MENU LATERAL E TOPBAR */
         aside { width: 260px; background: var(--bg-sidebar); color: var(--text-sidebar); padding: 2rem 0.5rem; position: fixed; height: 100vh; z-index: 1000; transition: 0.3s; }
@@ -64,12 +55,23 @@
         .btn-back-styled svg { width: 25px; height: 25px; fill: currentColor; }
 
         .card { background: var(--card-bg); padding: 1.2rem; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); margin-bottom: 1rem; border: 1px solid var(--border-color); }
-        .grid-home { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+        .grid-home { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
         .grid-areas-layout { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
         
         .card-nav { background: var(--card-bg); padding: 1.5rem 0.5rem; border-radius: 15px; text-align: center; cursor: pointer; border: 2px solid transparent; transition: 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .card-nav i { font-size: 2.2rem; display: block; margin-bottom: 8px; font-style: normal; }
         .card-nav h3 { font-size: 0.95rem; color: var(--bg-sidebar); }
+
+        /* CALENDÁRIO */
+        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .cal-btn { background: var(--bg-sidebar); color: white; border: none; border-radius: 8px; padding: 8px 15px; cursor: pointer; font-weight: bold; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+        .cal-day-name { font-weight: bold; text-align: center; padding: 10px 0; color: var(--bg-sidebar); text-transform: uppercase; font-size: 0.9rem; }
+        .cal-day { background: white; border: 1px solid var(--border-color); border-radius: 8px; text-align: center; padding: 15px 0; cursor: pointer; transition: 0.2s; position: relative; font-weight: 600; }
+        .cal-day:hover:not(.closed-day) { border-color: var(--primary); color: var(--primary); }
+        .cal-day.empty { background: transparent; border: none; pointer-events: none; }
+        .cal-day.has-reserva::after { content: ''; position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; background: var(--primary); border-radius: 50%; }
+        .cal-day.closed-day { background: #f1f5f9; color: #cbd5e1; border-color: #e2e8f0; cursor: not-allowed; text-decoration: line-through; }
 
         /* TABELAS FLUIDAS */
         .table-container { background: white; border-radius: 10px; overflow-x: auto; border: 1px solid var(--border-color); width: 100%; }
@@ -84,18 +86,11 @@
         .total-fardos { font-weight: 800; color: var(--primary); font-size: 0.95rem; white-space: nowrap; }
         .total-unidades { font-weight: 600; color: #64748b; font-size: 0.75rem; white-space: nowrap; }
 
-        .action-icon { width: 28px; height: 28px; border-radius: 50%; color: white; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; margin-right: 4px; font-size: 0.8rem; }
+        .action-icon { width: 28px; height: 28px; border-radius: 50%; color: white; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; margin-right: 4px; font-size: 0.8rem; flex-shrink: 0; }
         .info-btn { background: #60a5fa; }
         .edit-btn { background: #f59e0b; }
         .add-btn { background: #10b981; }
 
-        .preset-config-item { border-bottom: 1px solid #e2e8f0; padding: 15px 0; display: flex; flex-direction: column; gap: 8px; }
-        .preset-config-item:last-child { border-bottom: none; padding-bottom: 0; }
-        .preset-details { display: none; margin-top: 10px; padding: 12px; background: #fffaf7; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.85rem; }
-        .preset-details.active { display: block; }
-        .preset-area-item { padding: 4px 0; border-bottom: 1px dashed #e2e8f0; }
-        .preset-area-item:last-child { border-bottom: none; }
-        
         .cat-grid-checks { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin: 10px 0; padding: 10px; }
         .check-item { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.85rem; }
         input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary); }
@@ -110,24 +105,22 @@
         .chip { background: #e2e8f0; padding: 6px 12px; border-radius: 15px; font-size: 0.8rem; cursor: pointer; font-weight: 600; margin: 3px; display: inline-block; border: 1px solid transparent; }
         .active-chip { background: var(--primary) !important; color: white !important; }
 
-        input[type="text"], input[type="number"], input[type="password"] { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; margin: 6px 0; outline: none; font-size: 0.9rem; }
+        input[type="text"], input[type="number"], input[type="password"], select { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; margin: 6px 0; outline: none; font-size: 0.9rem; font-family: inherit; }
         .btn-submit { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; font-size: 0.95rem; }
         
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(40, 6, 6, 0.7); z-index: 3000; align-items: center; justify-content: center; }
         .modal-box { background: var(--bg-body); padding: 1.5rem; border-radius: 12px; max-width: 320px; width: 90%; text-align: center; border: 2px solid var(--primary); }
 
-        /* RESPONSIVIDADE MOBILE (App Native Style) */
+        /* RESPONSIVIDADE MOBILE */
         @media (max-width: 768px) { 
             .mobile-topbar { display: flex; justify-content: center; align-items: center; position: fixed; top: 0; left: 0; width: 100%; height: 60px; background: var(--bg-sidebar); z-index: 1500; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
             .mobile-topbar img { height: 35px; object-fit: contain; }
-
             aside { width: 100%; height: 65px; bottom: 0; top: auto; left: 0; padding: 0; display: flex; flex-direction: row; box-shadow: 0 -2px 10px rgba(0,0,0,0.2); } 
             aside nav { flex-direction: row; justify-content: space-around; height: 100%; align-items: center; }
             .logo-container { display: none; } 
-            
             .nav-btn { flex-direction: column; justify-content: center; align-items: center; gap: 4px; padding: 5px; margin-bottom: 0; border-radius: 0; border-left: none; border-bottom: 3px solid transparent; height: 100%; }
             .nav-btn.active { border-bottom: 3px solid var(--primary); background: var(--bg-sidebar-active); }
-            .nav-btn span { display: block !important; font-size: 0.65rem; font-weight: normal; }
+            .nav-btn span { display: block !important; font-size: 0.60rem; font-weight: normal; }
             
             .mobile-show { display: flex !important; }
             .fab-main { display: none !important; }
@@ -148,7 +141,7 @@
         }
     </style>
 </head>
-<body>
+<body class="logged-out">
 
     <!-- TOPO MOBILE -->
     <div class="mobile-topbar"><img src="contamais.svg" alt="Logo"></div>
@@ -160,7 +153,7 @@
     <div id="modalSenha" class="modal-overlay">
         <div class="modal-box">
             <h3 style="margin-bottom: 10px; color: var(--primary);">🔒 Acesso Restrito</h3>
-            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 15px;">Senha de administrador necessária para editar e configurar.</p>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 15px;">Senha de administrador necessária.</p>
             <input type="password" id="input-senha-admin" placeholder="Digite a senha" onkeydown="if(event.key==='Enter') verificarSenha()">
             <div style="display: flex; gap: 10px; margin-top: 15px;">
                 <button onclick="fecharModalSenha()" style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #ccc; background: white; font-weight: bold; cursor: pointer;">Cancelar</button>
@@ -169,7 +162,6 @@
         </div>
     </div>
 
-    <!-- MODAL EXCLUSÃO -->
     <div id="modalDelete" class="modal-overlay">
         <div class="modal-box">
             <p id="modalMsg" style="margin-bottom: 20px; font-weight: 600;"></p>
@@ -180,18 +172,21 @@
         </div>
     </div>
 
+    <!-- MENU -->
     <aside>
         <div class="logo-container"><img src="contamais.svg" alt="Logo" class="logo-img"></div>
-        <nav>
+        <nav id="menu-navegacao">
             <button class="nav-btn active" id="nav-inicio" onclick="navegar('inicio', this)">🏠 <span>Início</span></button>
             <button class="nav-btn" id="nav-areas" onclick="navegar('areas-lista', this)">📍 <span>Áreas</span></button>
             <button class="nav-btn" id="nav-produtos" onclick="navegar('produtos-categorias', this)">🍾 <span>Produtos</span></button>
             <button class="nav-btn" id="nav-pedidos" onclick="navegar('pedidos-metodos', this)">🛒 <span>Pedidos</span></button>
+            <button class="nav-btn" id="nav-agenda" onclick="navegar('agenda-view', this); renderizarCalendario();">📅 <span>Agenda</span></button>
             <button class="nav-btn mobile-show require-auth" onclick="toggleFab()">➕ <span>Novo</span></button>
         </nav>
     </aside>
 
     <main>
+        <!-- FAB (+) -->
         <div class="fab-container require-auth">
             <button class="fab-main" onclick="toggleFab()">+</button>
             <div id="fabOptions" class="fab-options">
@@ -207,6 +202,79 @@
                 <div class="card-nav" onclick="document.getElementById('nav-areas').click()"><i>📍</i><h3>Áreas</h3></div>
                 <div class="card-nav" onclick="document.getElementById('nav-produtos').click()"><i>🍾</i><h3>Produtos</h3></div>
                 <div class="card-nav" onclick="document.getElementById('nav-pedidos').click()"><i>🛒</i><h3>Pedidos</h3></div>
+                <div class="card-nav" onclick="document.getElementById('nav-agenda').click()"><i>📅</i><h3>Agenda</h3></div>
+            </div>
+        </section>
+
+        <!-- AGENDA (CALENDÁRIO) -->
+        <section id="agenda-view" class="section">
+            <h1>Agenda de Reservas</h1>
+            <div class="card" style="padding: 1.5rem 1rem;">
+                <div class="cal-header">
+                    <button class="cal-btn" onclick="mudarMes(-1)">◀</button>
+                    <h2 id="cal-mes-ano" style="margin: 0; font-size: 1.1rem; color: var(--bg-sidebar);"></h2>
+                    <button class="cal-btn" onclick="mudarMes(1)">▶</button>
+                </div>
+                <div class="cal-grid" id="cal-dias-semana">
+                    <div class="cal-day-name">D</div><div class="cal-day-name">S</div><div class="cal-day-name">T</div>
+                    <div class="cal-day-name">Q</div><div class="cal-day-name">Q</div><div class="cal-day-name">S</div><div class="cal-day-name">S</div>
+                </div>
+                <div class="cal-grid" id="cal-grid-dias"></div>
+            </div>
+        </section>
+
+        <!-- AGENDA DETALHE DIA (LISTA + FORMULÁRIO) -->
+        <section id="agenda-detalhe" class="section">
+            <div class="btn-back-styled" onclick="navegar('agenda-view', document.getElementById('nav-agenda')); renderizarCalendario();">
+                <svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+            </div>
+            <h1 id="titulo-data-reserva" style="font-size: 1.3rem;">Reservas</h1>
+            
+            <div class="card">
+                <h3 style="margin-bottom:10px; color:var(--primary); font-size:1rem;">Reservas do Dia</h3>
+                <div id="lista-reservas-dia" style="display:flex; flex-direction:column; gap:8px;"></div>
+            </div>
+
+            <div class="card require-auth">
+                <h3 style="margin-bottom: 10px; color: var(--primary); font-size: 1rem;">Criar Nova Reserva</h3>
+                
+                <p style="font-size:0.8rem; color:#64748b; margin: 10px 0 5px 0; font-weight:700;">Período:</p>
+                <select id="res-periodo" onchange="atualizarFormReserva()">
+                    <option value="dia">Dia</option>
+                    <option value="tarde_noite">Tarde/Noite</option>
+                </select>
+
+                <p style="font-size:0.8rem; color:#64748b; margin: 10px 0 5px 0; font-weight:700;">Horário:</p>
+                <div id="res-time-dia" style="padding: 10px; background: #e2e8f0; border-radius: 8px; font-weight: bold; text-align: center; color: #64748b;">12:00 - 18:00</div>
+                <div id="res-time-tarde" style="display: none; align-items: center; gap: 10px;">
+                    <input type="text" id="res-horario-tarde" list="lista-horarios" placeholder="18:00" style="flex:1;">
+                    <datalist id="lista-horarios">
+                        <option value="18:00"><option value="18:30"><option value="19:00"><option value="19:30"><option value="20:00">
+                    </datalist>
+                    <span id="res-time-tarde-end" style="font-weight: bold; color: var(--primary); white-space: nowrap;">- 01:00</span>
+                </div>
+
+                <p style="font-size:0.8rem; color:#64748b; margin: 10px 0 5px 0; font-weight:700;">Área:</p>
+                <select id="res-area" onchange="atualizarFormReserva()">
+                    <option value="Varanda">Varanda</option>
+                    <option value="Salão 1 - Frente">Salão 1 - Frente</option>
+                    <option value="Salão 1 - Corredor">Salão 1 - Corredor</option>
+                    <option value="Salão 2 - Parede">Salão 2 - Parede</option>
+                    <option value="Salão 2 - Meio">Salão 2 - Meio</option>
+                    <option value="Salão 2 - Corrimão">Salão 2 - Corrimão</option>
+                    <option value="Salão 2 - Mesas Redondas">Salão 2 - Mesas Redondas</option>
+                    <option value="Salão 2 - Bistrôs">Salão 2 - Bistrôs</option>
+                    <option value="Salão 2 - Brinquedão">Salão 2 - Brinquedão</option>
+                    <option value="Laje">Laje</option>
+                </select>
+
+                <p style="font-size:0.8rem; color:#64748b; margin: 10px 0 5px 0; font-weight:700;">Número (<span id="res-lbl-max" style="color: var(--primary);"></span>):</p>
+                <input type="number" id="res-lugares" placeholder="Ex: 10">
+
+                <p style="font-size:0.8rem; color:#64748b; margin: 10px 0 5px 0; font-weight:700;">Nome da Reserva:</p>
+                <input type="text" id="res-nome" placeholder="Ex: Aniversário do João">
+
+                <button class="btn-submit" onclick="salvarReserva()" style="margin-top: 15px;">CADASTRAR RESERVA</button>
             </div>
         </section>
 
@@ -219,505 +287,272 @@
             
             <div class="card" style="border-color: #10b981; background: #f0fdf4; margin-bottom: 1.5rem;">
                 <h3 style="color: #047857;">🔓 Acesso de Administrador Liberado</h3>
-                <p style="font-size:0.85rem; color:#065f46; margin-top:5px;">Você tem permissão total para criar, editar e excluir itens.</p>
                 <button class="btn-submit" style="background: #047857; margin-top: 15px;" onclick="sairModoAdmin()">Sair do Modo Admin (Trancar)</button>
             </div>
 
             <div class="card">
                 <h3 style="margin-bottom: 10px; color: var(--primary); font-size: 1rem;">1. Configurar Categorias</h3>
-                <input type="hidden" id="edit-cat-id">
-                <input type="text" id="cat-nome" placeholder="Nome da Categoria">
-                
+                <input type="hidden" id="edit-cat-id"><input type="text" id="cat-nome" placeholder="Nome da Categoria">
                 <p style="font-size:0.8rem; color:#64748b; margin-top:10px; font-weight:700;">Áreas vinculadas:</p>
                 <div id="cat-checks-areas" class="cat-grid-checks"></div>
-
                 <div style="margin: 10px 0; padding: 12px; background: #fffaf7; border-radius: 8px; border: 1px solid var(--border-color);">
-                    <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:700; font-size: 0.85rem;">
-                        <input type="checkbox" id="cat-uso-fardo" onchange="toggleFardoInput()"> Usa Fardos?
-                    </label>
-                    <div id="div-unidades-fardo" style="display:none; margin-top:10px;">
-                        <label style="font-size:0.8rem; color:#64748b;">Unidades por fardo:</label>
-                        <input type="number" id="cat-qtd-fardo" placeholder="Ex: 12">
-                    </div>
+                    <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:700; font-size: 0.85rem;"><input type="checkbox" id="cat-uso-fardo" onchange="toggleFardoInput()"> Usa Fardos?</label>
+                    <div id="div-unidades-fardo" style="display:none; margin-top:10px;"><input type="number" id="cat-qtd-fardo" placeholder="Unidades por fardo"></div>
                 </div>
-
                 <button class="btn-submit" id="btn-salvar-cat" onclick="salvarCategoria()">Salvar Categoria</button>
-                <button class="btn-submit" id="btn-cancelar-cat" onclick="resetarFormCategoria()" style="display:none; background:#e2e8f0; color:#280606;">Cancelar Edição</button>
+                <button class="btn-submit" id="btn-cancelar-cat" onclick="resetarFormCategoria()" style="display:none; background:#e2e8f0; color:#280606;">Cancelar</button>
             </div>
-            
-            <div class="card">
-                <h3 style="font-size: 1rem;">Categorias Existentes</h3>
-                <div id="lista-categorias-config" style="margin-top:10px;"></div>
-            </div>
+            <div class="card"><h3 style="font-size: 1rem;">Categorias Existentes</h3><div id="lista-categorias-config" style="margin-top:10px;"></div></div>
 
             <div class="card" style="margin-top: 1.5rem;">
                 <h3 style="margin-bottom: 10px; color: var(--primary); font-size: 1rem;">2. Métodos de Compra</h3>
-                <input type="hidden" id="edit-met-id">
-                <input type="text" id="met-nome" placeholder="Ex: Atacadão...">
-                <button class="btn-submit" id="btn-salvar-met" onclick="salvarMetodo()" style="margin-top:10px;">Salvar Método</button>
+                <input type="hidden" id="edit-met-id"><input type="text" id="met-nome" placeholder="Ex: Atacadão...">
+                <button class="btn-submit" id="btn-salvar-met" onclick="salvarMetodo()">Salvar Método</button>
                 <button class="btn-submit" id="btn-cancelar-met" onclick="resetarFormMetodo()" style="display:none; background:#e2e8f0; color:#280606;">Cancelar</button>
             </div>
-            
-            <div class="card">
-                <h3 style="font-size: 1rem;">Métodos Existentes</h3>
-                <div id="lista-metodos-config" style="margin-top:10px;"></div>
-            </div>
+            <div class="card"><h3 style="font-size: 1rem;">Métodos Existentes</h3><div id="lista-metodos-config" style="margin-top:10px;"></div></div>
         </section>
 
-        <!-- ATRIBUIÇÃO EM MASSA (CATEGORIAS) -->
-        <section id="atribuir-categoria" class="section require-auth">
-            <div class="btn-back-styled" onclick="navegar('configuracoes')">
-                <svg viewBox="0 0 24 24"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>
-            </div>
-            <h1 id="titulo-atribuir-cat" style="font-size: 1.2rem;">Atribuir Categoria</h1>
-            <div class="card">
-                <input type="hidden" id="atribuir-cat-id">
-                <div id="lista-produtos-atribuir" style="display: flex; flex-direction: column; gap: 8px; max-height: 55vh; overflow-y: auto; padding-right: 5px;"></div>
-                <button class="btn-submit" onclick="salvarAtribuicaoCategoria()" style="margin-top:15px;">SALVAR</button>
-            </div>
-        </section>
-
-        <!-- ATRIBUIÇÃO EM MASSA (MÉTODOS) -->
-        <section id="atribuir-metodo" class="section require-auth">
-            <div class="btn-back-styled" onclick="navegar('configuracoes')">
-                <svg viewBox="0 0 24 24"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>
-            </div>
-            <h1 id="titulo-atribuir-met" style="font-size: 1.2rem;">Atribuir Método</h1>
-            <div class="card">
-                <input type="hidden" id="atribuir-met-id">
-                <div id="lista-produtos-atribuir-met" style="display: flex; flex-direction: column; gap: 8px; max-height: 55vh; overflow-y: auto; padding-right: 5px;"></div>
-                <button class="btn-submit" onclick="salvarAtribuicaoMetodo()" style="margin-top:15px;">SALVAR</button>
-            </div>
-        </section>
-
-        <!-- ÁREAS -->
-        <section id="areas-lista" class="section">
-            <h1>Áreas de Estoque</h1>
-            <div id="grid-areas" class="grid-areas-layout"></div>
-        </section>
-
-        <!-- PRODUTOS AGRUPADOS -->
+        <!-- OUTRAS TELAS -->
+        <section id="atribuir-categoria" class="section require-auth"><div class="btn-back-styled" onclick="navegar('configuracoes')">✕</div><h1 id="titulo-atribuir-cat" style="font-size: 1.2rem;">Atribuir</h1><div class="card"><input type="hidden" id="atribuir-cat-id"><div id="lista-produtos-atribuir" style="display: flex; flex-direction: column; gap: 8px; max-height: 55vh; overflow-y: auto;"></div><button class="btn-submit" onclick="salvarAtribuicaoCategoria()">SALVAR</button></div></section>
+        <section id="atribuir-metodo" class="section require-auth"><div class="btn-back-styled" onclick="navegar('configuracoes')">✕</div><h1 id="titulo-atribuir-met" style="font-size: 1.2rem;">Atribuir Método</h1><div class="card"><input type="hidden" id="atribuir-met-id"><div id="lista-produtos-atribuir-met" style="display: flex; flex-direction: column; gap: 8px; max-height: 55vh; overflow-y: auto;"></div><button class="btn-submit" onclick="salvarAtribuicaoMetodo()">SALVAR</button></div></section>
+        <section id="areas-lista" class="section"><h1>Áreas de Estoque</h1><div id="grid-areas" class="grid-areas-layout"></div></section>
+        
         <section id="produtos-categorias" class="section">
-            <div class="header-com-acao">
-                <h1 id="titulo-aba-produtos" style="font-size: 1.2rem;">Categorias</h1>
-                <button class="btn-toggle-grupo" onclick="toggleAgrupamentoProdutos()">🔄 Agrupar</button>
-            </div>
+            <div class="header-com-acao"><h1 id="titulo-aba-produtos" style="font-size: 1.2rem;">Categorias</h1><button class="btn-toggle-grupo" onclick="toggleAgrupamentoProdutos()">🔄 Agrupar</button></div>
             <div id="grid-produtos-agrupados" class="grid-areas-layout"></div>
-            <h2 id="titulo-sem-grupo" style="margin-top:1.5rem; font-size: 1.1rem;">Sem Categoria/Método</h2>
+            <h2 id="titulo-sem-grupo" style="margin-top:1.5rem; font-size: 1.1rem;">Sem Categoria</h2>
             <div class="table-container"><table><tbody id="tabela-produtos-sem-grupo"></tbody></table></div>
         </section>
 
-        <!-- PRODUTOS LISTA FILTRADA -->
-        <section id="produtos-lista-filtrada" class="section">
-            <div class="btn-back-styled" onclick="navegar('produtos-categorias')">
-                <svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
-            </div>
-            <h1 id="titulo-categoria-filtrada" style="font-size: 1.2rem;">Produtos</h1>
-            <div class="table-container">
-                <table><thead><tr><th>Item</th><th style="text-align:right">Total</th></tr></thead><tbody id="tabela-produtos-filtrada"></tbody></table>
-            </div>
-        </section>
+        <section id="produtos-lista-filtrada" class="section"><div class="btn-back-styled" onclick="navegar('produtos-categorias')">✕</div><h1 id="titulo-categoria-filtrada" style="font-size: 1.2rem;">Produtos</h1><div class="table-container"><table><thead><tr><th>Item</th><th style="text-align:right">Total</th></tr></thead><tbody id="tabela-produtos-filtrada"></tbody></table></div></section>
+        <section id="detalhe-area" class="section"><div class="btn-back-styled" onclick="navegar('areas-lista')">✕</div><div class="card" style="padding: 1rem;"><div style="display:flex; align-items:center; gap:8px;"><h2 id="area-display-name" style="font-size: 1.2rem; margin:0;">Área</h2><button class="action-icon edit-btn require-auth" onclick="habilitarEdicaoArea()" style="width:24px; height:24px; font-size:0.7rem;">✎</button></div><div id="area-edit-box" style="display:none; margin-top:10px;"><input type="text" id="edit-area-input"><button class="btn-submit" onclick="salvarNovoNomeArea()" style="padding:8px;">Salvar</button></div><span class="require-auth" style="color:var(--primary); cursor:pointer; font-size:0.75rem; display:block; margin-top:8px;" onclick="prepararExclusaoArea()">Excluir Área</span></div><div class="table-container"><table><thead id="head-area-itens"></thead><tbody id="tabela-area-itens"></tbody></table></div></section>
+        <section id="detalhe-produto" class="section"><div class="btn-back-styled" onclick="navegar('produtos-categorias')">✕</div><div class="card"><h2 id="span-titulo-prod" style="font-size: 1.2rem;">Produto</h2><div id="info-extra-prod"></div></div><div class="table-container"><table><thead><tr><th>Área</th><th style="text-align:right">Total Consolidado</th></tr></thead><tbody id="tabela-locais-produto"></tbody></table></div></section>
+        
+        <section id="pedidos-metodos" class="section"><h1>Pedidos</h1><div id="grid-pedidos-metodos" class="grid-areas-layout"></div></section>
+        <section id="pedidos-lista" class="section"><div class="btn-back-styled" onclick="navegar('pedidos-metodos')">✕</div><h1 id="titulo-pedido-metodo" style="font-size: 1.2rem;">Pedidos</h1><div class="table-container"><table><thead><tr><th>Item</th><th style="text-align:center;">Atual</th><th style="text-align:center;">Mín.</th><th style="text-align:center; color: var(--primary);">Pedir</th></tr></thead><tbody id="tabela-pedidos-filtrada"></tbody></table></div></section>
 
-        <!-- DETALHE ÁREA -->
-        <section id="detalhe-area" class="section">
-            <div class="btn-back-styled" onclick="navegar('areas-lista')">
-                <svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
-            </div>
-            <div class="card" style="padding: 1rem;">
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <h2 id="area-display-name" style="font-size: 1.2rem; margin:0;">Área</h2>
-                    <button class="action-icon edit-btn require-auth" onclick="habilitarEdicaoArea()" style="width:24px; height:24px; font-size:0.7rem;">✎</button>
-                </div>
-                <div id="area-edit-box" style="display:none; margin-top:10px;">
-                    <input type="text" id="edit-area-input" placeholder="Novo nome">
-                    <button class="btn-submit" onclick="salvarNovoNomeArea()" style="padding:8px;">Salvar</button>
-                </div>
-                <span class="require-auth" style="color:var(--primary); cursor:pointer; font-size:0.75rem; display:block; margin-top:8px;" onclick="prepararExclusaoArea()">Excluir Área</span>
-            </div>
-            <div class="table-container">
-                <table style="table-layout: fixed;"><thead id="head-area-itens"></thead><tbody id="tabela-area-itens"></tbody></table>
-            </div>
-        </section>
-
-        <!-- DETALHE PRODUTO -->
-        <section id="detalhe-produto" class="section">
-            <div class="btn-back-styled" onclick="navegar('produtos-categorias')">
-                <svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
-            </div>
-            <div class="card">
-                <h2 id="span-titulo-prod" style="font-size: 1.2rem;">Produto</h2>
-                <div id="info-extra-prod"></div>
-            </div>
-            <div class="table-container">
-                <table><thead><tr><th>Área</th><th style="text-align:right">Total Consolidado</th></tr></thead><tbody id="tabela-locais-produto"></tbody></table>
-            </div>
-        </section>
-
-        <!-- PEDIDOS -->
-        <section id="pedidos-metodos" class="section">
-            <h1 style="font-size: 1.3rem;">Pedidos</h1>
-            <p style="color: #64748b; font-size: 0.85rem; margin-bottom: 15px;">Selecione um método de compra.</p>
-            <div id="grid-pedidos-metodos" class="grid-areas-layout"></div>
-        </section>
-
-        <section id="pedidos-lista" class="section">
-            <div class="btn-back-styled" onclick="navegar('pedidos-metodos')">
-                <svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
-            </div>
-            <h1 id="titulo-pedido-metodo" style="font-size: 1.2rem;">Pedidos</h1>
-            <div class="table-container">
-                <table><thead><tr><th>Item</th><th style="text-align:center;">Atual</th><th style="text-align:center;">Mín.</th><th style="text-align:center; color: var(--primary);">Pedir</th></tr></thead><tbody id="tabela-pedidos-filtrada"></tbody></table>
-            </div>
-        </section>
-
-        <!-- NOVO PRODUTO (REQUER AUTH) -->
+        <!-- FORMULÁRIOS DE CRIAÇÃO (REQUER AUTH) -->
         <section id="novo-produto" class="section require-auth">
-            <h1 style="font-size: 1.3rem;">Novo Produto</h1>
-            <div class="card">
-                <input type="text" id="prod-nome" placeholder="Ex: Coca-Cola 350ml">
-                <p style="font-size:0.8rem; color:#64748b; margin: 12px 0 5px 0; font-weight:700;">Categorias:</p>
-                <div id="presets-container" style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"></div>
-                <p style="font-size:0.8rem; color:#64748b; margin: 12px 0 5px 0; font-weight:700;">Método de Compra *:</p>
-                <div id="metodos-container" style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"></div>
-                <input type="hidden" id="prod-metodo-selecionado">
-                <p style="font-size:0.8rem; color:#64748b; margin: 12px 0 5px 0; font-weight:700;">Estoque Mínimo <span id="lbl-estoque-minimo-novo" style="color: var(--primary);">(Un.)</span>:</p>
-                <input type="number" id="prod-estoque-minimo" value="0">
-                <p style="font-size:0.8rem; color:#64748b; font-weight:700; margin-top: 20px;">Áreas Vinculadas:</p>
-                <div id="checks-areas" class="cat-grid-checks"></div>
-                <button class="btn-submit" onclick="salvarProduto()">CADASTRAR</button>
-            </div>
+            <h1 style="font-size: 1.3rem;">Novo Produto</h1><div class="card"><input type="text" id="prod-nome" placeholder="Ex: Coca-Cola"><p style="font-size:0.8rem; margin: 10px 0 5px 0;">Categorias:</p><div id="presets-container" style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"></div><p style="font-size:0.8rem; margin: 10px 0 5px 0;">Método *:</p><div id="metodos-container" style="display:flex; flex-wrap:wrap; gap:5px;"></div><input type="hidden" id="prod-metodo-selecionado"><p style="font-size:0.8rem; margin: 10px 0 5px 0;">Mínimo <span id="lbl-estoque-minimo-novo" style="color:var(--primary);">(Un.)</span>:</p><input type="number" id="prod-estoque-minimo" value="0"><p style="font-size:0.8rem; margin: 15px 0 5px 0;">Áreas:</p><div id="checks-areas" class="cat-grid-checks"></div><button class="btn-submit" onclick="salvarProduto()">CADASTRAR</button></div>
         </section>
         
-        <!-- EDITAR PRODUTO (REQUER AUTH) -->
         <section id="editar-produto" class="section require-auth">
-            <div class="btn-back-styled" onclick="navegar('produtos-categorias')">
-                <svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
-            </div>
-            <h1 style="font-size: 1.3rem;">Editar Produto</h1>
-            <div class="card">
-                <input type="hidden" id="edit-prod-id">
-                <input type="text" id="edit-prod-nome">
-                <p style="font-size:0.8rem; color:#64748b; margin: 12px 0 5px 0; font-weight:700;">Categorias:</p>
-                <div id="edit-presets-container" style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"></div>
-                <p style="font-size:0.8rem; color:#64748b; margin: 12px 0 5px 0; font-weight:700;">Método de Compra *:</p>
-                <div id="edit-metodos-container" style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"></div>
-                <input type="hidden" id="edit-prod-metodo-selecionado">
-                <p style="font-size:0.8rem; color:#64748b; margin: 12px 0 5px 0; font-weight:700;">Estoque Mínimo <span id="lbl-estoque-minimo-edit" style="color: var(--primary);">(Un.)</span>:</p>
-                <input type="number" id="edit-prod-estoque-minimo" value="0">
-                <p style="font-size:0.8rem; color:#64748b; font-weight:700; margin-top: 20px;">Áreas Vinculadas:</p>
-                <div id="edit-checks-areas" class="cat-grid-checks"></div>
-                <button class="btn-submit" onclick="salvarEdicaoProduto()">SALVAR ALTERAÇÕES</button>
-                <span style="color:var(--primary); cursor:pointer; display:block; text-align:center; margin-top:15px; font-weight:bold; font-size:0.85rem;" onclick="prepararExclusaoProd()">Excluir Produto</span>
-            </div>
+            <div class="btn-back-styled" onclick="navegar('produtos-categorias')">✕</div><h1 style="font-size: 1.3rem;">Editar Produto</h1><div class="card"><input type="hidden" id="edit-prod-id"><input type="text" id="edit-prod-nome"><p style="font-size:0.8rem; margin: 10px 0 5px 0;">Categorias:</p><div id="edit-presets-container" style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"></div><p style="font-size:0.8rem; margin: 10px 0 5px 0;">Método *:</p><div id="edit-metodos-container" style="display:flex; flex-wrap:wrap; gap:5px;"></div><input type="hidden" id="edit-prod-metodo-selecionado"><p style="font-size:0.8rem; margin: 10px 0 5px 0;">Mínimo <span id="lbl-estoque-minimo-edit" style="color:var(--primary);">(Un.)</span>:</p><input type="number" id="edit-prod-estoque-minimo"><p style="font-size:0.8rem; margin: 15px 0 5px 0;">Áreas:</p><div id="edit-checks-areas" class="cat-grid-checks"></div><button class="btn-submit" onclick="salvarEdicaoProduto()">SALVAR</button><span style="color:var(--primary); cursor:pointer; display:block; text-align:center; margin-top:15px; font-weight:bold; font-size:0.85rem;" onclick="prepararExclusaoProd()">Excluir Produto</span></div>
         </section>
 
-        <!-- NOVA ÁREA -->
-        <section id="nova-area" class="section require-auth">
-            <h1 style="font-size: 1.3rem;">Nova Área</h1>
-            <div class="card"><input type="text" id="area-nome" placeholder="Nome da área"><button class="btn-submit" onclick="salvarArea()">CRIAR</button></div>
-        </section>
+        <section id="nova-area" class="section require-auth"><h1>Nova Área</h1><div class="card"><input type="text" id="area-nome" placeholder="Nome da área"><button class="btn-submit" onclick="salvarArea()">CRIAR</button></div></section>
     </main>
 
+    <!-- FIREBASE E SCRIPT PRINCIPAL -->
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
 
     <script>
-        const firebaseConfig = { 
-            apiKey: "AIzaSyC3cAzrTMwCUxDcMvl68XxrcGLkmeANtSg", 
-            authDomain: "contamais-411llp.firebaseapp.com", 
-            databaseURL: "https://contamais-411llp-default-rtdb.firebaseio.com", 
-            projectId: "contamais-411llp", 
-            storageBucket: "contamais-411llp.firebasestorage.app", 
-            messagingSenderId: "691691378209", 
-            appId: "1:691691378209:web:6191b84e88ee3281b17560" 
-        };
+        const firebaseConfig = { apiKey: "AIzaSyC3cAzrTMwCUxDcMvl68XxrcGLkmeANtSg", authDomain: "contamais-411llp.firebaseapp.com", databaseURL: "https://contamais-411llp-default-rtdb.firebaseio.com", projectId: "contamais-411llp", storageBucket: "contamais-411llp.firebasestorage.app", messagingSenderId: "691691378209", appId: "1:691691378209:web:6191b84e88ee3281b17560" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let areas = [], produtos = {}, categorias = {}, metodosCompra = {}, areaAtualKey = "";
-        let catsNovo = [], catsEdit = [], agrupamentoAtual = 'categorias'; 
+        let areas = [], produtos = {}, categorias = {}, metodosCompra = {}, reservasApp = {};
+        let areaAtualKey = "", catsNovo = [], catsEdit = [], agrupamentoAtual = 'categorias'; 
         
-        // SISTEMA DE ADMINISTRAÇÃO (TRAVA)
-        let isAdmin = false;
-        const SENHA_ADMIN = "411 J@nder114";
-
+        // ADMIN E SENHA
+        let isAdmin = false; const SENHA_ADMIN = "411 J@nder114";
         function fecharModalSenha() { document.getElementById('modalSenha').style.display = 'none'; }
-        
-        function verificarSenha() {
-            const digitado = document.getElementById('input-senha-admin').value;
-            if(digitado === SENHA_ADMIN) {
-                isAdmin = true;
-                document.body.classList.remove('logged-out');
-                document.body.classList.add('admin-mode');
-                fecharModalSenha();
-                abrirConfig();
-            } else {
-                alert("Senha incorreta!");
-            }
-        }
+        function verificarSenha() { const dig = document.getElementById('input-senha-admin').value; if(dig === SENHA_ADMIN) { isAdmin = true; document.body.classList.remove('logged-out'); document.body.classList.add('admin-mode'); fecharModalSenha(); abrirConfig(); } else alert("Senha incorreta!"); }
+        function sairModoAdmin() { isAdmin = false; document.body.classList.remove('admin-mode'); document.body.classList.add('logged-out'); navegar('inicio', document.getElementById('nav-inicio')); alert("Modo Leitura ativado."); }
 
-        function sairModoAdmin() {
-            isAdmin = false;
-            document.body.classList.remove('admin-mode');
-            document.body.classList.add('logged-out');
-            navegar('inicio', document.getElementById('nav-inicio'));
-            alert("Sistema trancado. Modo Leitura ativado.");
-        }
+        // REGRAS AGENDA E CAPACIDADE
+        const areasAgenda = { "Varanda": 20, "Salão 1 - Frente": 30, "Salão 1 - Corredor": 30, "Salão 2 - Parede": 40, "Salão 2 - Meio": 40, "Salão 2 - Corrimão": 15, "Salão 2 - Mesas Redondas": 3, "Salão 2 - Bistrôs": 3, "Salão 2 - Brinquedão": 60, "Laje": 60 };
+        let navDate = new Date(); let dataAtualReserva = "";
 
-        const mapaEmojis = { "refrigerantes": "🥤", "cervejas": "🍺", "vinhos bar": "🍷", "camara fria": "🧊", "geladeira red bull": "🐂", "geladeira baden": "🅱️", "chopps bar": "🍻", "balcoes refrigerados bar": "❄️", "geladeiras amstel bar": "🅰️", "corredor": "🧭", "fundo": "🔑", "laje": "🪜", "atacadao": "🛒", "mercado": "🛒", "distribuidora": "🚚", "fornecedor": "📦" };
-
-        function removerAcentos(str) { return str ? str.normalize("NFD").replace(/[\u0300-\u036f]/g, "") : ""; }
-        function obterEmoji(nome) { 
-            if (!nome) return "📦";
-            const limpo = removerAcentos(nome.toLowerCase().trim()); 
-            for(let key in mapaEmojis) if(limpo.includes(key)) return mapaEmojis[key]; 
-            return "📦"; 
-        }
-
-        function getCategoriasProduto(p) { 
-            if (!p) return [];
-            if (p.categorias) return Array.isArray(p.categorias) ? [...p.categorias] : (typeof p.categorias === 'string' ? [p.categorias] : Object.values(p.categorias));
-            if (p.categoria) return [p.categoria];
-            return []; 
-        }
-
-        // LISTENERS
-        db.ref('areas').on('value', s => { 
-            areas = s.val() ? Object.entries(s.val()).map(([key, nome]) => ({key, nome})) : []; 
-            renderizarAreas(); renderizarChecksConfig(); 
-        });
-
-        db.ref('produtos').on('value', s => { 
-            produtos = s.val() || {}; renderizarGradeAgrupada(); 
-            if(document.getElementById('pedidos-lista').classList.contains('active')) {
-                const titulo = document.getElementById('titulo-pedido-metodo').innerText.replace('Pedidos: ', '');
-                const metKey = Object.keys(metodosCompra).find(k => metodosCompra[k].nome === titulo);
-                if(metKey) verPedidoPorMetodo(metKey);
-            }
-        });
-
+        // CORE FIREBASE
+        db.ref('areas').on('value', s => { areas = s.val() ? Object.entries(s.val()).map(([key, nome]) => ({key, nome})) : []; renderizarAreas(); renderizarChecksConfig(); });
+        db.ref('produtos').on('value', s => { produtos = s.val() || {}; renderizarGradeAgrupada(); if(document.getElementById('pedidos-lista').classList.contains('active')){ const metKey = Object.keys(metodosCompra).find(k => metodosCompra[k].nome === document.getElementById('titulo-pedido-metodo').innerText.replace('Pedidos: ', '')); if(metKey) verPedidoPorMetodo(metKey); } });
         db.ref('categorias').on('value', s => { categorias = s.val() || {}; renderizarPresets(); renderizarGradeAgrupada(); });
         db.ref('metodos').on('value', s => { metodosCompra = s.val() || {}; renderizarMetodosConfig(); renderizarPresetsMetodos(); renderizarGradeAgrupada(); renderizarPedidosMetodos(); });
+        db.ref('reservas').on('value', s => { 
+            reservasApp = s.val() || {}; 
+            if(document.getElementById('agenda-view').classList.contains('active')) renderizarCalendario(); 
+            if(document.getElementById('agenda-detalhe').classList.contains('active')) { renderizarReservasDia(); atualizarFormReserva(); }
+        });
 
-        function navegar(id, btn) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            if(btn) { document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
-            window.scrollTo(0, 0);
-        }
+        const mapaEmojis = { "refrigerantes": "🥤", "cervejas": "🍺", "vinhos bar": "🍷", "camara fria": "🧊", "geladeira red bull": "🐂", "chopps bar": "🍻", "laje": "🪜", "atacadao": "🛒", "mercado": "🛒", "distribuidora": "🚚" };
+        function removerAcentos(str) { return str ? str.normalize("NFD").replace(/[\u0300-\u036f]/g, "") : ""; }
+        function obterEmoji(nome) { const limpo = removerAcentos((nome||"").toLowerCase().trim()); for(let key in mapaEmojis) if(limpo.includes(key)) return mapaEmojis[key]; return "📦"; }
+        function getCategoriasProduto(p) { if (!p) return []; if (p.categorias) return Array.isArray(p.categorias) ? [...p.categorias] : (typeof p.categorias==='string' ? [p.categorias] : Object.values(p.categorias)); return p.categoria ? [p.categoria] : []; }
 
-        function abrirConfig() { 
-            if(isAdmin) {
-                resetarFormCategoria(); resetarFormMetodo(); navegar('configuracoes'); 
-            } else {
-                document.getElementById('input-senha-admin').value = "";
-                document.getElementById('modalSenha').style.display = 'flex';
-            }
-        }
-
+        function navegar(id, btn) { document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); if(btn) { document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); } window.scrollTo(0, 0); }
+        function abrirConfig() { if(isAdmin) { resetarFormCategoria(); resetarFormMetodo(); navegar('configuracoes'); } else { document.getElementById('input-senha-admin').value = ""; document.getElementById('modalSenha').style.display = 'flex'; } }
         function toggleFab() { document.getElementById('fabOptions').classList.toggle('active'); }
         function toggleFardoInput() { document.getElementById('div-unidades-fardo').style.display = document.getElementById('cat-uso-fardo').checked ? 'block' : 'none'; }
         function fecharModal() { document.getElementById('modalDelete').style.display = 'none'; }
 
-        function atualizarLabelEstoqueMinimo(ctx, selectedCats) {
-            let maxFardo = 1;
-            selectedCats.forEach(cName => {
-                const cObj = Object.values(categorias).find(c => c.nome === cName);
-                if(cObj && cObj.unidadesFardo > maxFardo) maxFardo = Number(cObj.unidadesFardo);
-            });
-            const lbl = maxFardo > 1 ? "(Fardos)" : "(Un.)";
-            const el = document.getElementById(ctx === 'novo' ? 'lbl-estoque-minimo-novo' : 'lbl-estoque-minimo-edit');
-            if (el) el.innerText = lbl;
-        }
-
-        function renderizarTotalLinhaDupla(total, tam) {
-            const tamFardo = tam > 1 ? tam : 1;
-            return `<div class="total-container"><span class="total-fardos">${Math.floor(total/tamFardo)} Fardos</span><span class="total-unidades">${total%tamFardo} Un. Soltas</span></div>`;
-        }
-
-        function renderizarAreas() {
-            document.getElementById('grid-areas').innerHTML = areas.map(a => `<div class="card-nav" onclick="verArea('${a.key}', '${a.nome}')"><i>${obterEmoji(a.nome)}</i><h3>${a.nome}</h3></div>`).join('');
-        }
-
-        function renderizarPedidosMetodos() {
-            document.getElementById('grid-pedidos-metodos').innerHTML = Object.keys(metodosCompra).map(k => `<div class="card-nav" onclick="verPedidoPorMetodo('${k}')"><i>${obterEmoji(metodosCompra[k].nome)}</i><h3>${metodosCompra[k].nome}</h3></div>`).join('');
-        }
-
-        function verPedidoPorMetodo(key) {
-            navegar('pedidos-lista');
-            const metodoNome = metodosCompra[key].nome;
-            document.getElementById('titulo-pedido-metodo').innerText = `Pedidos: ${metodoNome}`;
-            const prods = Object.keys(produtos).filter(k => produtos[k] && produtos[k].metodoCompra === metodoNome).sort((a,b) => produtos[a].nome.localeCompare(produtos[b].nome));
-
-            document.getElementById('tabela-pedidos-filtrada').innerHTML = prods.map(k => {
-                const p = produtos[k]; if(!p) return '';
-                let tam = 1; getCategoriasProduto(p).forEach(cn => { const c = Object.values(categorias).find(x => x.nome === cn); if(c && c.unidadesFardo > tam) tam = c.unidadesFardo; });
-                const totUnits = Object.values(p.estoque || {}).reduce((acc, val) => typeof val === 'object' && val !== null ? acc + ((Number(val.f)||0)*tam) + (Number(val.u)||0) : acc + Number(val||0), 0);
-                const fAtual = totUnits / tam;
-                const min = Number(p.estoqueMinimo || 0);
-                const sugFormatado = Math.ceil(Math.max(0, min - fAtual));
-                const lblType = tam > 1 ? 'Fds.' : 'Un.';
-                return `<tr><td class="col-item">${p.nome}</td><td style="text-align:center;">${fAtual%1===0?fAtual:fAtual.toFixed(1)} <br><small style="color:#64748b">${lblType}</small></td><td style="text-align:center;">${min} <br><small style="color:#64748b">${lblType}</small></td><td style="text-align:center; font-weight:800; font-size:1.1rem; color:${sugFormatado>0?'var(--primary)':'#10b981'};">${sugFormatado} <br><small style="font-weight:normal; font-size:0.75rem">${lblType}</small></td></tr>`;
-            }).join('');
-        }
-
-        function toggleAgrupamentoProdutos() {
-            agrupamentoAtual = agrupamentoAtual === 'categorias' ? 'metodos' : 'categorias';
-            document.getElementById('btn-toggle-grupo').innerHTML = agrupamentoAtual === 'categorias' ? '🔄 Agrupar: Categorias' : '🔄 Agrupar: Métodos Compra';
-            renderizarGradeAgrupada();
-        }
-
-        // FUNÇÃO OTIMIZADA PARA CABER NO LIMITE
-        function renderizarGradeAgrupada() {
-            const grid = document.getElementById('grid-produtos-agrupados');
-            const tbodySem = document.getElementById('tabela-produtos-sem-grupo');
-            if(!grid || !tbodySem) return;
-
-            const isCat = agrupamentoAtual === 'categorias';
-            document.getElementById('titulo-aba-produtos').innerText = isCat ? "Categorias de Produtos" : "Métodos de Compra";
-            document.getElementById('titulo-sem-grupo').innerText = isCat ? "Sem Categoria" : "Sem Método de Compra";
+        // ----- SISTEMA DE AGENDA E CALENDÁRIO -----
+        function mudarMes(dir) { navDate.setMonth(navDate.getMonth() + dir); renderizarCalendario(); }
+        function renderizarCalendario() {
+            const year = navDate.getFullYear(), month = navDate.getMonth();
+            const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+            document.getElementById('cal-mes-ano').innerText = `${monthNames[month]} ${year}`;
             
-            const source = isCat ? categorias : metodosCompra;
-            grid.innerHTML = Object.keys(source).map(k => `
-                <div class="card-nav" onclick="verGrupo('${k}', '${isCat ? 'categoria' : 'metodo'}')">
-                    <i>${obterEmoji(source[k].nome)}</i><h3>${source[k].nome}</h3>
-                </div>
-            `).join('');
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
             
-            const semGrupo = Object.keys(produtos).filter(k => {
-                if(!produtos[k]) return false;
-                return isCat ? getCategoriasProduto(produtos[k]).length === 0 : !produtos[k].metodoCompra;
-            });
-
-            tbodySem.innerHTML = semGrupo.map(k => {
-                const p = produtos[k]; 
-                const total = Object.values(p.estoque || {}).reduce((acc, val) => typeof val === 'object' && val !== null ? acc + (Number(val.f)||0) + (Number(val.u)||0) : acc + Number(val||0), 0);
-                return `<tr>
-                    <td>
-                        <div style="display:flex; align-items:center;">
-                            <button class="action-icon edit-btn require-auth" onclick="abrirEdicaoProduto('${k}')">✎</button>
-                            <button class="action-icon info-btn" onclick="verDetalhesProduto('${k}')">ⓘ</button>
-                            <span class="col-item">${p.nome || ''}</span>
-                        </div>
-                    </td>
-                    <td style="text-align:right">${renderizarTotalLinhaDupla(total, 1)}</td>
-                </tr>`;
-            }).join('');
+            let html = '';
+            for(let i=0; i<firstDay; i++) html += `<div class="cal-day empty"></div>`;
+            for(let i=1; i<=daysInMonth; i++) {
+                const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
+                const dw = new Date(year, month, i).getDay();
+                if(dw === 1) { // Segunda
+                    html += `<div class="cal-day closed-day">${i}</div>`;
+                } else {
+                    const hasReserva = reservasApp[dateStr] ? 'has-reserva' : '';
+                    html += `<div class="cal-day ${hasReserva}" onclick="abrirDia('${dateStr}')">${i}</div>`;
+                }
+            }
+            document.getElementById('cal-grid-dias').innerHTML = html;
         }
 
-        function verGrupo(key, tipo) {
-            navegar('produtos-lista-filtrada');
-            const nomeGrupo = tipo === 'categoria' ? categorias[key].nome : metodosCompra[key].nome;
-            document.getElementById('titulo-categoria-filtrada').innerText = nomeGrupo;
+        function abrirDia(dateStr) {
+            dataAtualReserva = dateStr;
+            const [y, m, d] = dateStr.split('-');
+            document.getElementById('titulo-data-reserva').innerText = `Reservas: ${d}/${m}/${y}`;
             
-            const chaves = Object.keys(produtos).filter(k => produtos[k] && (tipo === 'categoria' ? getCategoriasProduto(produtos[k]).includes(nomeGrupo) : produtos[k].metodoCompra === nomeGrupo));
-            document.getElementById('tabela-produtos-filtrada').innerHTML = chaves.map(k => {
-                const p = produtos[k]; if(!p) return '';
-                let tam = 1; getCategoriasProduto(p).forEach(cn => { const c = Object.values(categorias).find(x => x.nome === cn); if(c && c.unidadesFardo > tam) tam = Number(c.unidadesFardo); });
-                const total = Object.values(p.estoque || {}).reduce((acc, val) => typeof val === 'object' && val !== null ? acc + ((Number(val.f)||0)*tam) + (Number(val.u)||0) : acc + Number(val||0), 0);
-                return `<tr><td><div style="display:flex; align-items:center;"><button class="action-icon edit-btn require-auth" onclick="abrirEdicaoProduto('${k}')">✎</button><button class="action-icon info-btn" onclick="verDetalhesProduto('${k}')">ⓘ</button><span class="col-item">${p.nome || ''}</span></div></td><td style="text-align:right">${renderizarTotalLinhaDupla(total, tam)}</td></tr>`;
-            }).join('');
+            const dw = new Date(y, m-1, d).getDay();
+            const selPer = document.getElementById('res-periodo');
+            selPer.innerHTML = dw === 0 ? '<option value="dia">Dia</option>' : '<option value="dia">Dia</option><option value="tarde_noite">Tarde/Noite</option>';
+            
+            atualizarFormReserva(); 
+            document.getElementById('res-nome').value = "";
+            renderizarReservasDia();
+            navegar('agenda-detalhe');
         }
 
-        function verArea(key, nome) {
-            areaAtualKey = key; navegar('detalhe-area'); document.getElementById('area-display-name').innerText = nome;
-            let maxFardo = 1;
-            const itensArea = Object.keys(produtos).filter(pk => produtos[pk] && (produtos[pk].locais || []).includes(nome));
-            itensArea.forEach(pk => getCategoriasProduto(produtos[pk]).forEach(cn => { const c = Object.values(categorias).find(x => x.nome === cn); if(c && c.unidadesFardo > maxFardo) maxFardo = Number(c.unidadesFardo); }));
+        function renderizarReservasDia() {
+            const lista = reservasApp[dataAtualReserva] || {};
+            const dw = new Date(dataAtualReserva + 'T12:00:00').getDay();
+            let endStr = "- 01:00"; if(dw===2) endStr="- 22:00"; else if(dw===3||dw===4) endStr="- 23:00";
             
-            document.getElementById('head-area-itens').innerHTML = `<tr><th>Item</th><th style="text-align:center">${maxFardo>1?`Fds. (${maxFardo}u)`:'Fardos'}</th><th style="text-align:center">Un.</th><th style="text-align:right">Total</th></tr>`;
-            document.getElementById('tabela-area-itens').innerHTML = itensArea.map(pk => {
-                const p = produtos[pk]; if(!p) return '';
-                let tam = 1; getCategoriasProduto(p).forEach(cn => { const c = Object.values(categorias).find(x => x.nome === cn); if(c && c.unidadesFardo > tam) tam = Number(c.unidadesFardo); });
-                const val = p.estoque?.[nome] || {f:0, u:0};
-                return `<tr><td><div style="display:flex; align-items:center;"><button class="action-icon info-btn" onclick="verDetalhesProduto('${pk}')">ⓘ</button><span class="col-item">${p.nome || ''}</span></div></td><td style="text-align:center"><input type="number" class="input-qtd" id="f-${pk}" value="${val.f||0}" oninput="attEst('${pk}','${nome}',${tam})" ${tam<=1?'disabled style="opacity:0.5"':''}></td><td style="text-align:center"><input type="number" class="input-qtd" id="u-${pk}" value="${val.u||0}" oninput="attEst('${pk}','${nome}',${tam})"></td><td style="text-align:right" id="tot-cell-${pk}">${renderizarTotalLinhaDupla((val.f||0)*tam+(val.u||0), tam)}</td></tr>`;
-            }).join('');
+            const html = Object.keys(lista).map(k => {
+                const r = lista[k];
+                const hor = r.periodo === 'dia' ? '12:00 - 18:00' : `${r.horario} ${endStr}`;
+                const btnExcluir = isAdmin ? `<span style="color:red; font-size:0.8rem; cursor:pointer; font-weight:bold;" onclick="excluirReserva('${k}')">Excluir</span>` : '';
+                return `<div style="padding:12px; border:1px solid var(--border-color); border-radius:8px; background:var(--row-even); margin-bottom:8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;"><strong style="font-size:1.05rem; color:var(--bg-sidebar);">${r.nome}</strong>${btnExcluir}</div>
+                    <div style="font-size:0.85rem; color:#64748b; margin-top:6px; display:flex; flex-direction:column; gap:3px;">
+                        <span>📍 ${r.area} <strong>(${r.lugares} lug.)</strong></span><span>⏰ ${hor}</span>
+                    </div>
+                </div>`;
+            }).join('') || `<p style="font-size:0.85rem; color:#64748b; text-align:center; margin-top:20px;">Nenhuma reserva para este dia.</p>`;
+            document.getElementById('lista-reservas-dia').innerHTML = html;
         }
 
-        function attEst(pk, ar, tam) {
+        function calcDisp(data, periodo, area) {
+            let max = areasAgenda[area] || 0, ocupados = 0;
+            const resDia = reservasApp[data] || {};
+            const isTable = (area === 'Salão 2 - Mesas Redondas' || area === 'Salão 2 - Bistrôs');
+            for (let k in resDia) {
+                if (resDia[k].area === area && resDia[k].periodo === periodo) ocupados += isTable ? 1 : (Number(resDia[k].lugares) || 0);
+            }
+            return max - ocupados;
+        }
+
+        function atualizarFormReserva() {
+            const per = document.getElementById('res-periodo').value;
+            const area = document.getElementById('res-area').value;
+            const inputLug = document.getElementById('res-lugares');
+            
+            document.getElementById('res-time-dia').style.display = per === 'dia' ? 'block' : 'none'; 
+            document.getElementById('res-time-tarde').style.display = per === 'dia' ? 'none' : 'flex';
+            
+            const dw = new Date(dataAtualReserva + 'T12:00:00').getDay();
+            let endStr = "- 01:00"; if(dw===2) endStr="- 22:00"; else if(dw===3||dw===4) endStr="- 23:00";
+            document.getElementById('res-time-tarde-end').innerText = endStr;
+            
+            const maxLugs = areasAgenda[area];
+            const isTable = (area === 'Salão 2 - Mesas Redondas' || area === 'Salão 2 - Bistrôs');
+            const disponiveis = calcDisp(dataAtualReserva, per, area);
+            
+            document.getElementById('res-lbl-max').innerText = isTable ? `${Math.max(0, disponiveis)} mesas livres de ${maxLugs}` : `${Math.max(0, disponiveis)} livres de ${maxLugs}`;
+            
+            if(isTable) {
+                inputLug.value = 2; 
+                inputLug.readOnly = true; 
+                inputLug.style.background = "#e2e8f0";
+            } else {
+                inputLug.readOnly = false; 
+                inputLug.style.background = "#fff";
+                inputLug.max = disponiveis;
+            }
+        }
+
+        function salvarReserva() {
             if(!isAdmin) return;
-            const f = Number(document.getElementById(`f-${pk}`).value) || 0;
-            const u = Number(document.getElementById(`u-${pk}`).value) || 0;
-            db.ref(`produtos/${pk}/estoque/${ar}`).set({ f, u });
-            document.getElementById(`tot-cell-${pk}`).innerHTML = renderizarTotalLinhaDupla(f*tam+u, tam);
-        }
-
-        function verDetalhesProduto(key) {
-            const p = produtos[key]; if(!p) return;
-            navegar('detalhe-produto'); document.getElementById('span-titulo-prod').innerText = p.nome || '';
-            let tam = 1; const pCats = getCategoriasProduto(p);
-            pCats.forEach(cn => { const cObj = Object.values(categorias).find(c => c.nome === cn); if(cObj && cObj.unidadesFardo > tam) tam = Number(cObj.unidadesFardo); });
+            const nome = document.getElementById('res-nome').value.trim();
+            const per = document.getElementById('res-periodo').value;
+            const hor = per === 'dia' ? '12:00' : document.getElementById('res-horario-tarde').value;
+            const area = document.getElementById('res-area').value;
             
-            let totGlob = 0;
-            document.getElementById('tabela-locais-produto').innerHTML = (p.locais || []).map(loc => {
-                const a = areas.find(x => x.nome === loc); 
-                const val = p.estoque?.[loc] || {f:0,u:0};
-                const q = (val.f||0)*tam + (val.u||0); totGlob += q;
-                return `<tr><td><div style="display:flex; align-items:center; gap:8px;"><button class="action-icon info-btn" onclick="verArea('${a?.key}', '${loc}')">ⓘ</button><span>${loc} ${obterEmoji(loc)}</span></div></td><td style="text-align:right">${renderizarTotalLinhaDupla(q, tam)}</td></tr>`;
-            }).join('');
+            const isTable = (area === 'Salão 2 - Mesas Redondas' || area === 'Salão 2 - Bistrôs');
+            let lug = isTable ? 2 : (parseInt(document.getElementById('res-lugares').value) || 0);
+            
+            if(!nome) { alert("Dê um nome para a reserva."); return; }
+            if(lug <= 0) { alert("Número de lugares inválido."); return; }
+            
+            const disponiveis = calcDisp(dataAtualReserva, per, area);
+            
+            if (isTable) {
+                if (disponiveis <= 0) { alert(`Impossível realizar reserva!\nTodas as mesas da área "${area}" já estão reservadas.`); return; }
+            } else {
+                if (lug > disponiveis) { alert(`Impossível realizar reserva!\nA área "${area}" possui apenas ${disponiveis} lugares livres.`); return; }
+            }
 
-            document.getElementById('info-extra-prod').innerHTML = `<div style="padding: 12px; background: var(--row-even); border-radius: 8px; border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
-                <div><strong style="color: var(--primary);">Categorias:</strong> <span style="color: #64748b;">${pCats.length > 0 ? pCats.join(', ') : 'Nenhuma'}</span></div>
-                <div><strong style="color: var(--primary);">Método:</strong> <span style="color: #64748b;">${p.metodoCompra || "Não atribuído"}</span></div>
-                <div><strong style="color: var(--primary);">Estoque Mín.:</strong> <span style="color: #64748b;">${p.estoqueMinimo || 0} ${tam > 1 ? 'Fardos' : 'Unidades'}</span></div>
-                <div><strong style="color: var(--primary);">Fardos Fechados:</strong> <span style="color: #64748b;">${Math.floor(totGlob/tam)} Fardos (Total Geral)</span></div></div>`;
+            db.ref(`reservas/${dataAtualReserva}`).push({ nome, periodo: per, horario: hor, area, lugares: lug });
+            document.getElementById('res-nome').value = ""; document.getElementById('res-lugares').value = "";
         }
 
-        // CONFIGS MÉTODOS E CATEGORIAS
-        function renderizarMetodosConfig() {
-            document.getElementById('lista-metodos-config').innerHTML = Object.keys(metodosCompra).map(k => `<div class="preset-config-item"><div style="display:flex; align-items:center;"><button class="action-icon edit-btn" onclick="editarMetodo('${k}')">✎</button><button class="action-icon add-btn" onclick="abrirAtribuirMetodo('${k}')">➕</button><strong style="font-size:1.05rem; margin-left:5px;">${obterEmoji(metodosCompra[k].nome)} ${metodosCompra[k].nome}</strong><span style="margin-left:auto; color:red; cursor:pointer; font-size:0.9rem;" onclick="prepararExclusaoMet('${k}')">Excluir</span></div></div>`).join('');
-        }
-        function salvarMetodo() { const id = document.getElementById('edit-met-id').value, n = document.getElementById('met-nome').value; if(n) { if(id) { const old = metodosCompra[id].nome; db.ref('metodos/'+id).update({nome:n}).then(()=>{ if(old!==n) Object.keys(produtos).forEach(pk=>{ if(produtos[pk]&&produtos[pk].metodoCompra===old) db.ref('produtos/'+pk).update({metodoCompra:n}); }); }); } else db.ref('metodos').push({nome:n}); resetarFormMetodo(); } }
-        function editarMetodo(k) { const m = metodosCompra[k]; document.getElementById('edit-met-id').value = k; document.getElementById('met-nome').value = m.nome; document.getElementById('btn-salvar-met').innerText = "Atualizar"; document.getElementById('btn-cancelar-met').style.display = "inline-block"; }
-        function resetarFormMetodo() { document.getElementById('edit-met-id').value = ""; document.getElementById('met-nome').value = ""; document.getElementById('btn-salvar-met').innerText = "Salvar Método"; document.getElementById('btn-cancelar-met').style.display = "none"; }
-        function renderizarPresetsMetodos() { const vn = document.getElementById('prod-metodo-selecionado').value, ve = document.getElementById('edit-prod-metodo-selecionado').value; document.getElementById('metodos-container').innerHTML = Object.keys(metodosCompra).map(k => `<div class="chip ${vn===metodosCompra[k].nome?'active-chip':''}" onclick="selecionarMetodo('${k}','novo')">${obterEmoji(metodosCompra[k].nome)} ${metodosCompra[k].nome}</div>`).join(''); document.getElementById('edit-metodos-container').innerHTML = Object.keys(metodosCompra).map(k => `<div class="chip ${ve===metodosCompra[k].nome?'active-chip':''}" onclick="selecionarMetodo('${k}','edit')">${obterEmoji(metodosCompra[k].nome)} ${metodosCompra[k].nome}</div>`).join(''); }
-        function selecionarMetodo(k, ctx) { document.getElementById(ctx==='novo'?'prod-metodo-selecionado':'edit-prod-metodo-selecionado').value = metodosCompra[k].nome; renderizarPresetsMetodos(); }
+        function excluirReserva(k) { if(isAdmin && confirm("Excluir esta reserva?")) db.ref(`reservas/${dataAtualReserva}/${k}`).remove(); }
+        // ------------------------------------------
 
-        function salvarCategoria() {
-            const id = document.getElementById('edit-cat-id').value, n = document.getElementById('cat-nome').value, use = document.getElementById('cat-uso-fardo').checked, tam = use ? Number(document.getElementById('cat-qtd-fardo').value) : 1;
-            const sel = Array.from(document.querySelectorAll('#cat-checks-areas input:checked')).map(i => i.value);
-            if(n && sel.length) { const d = {nome:n, areas:sel, unidadesFardo:tam}; if(id) { const old = categorias[id].nome; db.ref('categorias/'+id).update(d).then(()=>{ if(old!==n) Object.keys(produtos).forEach(pk=>{ if(!produtos[pk]) return; let pC = getCategoriasProduto(produtos[pk]); if(pC.includes(old)) db.ref('produtos/'+pk).update({categorias: pC.map(c=>c===old?n:c), categoria:null}); }); }); } else db.ref('categorias').push(d); resetarFormCategoria(); }
-        }
-        function renderizarPresets() {
-            document.getElementById('presets-container').innerHTML = Object.keys(categorias).map(k => `<div class="chip ${catsNovo.includes(categorias[k].nome)?'active-chip':''}" onclick="togglePreset('${k}','novo')">${obterEmoji(categorias[k].nome)} ${categorias[k].nome}</div>`).join('');
-            document.getElementById('edit-presets-container').innerHTML = Object.keys(categorias).map(k => `<div class="chip ${catsEdit.includes(categorias[k].nome)?'active-chip':''}" onclick="togglePreset('${k}','edit')">${obterEmoji(categorias[k].nome)} ${categorias[k].nome}</div>`).join('');
-            document.getElementById('lista-categorias-config').innerHTML = Object.keys(categorias).map(k => { const c = categorias[k]; return `<div class="preset-config-item"><div style="display:flex; align-items:center;"><button class="action-icon edit-btn" onclick="editarCategoria('${k}')">✎</button><button class="action-icon info-btn" onclick="document.getElementById('det-${k}').classList.toggle('active')">ⓘ</button><button class="action-icon add-btn" onclick="abrirAtribuirCategoria('${k}')">➕</button><strong style="font-size:1.05rem; margin-left:5px;">${obterEmoji(c.nome)} ${c.nome}</strong><span style="margin-left:auto; color:red; cursor:pointer; font-size:0.85rem;" onclick="prepararExclusaoCat('${k}')">Excluir</span></div><div id="det-${k}" class="preset-details"><strong style="display:block; margin-bottom:8px;">Áreas vinculadas:</strong>${(c.areas||[]).map(a=>`<div class="preset-area-item">📍 ${a}</div>`).join('')}<div style="margin-top:10px; color:${c.unidadesFardo>1?'var(--primary)':'#64748b'}; font-weight:600;">📦 ${c.unidadesFardo>1?`Fardos de ${c.unidadesFardo} un.`:'Não usa fardos'}</div></div></div>`; }).join('');
-        }
-
-        function abrirAtribuirCategoria(k) {
-            const cat = categorias[k]; document.getElementById('atribuir-cat-id').value = k; document.getElementById('titulo-atribuir-cat').innerText = `Atribuir: ${cat.nome}`;
-            const pKeys = Object.keys(produtos).filter(pk => produtos[pk] && produtos[pk].nome).sort((a,b) => { const hasA = getCategoriasProduto(produtos[a]).includes(cat.nome)?1:0; const hasB = getCategoriasProduto(produtos[b]).includes(cat.nome)?1:0; return hasA!==hasB ? hasB-hasA : produtos[a].nome.localeCompare(produtos[b].nome); });
-            document.getElementById('lista-produtos-atribuir').innerHTML = pKeys.map(pk => { const p = produtos[pk]; const has = getCategoriasProduto(p).includes(cat.nome); const out = getCategoriasProduto(p).filter(c=>c!==cat.nome).length; return `<label class="check-item" style="padding:15px 10px; border:1px solid ${has?'var(--primary)':'var(--border-color)'}; border-radius:10px; background:${has?'#fff5f5':'#fff'}; margin-bottom:0; display:flex; align-items:center; cursor:pointer;"><input type="checkbox" value="${pk}" ${has?'checked':''} style="width:22px; height:22px; accent-color:var(--primary); margin-right:12px;"><strong style="font-size:1.05rem;">${p.nome}</strong><span style="font-size:0.65rem; background:${out>0||has?'#e2e8f0':'#fee2e2'}; color:${out>0||has?'#64748b':'#b91c1c'}; padding:4px 8px; border-radius:12px; margin-left:auto;">${out>0?`+ ${out} cat.`:(has?'OK':'Vazio')}</span></label>`; }).join('');
-            navegar('atribuir-categoria');
-        }
-        function salvarAtribuicaoCategoria() { const n = categorias[document.getElementById('atribuir-cat-id').value].nome; const upds = {}; document.querySelectorAll('#lista-produtos-atribuir input[type="checkbox"]').forEach(cb => { const p = produtos[cb.value]; if(!p) return; let pc = getCategoriasProduto(p); let ch = false; if(cb.checked && !pc.includes(n)){ pc.push(n); ch=true; } else if(!cb.checked && pc.includes(n)){ pc = pc.filter(c=>c!==n); ch=true; } if(ch) { upds[`produtos/${cb.value}/categorias`] = pc.length>0?pc:null; upds[`produtos/${cb.value}/categoria`] = null; } }); if(Object.keys(upds).length>0) db.ref().update(upds).then(()=>navegar('configuracoes')); else navegar('configuracoes'); }
-
-        function abrirAtribuirMetodo(k) {
-            const met = metodosCompra[k]; document.getElementById('atribuir-met-id').value = k; document.getElementById('titulo-atribuir-met').innerText = `Atribuir: ${met.nome}`;
-            const pKeys = Object.keys(produtos).filter(pk => produtos[pk] && produtos[pk].nome).sort((a,b) => { const hA = produtos[a].metodoCompra===met.nome?1:0; const hB = produtos[b].metodoCompra===met.nome?1:0; return hA!==hB ? hB-hA : produtos[a].nome.localeCompare(produtos[b].nome); });
-            document.getElementById('lista-produtos-atribuir-met').innerHTML = pKeys.map(pk => { const p = produtos[pk]; const has = p.metodoCompra===met.nome; const out = p.metodoCompra && p.metodoCompra!==met.nome; return `<label class="check-item" style="padding:15px 10px; border:1px solid ${has?'var(--primary)':'var(--border-color)'}; border-radius:10px; background:${has?'#fff5f5':'#fff'}; margin-bottom:0; display:flex; align-items:center; cursor:pointer;"><input type="checkbox" value="${pk}" ${has?'checked':''} style="width:22px; height:22px; accent-color:var(--primary); margin-right:12px;"><strong style="font-size:1.05rem;">${p.nome}</strong><span style="font-size:0.65rem; background:${out?'#e2e8f0':(has?'#e2e8f0':'#fee2e2')}; color:${out?'#64748b':(has?'#64748b':'#b91c1c')}; padding:4px 8px; border-radius:12px; margin-left:auto;">${out?`Atual: ${p.metodoCompra}`:(has?'OK':'Sem método')}</span></label>`; }).join('');
-            navegar('atribuir-metodo');
-        }
-        function salvarAtribuicaoMetodo() { const n = metodosCompra[document.getElementById('atribuir-met-id').value].nome; const upds = {}; document.querySelectorAll('#lista-produtos-atribuir-met input[type="checkbox"]').forEach(cb => { const p = produtos[cb.value]; if(!p) return; let ch = false, nm = p.metodoCompra; if(cb.checked && p.metodoCompra!==n){ nm=n; ch=true; } else if(!cb.checked && p.metodoCompra===n){ nm=null; ch=true; } if(ch) upds[`produtos/${cb.value}/metodoCompra`] = nm; }); if(Object.keys(upds).length>0) db.ref().update(upds).then(()=>navegar('configuracoes')); else navegar('configuracoes'); }
-
-        function togglePreset(k, ctx) { const cat = categorias[k], t = ctx==='novo'?'checks-areas':'edit-checks-areas', arr = ctx==='novo'?catsNovo:catsEdit; const idx = arr.indexOf(cat.nome); if(idx>-1) arr.splice(idx,1); else { arr.push(cat.nome); document.querySelectorAll(`#${t} input`).forEach(cb=>{ if(cat.areas&&cat.areas.includes(cb.value)) cb.checked=true; }); } atualizarLabelEstoqueMinimo(ctx, arr); renderizarPresets(); }
-        function editarCategoria(k) { const c = categorias[k]; document.getElementById('edit-cat-id').value = k; document.getElementById('cat-nome').value = c.nome; document.getElementById('cat-uso-fardo').checked = c.unidadesFardo>1; document.getElementById('cat-qtd-fardo').value = c.unidadesFardo; toggleFardoInput(); document.querySelectorAll('#cat-checks-areas input').forEach(cb=>cb.checked=c.areas&&c.areas.includes(cb.value)); document.getElementById('btn-salvar-cat').innerText = "Atualizar"; document.getElementById('btn-cancelar-cat').style.display = "block"; window.scrollTo({top:0}); }
-        function resetarFormCategoria() { document.getElementById('edit-cat-id').value = ""; document.getElementById('cat-nome').value = ""; document.getElementById('cat-uso-fardo').checked = false; document.getElementById('cat-qtd-fardo').value = ""; toggleFardoInput(); document.querySelectorAll('#cat-checks-areas input').forEach(cb=>cb.checked=false); document.getElementById('btn-salvar-cat').innerText = "Criar"; document.getElementById('btn-cancelar-cat').style.display = "none"; }
-        function renderizarChecksConfig() { document.getElementById('cat-checks-areas').innerHTML = areas.map(a => `<label class="check-item"><input type="checkbox" value="${a.nome}"> <span>${a.nome}</span></label>`).join(''); }
-
-        function abrirCadastro(id) { if(id==='novo-produto') { document.getElementById('checks-areas').innerHTML = areas.map(a => `<label class="check-item"><input type="checkbox" value="${a.nome}"> <span>${a.nome}</span></label>`).join(''); document.getElementById('prod-nome').value = ""; document.getElementById('prod-metodo-selecionado').value = ""; document.getElementById('prod-estoque-minimo').value = "0"; catsNovo = []; atualizarLabelEstoqueMinimo('novo', catsNovo); renderizarPresets(); renderizarPresetsMetodos(); } navegar(id); }
-        function salvarArea() { const n = document.getElementById('area-nome').value; if(n) { db.ref('areas').push(n); document.getElementById('area-nome').value=""; navegar('areas-lista'); } }
-        function salvarProduto() { const n = document.getElementById('prod-nome').value, met = document.getElementById('prod-metodo-selecionado').value, min = Number(document.getElementById('prod-estoque-minimo').value)||0; if(!met){ alert("Selecione um Método de Compra."); return; } const s = Array.from(document.querySelectorAll('#checks-areas input:checked')).map(i=>i.value); if(n && s.length){ const e = {}; s.forEach(x=>e[x]={f:0,u:0}); db.ref('produtos').push({nome:n, categorias:catsNovo.length>0?catsNovo:null, metodoCompra:met, estoqueMinimo:min, locais:s, estoque:e}); document.getElementById('prod-nome').value=""; navegar('produtos-categorias'); } else alert("Assinale uma área vinculada."); }
-        function abrirEdicaoProduto(k) { const p = produtos[k]; document.getElementById('edit-prod-id').value = k; document.getElementById('edit-prod-nome').value = p.nome; document.getElementById('edit-prod-metodo-selecionado').value = p.metodoCompra||""; document.getElementById('edit-prod-estoque-minimo').value = p.estoqueMinimo||0; catsEdit = getCategoriasProduto(p); atualizarLabelEstoqueMinimo('edit', catsEdit); renderizarPresets(); renderizarPresetsMetodos(); document.getElementById('edit-checks-areas').innerHTML = areas.map(a => `<label class="check-item"><input type="checkbox" value="${a.nome}" ${(p.locais||[]).includes(a.nome)?'checked':''}> <span>${a.nome}</span></label>`).join(''); navegar('editar-produto'); }
-        function salvarEdicaoProduto() { const id = document.getElementById('edit-prod-id').value, n = document.getElementById('edit-prod-nome').value, met = document.getElementById('edit-prod-metodo-selecionado').value, min = Number(document.getElementById('edit-prod-estoque-minimo').value)||0; if(!met){ alert("Selecione um Método de Compra."); return; } const l = Array.from(document.querySelectorAll('#edit-checks-areas input:checked')).map(i=>i.value); db.ref('produtos/'+id).update({nome:n, categorias:catsEdit.length>0?catsEdit:null, categoria:null, metodoCompra:met, estoqueMinimo:min, locais:l.length>0?l:null}); navegar('produtos-categorias'); }
-        
-        function habilitarEdicaoArea() { document.getElementById('area-edit-box').style.display = 'block'; }
-        function salvarNovoNomeArea() { const nv = document.getElementById('edit-area-input').value, ant = document.getElementById('area-display-name').innerText; if(nv && areaAtualKey && nv!==ant) { db.ref('areas/'+areaAtualKey).set(nv).then(()=>{ Object.keys(produtos).forEach(pk=>{ if(!produtos[pk]) return; let p = produtos[pk], upd = false, locs = p.locais||[], est = p.estoque||{}; if(locs.includes(ant)) { locs = locs.map(l=>l===ant?nv:l); upd = true; } if(est[ant]!==undefined) { est[nv] = est[ant]; delete est[ant]; upd = true; } if(upd) db.ref('produtos/'+pk).update({locais:locs, estoque:est}); }); document.getElementById('area-edit-box').style.display = 'none'; document.getElementById('edit-area-input').value = ""; }); } }
-        
-        function prepararExclusaoArea() { document.getElementById('modalMsg').innerHTML = `Excluir área <strong>${document.getElementById('area-display-name').innerText}</strong>?`; document.getElementById('modalDelete').style.display = 'flex'; document.getElementById('confirmDeleteBtn').onclick = () => { db.ref('areas/'+areaAtualKey).remove(); fecharModal(); navegar('areas-lista'); }; }
-        function prepararExclusaoProd() { document.getElementById('modalMsg').innerHTML = `Excluir produto <strong>${document.getElementById('edit-prod-nome').value}</strong>?`; document.getElementById('modalDelete').style.display = 'flex'; document.getElementById('confirmDeleteBtn').onclick = () => { db.ref('produtos/'+document.getElementById('edit-prod-id').value).remove(); fecharModal(); navegar('produtos-categorias'); }; }
-        function prepararExclusaoCat(k) { document.getElementById('modalMsg').innerHTML = `Excluir preset <strong>${categorias[k].nome}</strong>?`; document.getElementById('modalDelete').style.display = 'flex'; document.getElementById('confirmDeleteBtn').onclick = () => { db.ref('categorias/'+k).remove(); fecharModal(); }; }
-        function prepararExclusaoMet(k) { document.getElementById('modalMsg').innerHTML = `Excluir método <strong>${metodosCompra[k].nome}</strong>?`; document.getElementById('modalDelete').style.display = 'flex'; document.getElementById('confirmDeleteBtn').onclick = () => { db.ref('metodos/'+k).remove(); fecharModal(); }; }
+        // OUTRAS FUNÇÕES DO SISTEMA
+        function atualizarLabelEstoqueMinimo(ctx, selectedCats) { let maxFardo=1; selectedCats.forEach(cn=>{ const c = Object.values(categorias).find(x=>x.nome===cn); if(c && c.unidadesFardo>maxFardo) maxFardo=Number(c.unidadesFardo); }); document.getElementById(ctx==='novo'?'lbl-estoque-minimo-novo':'lbl-estoque-minimo-edit').innerText=maxFardo>1?"(Fardos)":"(Un.)"; }
+        function renderizarTotalLinhaDupla(total, tam) { const tf = tam>1?tam:1; return `<div class="total-container"><span class="total-fardos">${Math.floor(total/tf)} Fardos</span><span class="total-unidades">${total%tf} Un. Soltas</span></div>`; }
+        function renderizarAreas() { document.getElementById('grid-areas').innerHTML = areas.map(a => `<div class="card-nav" onclick="verArea('${a.key}', '${a.nome}')"><i>${obterEmoji(a.nome)}</i><h3>${a.nome}</h3></div>`).join(''); }
+        function renderizarPedidosMetodos() { document.getElementById('grid-pedidos-metodos').innerHTML = Object.keys(metodosCompra).map(k => `<div class="card-nav" onclick="verPedidoPorMetodo('${k}')"><i>${obterEmoji(metodosCompra[k].nome)}</i><h3>${metodosCompra[k].nome}</h3></div>`).join(''); }
+        function verPedidoPorMetodo(key) { navegar('pedidos-lista'); const met = metodosCompra[key].nome; document.getElementById('titulo-pedido-metodo').innerText = `Pedidos: ${met}`; document.getElementById('tabela-pedidos-filtrada').innerHTML = Object.keys(produtos).filter(k=>produtos[k]&&produtos[k].metodoCompra===met).sort((a,b)=>produtos[a].nome.localeCompare(produtos[b].nome)).map(k=>{ const p=produtos[k]; let t=1; getCategoriasProduto(p).forEach(cn=>{const c=Object.values(categorias).find(x=>x.nome===cn);if(c&&c.unidadesFardo>t)t=Number(c.unidadesFardo);}); const fAt=Object.values(p.estoque||{}).reduce((ac,v)=>typeof v==='object'&&v!==null?ac+((Number(v.f)||0)*t)+(Number(v.u)||0):ac+Number(v||0),0)/t; const m=Number(p.estoqueMinimo||0); const sg=Math.ceil(Math.max(0,m-fAt)); const lb=t>1?'Fds.':'Un.'; return `<tr><td class="col-item">${p.nome}</td><td style="text-align:center;">${fAt%1===0?fAt:fAt.toFixed(1)} <br><small style="color:#64748b">${lb}</small></td><td style="text-align:center;">${m} <br><small style="color:#64748b">${lb}</small></td><td style="text-align:center; font-weight:800; font-size:1.1rem; color:${sg>0?'var(--primary)':'#10b981'}">${sg} <br><small style="font-weight:normal; font-size:0.75rem">${lb}</small></td></tr>`; }).join(''); }
+        function toggleAgrupamentoProdutos() { agrupamentoAtual = agrupamentoAtual==='categorias'?'metodos':'categorias'; document.getElementById('btn-toggle-grupo').innerHTML = agrupamentoAtual==='categorias'?'🔄 Agrupar: Categorias':'🔄 Agrupar: Métodos Compra'; renderizarGradeAgrupada(); }
+        function renderizarGradeAgrupada() { const g=document.getElementById('grid-produtos-agrupados'), ts=document.getElementById('tabela-produtos-sem-grupo'); if(!g||!ts)return; const isC=agrupamentoAtual==='categorias'; document.getElementById('titulo-aba-produtos').innerText=isC?"Categorias de Produtos":"Métodos de Compra"; document.getElementById('titulo-sem-grupo').innerText=isC?"Sem Categoria":"Sem Método de Compra"; g.innerHTML=Object.keys(isC?categorias:metodosCompra).map(k=>`<div class="card-nav" onclick="verGrupo('${k}', '${isC?'categoria':'metodo'}')"><i>${obterEmoji(isC?categorias[k].nome:metodosCompra[k].nome)}</i><h3>${isC?categorias[k].nome:metodosCompra[k].nome}</h3></div>`).join(''); ts.innerHTML=Object.keys(produtos).filter(k=>produtos[k]&&(isC?getCategoriasProduto(produtos[k]).length===0:!produtos[k].metodoCompra)).map(k=>{ const p=produtos[k]; const t=Object.values(p.estoque||{}).reduce((a,v)=>typeof v==='object'&&v!==null?a+(Number(v.f)||0)+(Number(v.u)||0):a+Number(v||0),0); return `<tr><td><div style="display:flex; align-items:center;"><button class="action-icon edit-btn require-auth" onclick="abrirEdicaoProduto('${k}')">✎</button><button class="action-icon info-btn" onclick="verDetalhesProduto('${k}')">ⓘ</button><span class="col-item">${p.nome||''}</span></div></td><td style="text-align:right">${renderizarTotalLinhaDupla(t,1)}</td></tr>`; }).join(''); }
+        function verGrupo(key, tipo) { navegar('produtos-lista-filtrada'); const n = tipo==='categoria'?categorias[key].nome:metodosCompra[key].nome; document.getElementById('titulo-categoria-filtrada').innerText = n; document.getElementById('tabela-produtos-filtrada').innerHTML = Object.keys(produtos).filter(k=>produtos[k]&&(tipo==='categoria'?getCategoriasProduto(produtos[k]).includes(n):produtos[k].metodoCompra===n)).map(k=>{ const p=produtos[k]; let t=1; getCategoriasProduto(p).forEach(cn=>{const c=Object.values(categorias).find(x=>x.nome===cn);if(c&&c.unidadesFardo>t)t=Number(c.unidadesFardo);}); const tot=Object.values(p.estoque||{}).reduce((a,v)=>typeof v==='object'&&v!==null?a+((Number(v.f)||0)*t)+(Number(v.u)||0):a+Number(v||0),0); return `<tr><td><div style="display:flex; align-items:center;"><button class="action-icon edit-btn require-auth" onclick="abrirEdicaoProduto('${k}')">✎</button><button class="action-icon info-btn" onclick="verDetalhesProduto('${k}')">ⓘ</button><span class="col-item">${p.nome||''}</span></div></td><td style="text-align:right">${renderizarTotalLinhaDupla(tot,t)}</td></tr>`; }).join(''); }
+        function verArea(key, nome) { areaAtualKey=key; navegar('detalhe-area'); document.getElementById('area-display-name').innerText=nome; let max=1; const iA=Object.keys(produtos).filter(pk=>produtos[pk]&&(produtos[pk].locais||[]).includes(nome)); iA.forEach(pk=>getCategoriasProduto(produtos[pk]).forEach(cn=>{const c=Object.values(categorias).find(x=>x.nome===cn);if(c&&c.unidadesFardo>max)max=Number(c.unidadesFardo);})); document.getElementById('head-area-itens').innerHTML=`<tr><th>Item</th><th style="text-align:center">${max>1?`Fds. (${max}u)`:'Fardos'}</th><th style="text-align:center">Un.</th><th style="text-align:right">Total</th></tr>`; document.getElementById('tabela-area-itens').innerHTML=iA.map(pk=>{ const p=produtos[pk]; let t=1; getCategoriasProduto(p).forEach(cn=>{const c=Object.values(categorias).find(x=>x.nome===cn);if(c&&c.unidadesFardo>t)t=Number(c.unidadesFardo);}); const v=p.estoque?.[nome]||{f:0,u:0}; return `<tr><td><div style="display:flex; align-items:center;"><button class="action-icon info-btn" onclick="verDetalhesProduto('${pk}')">ⓘ</button><span class="col-item">${p.nome||''}</span></div></td><td style="text-align:center"><input type="number" class="input-qtd" id="f-${pk}" value="${v.f||0}" oninput="attEst('${pk}','${nome}',${t})" ${t<=1?'disabled style="opacity:0.5"':''}></td><td style="text-align:center"><input type="number" class="input-qtd" id="u-${pk}" value="${v.u||0}" oninput="attEst('${pk}','${nome}',${t})"></td><td style="text-align:right" id="tot-cell-${pk}">${renderizarTotalLinhaDupla((v.f||0)*t+(v.u||0),t)}</td></tr>`; }).join(''); }
+        function attEst(pk, ar, tam) { if(!isAdmin)return; const f=Number(document.getElementById(`f-${pk}`).value)||0, u=Number(document.getElementById(`u-${pk}`).value)||0; db.ref(`produtos/${pk}/estoque/${ar}`).set({f,u}); document.getElementById(`tot-cell-${pk}`).innerHTML=renderizarTotalLinhaDupla(f*tam+u,tam); }
+        function verDetalhesProduto(key) { const p=produtos[key]; if(!p)return; navegar('detalhe-produto'); document.getElementById('span-titulo-prod').innerText=p.nome||''; let t=1; const pC=getCategoriasProduto(p); pC.forEach(cn=>{const c=Object.values(categorias).find(x=>x.nome===cn);if(c&&c.unidadesFardo>t)t=Number(c.unidadesFardo);}); let tG=0; document.getElementById('tabela-locais-produto').innerHTML=(p.locais||[]).map(loc=>{ const a=areas.find(x=>x.nome===loc); const v=p.estoque?.[loc]||{f:0,u:0}; const q=(v.f||0)*t+(v.u||0); tG+=q; return `<tr><td><div style="display:flex; align-items:center; gap:8px;"><button class="action-icon info-btn" onclick="verArea('${a?.key}', '${loc}')">ⓘ</button><span>${loc} ${obterEmoji(loc)}</span></div></td><td style="text-align:right">${renderizarTotalLinhaDupla(q,t)}</td></tr>`; }).join(''); document.getElementById('info-extra-prod').innerHTML=`<div style="padding:12px; background:var(--row-even); border-radius:8px; border:1px solid var(--border-color); display:flex; flex-direction:column; gap:8px; margin-top:10px;"><div><strong style="color:var(--primary);">Categorias:</strong> <span style="color:#64748b;">${pC.length>0?pC.join(', '):'Nenhuma'}</span></div><div><strong style="color:var(--primary);">Método:</strong> <span style="color:#64748b;">${p.metodoCompra||"Não atribuído"}</span></div><div><strong style="color:var(--primary);">Estoque Mín.:</strong> <span style="color:#64748b;">${p.estoqueMinimo||0} ${t>1?'Fardos':'Unidades'}</span></div><div><strong style="color:var(--primary);">Fardos Fechados:</strong> <span style="color:#64748b;">${Math.floor(tG/t)} Fardos (Geral)</span></div></div>`; }
+        function renderizarMetodosConfig() { document.getElementById('lista-metodos-config').innerHTML = Object.keys(metodosCompra).map(k=>`<div class="preset-config-item"><div style="display:flex; align-items:center;"><button class="action-icon edit-btn" onclick="editarMetodo('${k}')">✎</button><button class="action-icon add-btn" onclick="abrirAtribuirMetodo('${k}')">➕</button><strong style="font-size:1.05rem; margin-left:5px;">${obterEmoji(metodosCompra[k].nome)} ${metodosCompra[k].nome}</strong><span style="margin-left:auto; color:red; cursor:pointer;" onclick="prepararExclusaoMet('${k}')">Excluir</span></div></div>`).join(''); }
+        function salvarMetodo() { const id=document.getElementById('edit-met-id').value, n=document.getElementById('met-nome').value; if(n){ if(id){ const old=metodosCompra[id].nome; db.ref('metodos/'+id).update({nome:n}).then(()=>{if(old!==n)Object.keys(produtos).forEach(pk=>{if(produtos[pk]&&produtos[pk].metodoCompra===old)db.ref('produtos/'+pk).update({metodoCompra:n});});}); }else db.ref('metodos').push({nome:n}); resetarFormMetodo(); } }
+        function editarMetodo(k) { document.getElementById('edit-met-id').value=k; document.getElementById('met-nome').value=metodosCompra[k].nome; document.getElementById('btn-salvar-met').innerText="Atualizar"; document.getElementById('btn-cancelar-met').style.display="inline-block"; }
+        function resetarFormMetodo() { document.getElementById('edit-met-id').value=""; document.getElementById('met-nome').value=""; document.getElementById('btn-salvar-met').innerText="Salvar"; document.getElementById('btn-cancelar-met').style.display="none"; }
+        function renderizarPresetsMetodos() { const vN=document.getElementById('prod-metodo-selecionado').value, vE=document.getElementById('edit-prod-metodo-selecionado').value; document.getElementById('metodos-container').innerHTML=Object.keys(metodosCompra).map(k=>`<div class="chip ${vN===metodosCompra[k].nome?'active-chip':''}" onclick="selecionarMetodo('${k}','novo')">${obterEmoji(metodosCompra[k].nome)} ${metodosCompra[k].nome}</div>`).join(''); document.getElementById('edit-metodos-container').innerHTML=Object.keys(metodosCompra).map(k=>`<div class="chip ${vE===metodosCompra[k].nome?'active-chip':''}" onclick="selecionarMetodo('${k}','edit')">${obterEmoji(metodosCompra[k].nome)} ${metodosCompra[k].nome}</div>`).join(''); }
+        function selecionarMetodo(k, ctx) { document.getElementById(ctx==='novo'?'prod-metodo-selecionado':'edit-prod-metodo-selecionado').value=metodosCompra[k].nome; renderizarPresetsMetodos(); }
+        function salvarCategoria() { const id=document.getElementById('edit-cat-id').value, n=document.getElementById('cat-nome').value, u=document.getElementById('cat-uso-fardo').checked, t=u?Number(document.getElementById('cat-qtd-fardo').value):1, sel=Array.from(document.querySelectorAll('#cat-checks-areas input:checked')).map(i=>i.value); if(n&&sel.length){ const d={nome:n,areas:sel,unidadesFardo:t}; if(id){ const old=categorias[id].nome; db.ref('categorias/'+id).update(d).then(()=>{if(old!==n)Object.keys(produtos).forEach(pk=>{if(!produtos[pk])return;let pc=getCategoriasProduto(produtos[pk]);if(pc.includes(old))db.ref('produtos/'+pk).update({categorias:pc.map(c=>c===old?n:c),categoria:null});});}); }else db.ref('categorias').push(d); resetarFormCategoria(); } }
+        function renderizarPresets() { document.getElementById('presets-container').innerHTML=Object.keys(categorias).map(k=>`<div class="chip ${catsNovo.includes(categorias[k].nome)?'active-chip':''}" onclick="togglePreset('${k}','novo')">${obterEmoji(categorias[k].nome)} ${categorias[k].nome}</div>`).join(''); document.getElementById('edit-presets-container').innerHTML=Object.keys(categorias).map(k=>`<div class="chip ${catsEdit.includes(categorias[k].nome)?'active-chip':''}" onclick="togglePreset('${k}','edit')">${obterEmoji(categorias[k].nome)} ${categorias[k].nome}</div>`).join(''); document.getElementById('lista-categorias-config').innerHTML=Object.keys(categorias).map(k=>{ const c=categorias[k]; return `<div class="preset-config-item"><div style="display:flex; align-items:center;"><button class="action-icon edit-btn" onclick="editarCategoria('${k}')">✎</button><button class="action-icon info-btn" onclick="document.getElementById('det-${k}').classList.toggle('active')">ⓘ</button><button class="action-icon add-btn" onclick="abrirAtribuirCategoria('${k}')">➕</button><strong style="font-size:1.05rem; margin-left:5px;">${obterEmoji(c.nome)} ${c.nome}</strong><span style="margin-left:auto; color:red; cursor:pointer;" onclick="prepararExclusaoCat('${k}')">Excluir</span></div><div id="det-${k}" class="preset-details"><strong style="display:block; margin-bottom:8px;">Áreas vinculadas:</strong>${(c.areas||[]).map(a=>`<div class="preset-area-item">📍 ${a}</div>`).join('')}<div style="margin-top:10px; color:${c.unidadesFardo>1?'var(--primary)':'#64748b'}; font-weight:600;">📦 ${c.unidadesFardo>1?`Fds de ${c.unidadesFardo}u`:'Unidades'}</div></div></div>`; }).join(''); }
+        function abrirAtribuirCategoria(k) { const c=categorias[k]; document.getElementById('atribuir-cat-id').value=k; document.getElementById('titulo-atribuir-cat').innerText=`Atribuir: ${c.nome}`; document.getElementById('lista-produtos-atribuir').innerHTML=Object.keys(produtos).filter(pk=>produtos[pk]&&produtos[pk].nome).sort((a,b)=>{const hA=getCategoriasProduto(produtos[a]).includes(c.nome)?1:0; const hB=getCategoriasProduto(produtos[b]).includes(c.nome)?1:0; return hA!==hB?hB-hA:produtos[a].nome.localeCompare(produtos[b].nome);}).map(pk=>{ const p=produtos[pk], has=getCategoriasProduto(p).includes(c.nome), out=getCategoriasProduto(p).filter(x=>x!==c.nome).length; return `<label class="check-item" style="padding:15px 10px; border:1px solid ${has?'var(--primary)':'var(--border-color)'}; border-radius:10px; background:${has?'#fff5f5':'#fff'}; display:flex; align-items:center; cursor:pointer;"><input type="checkbox" value="${pk}" ${has?'checked':''} style="width:22px; height:22px; margin-right:12px;"><strong style="font-size:1.05rem;">${p.nome}</strong><span style="font-size:0.65rem; background:${out>0||has?'#e2e8f0':'#fee2e2'}; color:${out>0||has?'#64748b':'#b91c1c'}; padding:4px 8px; border-radius:12px; margin-left:auto;">${out>0?`+${out} cat`:(has?'OK':'Vazio')}</span></label>`; }).join(''); navegar('atribuir-categoria'); }
+        function salvarAtribuicaoCategoria() { const n=categorias[document.getElementById('atribuir-cat-id').value].nome, u={}; document.querySelectorAll('#lista-produtos-atribuir input:checked, #lista-produtos-atribuir input:not(:checked)').forEach(cb=>{ const p=produtos[cb.value]; if(!p)return; let pc=getCategoriasProduto(p), ch=false; if(cb.checked&&!pc.includes(n)){pc.push(n);ch=true;}else if(!cb.checked&&pc.includes(n)){pc=pc.filter(x=>x!==n);ch=true;} if(ch){u[`produtos/${cb.value}/categorias`]=pc.length?pc:null;u[`produtos/${cb.value}/categoria`]=null;} }); if(Object.keys(u).length)db.ref().update(u).then(()=>navegar('configuracoes')); else navegar('configuracoes'); }
+        function abrirAtribuirMetodo(k) { const m=metodosCompra[k]; document.getElementById('atribuir-met-id').value=k; document.getElementById('titulo-atribuir-met').innerText=`Atribuir: ${m.nome}`; document.getElementById('lista-produtos-atribuir-met').innerHTML=Object.keys(produtos).filter(pk=>produtos[pk]&&produtos[pk].nome).sort((a,b)=>{const hA=produtos[a].metodoCompra===m.nome?1:0; const hB=produtos[b].metodoCompra===m.nome?1:0; return hA!==hB?hB-hA:produtos[a].nome.localeCompare(produtos[b].nome);}).map(pk=>{ const p=produtos[pk], has=p.metodoCompra===m.nome, out=p.metodoCompra&&p.metodoCompra!==m.nome; return `<label class="check-item" style="padding:15px 10px; border:1px solid ${has?'var(--primary)':'var(--border-color)'}; border-radius:10px; background:${has?'#fff5f5':'#fff'}; display:flex; align-items:center; cursor:pointer;"><input type="checkbox" value="${pk}" ${has?'checked':''} style="width:22px; height:22px; margin-right:12px;"><strong style="font-size:1.05rem;">${p.nome}</strong><span style="font-size:0.65rem; background:${out?'#e2e8f0':(has?'#e2e8f0':'#fee2e2')}; color:${out?'#64748b':(has?'#64748b':'#b91c1c')}; padding:4px 8px; border-radius:12px; margin-left:auto;">${out?p.metodoCompra:(has?'OK':'Sem método')}</span></label>`; }).join(''); navegar('atribuir-metodo'); }
+        function salvarAtribuicaoMetodo() { const n=metodosCompra[document.getElementById('atribuir-met-id').value].nome, u={}; document.querySelectorAll('#lista-produtos-atribuir-met input').forEach(cb=>{ const p=produtos[cb.value]; if(!p)return; let nm=p.metodoCompra, ch=false; if(cb.checked&&nm!==n){nm=n;ch=true;}else if(!cb.checked&&nm===n){nm=null;ch=true;} if(ch)u[`produtos/${cb.value}/metodoCompra`]=nm; }); if(Object.keys(u).length)db.ref().update(u).then(()=>navegar('configuracoes')); else navegar('configuracoes'); }
+        function togglePreset(k, ctx) { const n=categorias[k].nome, t=ctx==='novo'?'checks-areas':'edit-checks-areas', a=ctx==='novo'?catsNovo:catsEdit, idx=a.indexOf(n); if(idx>-1)a.splice(idx,1); else{a.push(n);document.querySelectorAll(`#${t} input`).forEach(cb=>{if(categorias[k].areas?.includes(cb.value))cb.checked=true;});} atualizarLabelEstoqueMinimo(ctx, a); renderizarPresets(); }
+        function editarCategoria(k) { const c=categorias[k]; document.getElementById('edit-cat-id').value=k; document.getElementById('cat-nome').value=c.nome; document.getElementById('cat-uso-fardo').checked=c.unidadesFardo>1; document.getElementById('cat-qtd-fardo').value=c.unidadesFardo; toggleFardoInput(); document.querySelectorAll('#cat-checks-areas input').forEach(cb=>cb.checked=c.areas?.includes(cb.value)); document.getElementById('btn-salvar-cat').innerText="Atualizar"; document.getElementById('btn-cancelar-cat').style.display="block"; window.scrollTo({top:0}); }
+        function resetarFormCategoria() { document.getElementById('edit-cat-id').value=""; document.getElementById('cat-nome').value=""; document.getElementById('cat-uso-fardo').checked=false; document.getElementById('cat-qtd-fardo').value=""; toggleFardoInput(); document.querySelectorAll('#cat-checks-areas input').forEach(cb=>cb.checked=false); document.getElementById('btn-salvar-cat').innerText="Criar"; document.getElementById('btn-cancelar-cat').style.display="none"; }
+        function renderizarChecksConfig() { document.getElementById('cat-checks-areas').innerHTML=areas.map(a=>`<label class="check-item"><input type="checkbox" value="${a.nome}"> <span>${a.nome}</span></label>`).join(''); }
+        function abrirCadastro(id) { if(id==='novo-produto'){ document.getElementById('checks-areas').innerHTML=areas.map(a=>`<label class="check-item"><input type="checkbox" value="${a.nome}"> <span>${a.nome}</span></label>`).join(''); document.getElementById('prod-nome').value=""; document.getElementById('prod-metodo-selecionado').value=""; document.getElementById('prod-estoque-minimo').value="0"; catsNovo=[]; atualizarLabelEstoqueMinimo('novo',catsNovo); renderizarPresets(); renderizarPresetsMetodos(); } navegar(id); }
+        function salvarArea() { const n=document.getElementById('area-nome').value; if(n){db.ref('areas').push(n); document.getElementById('area-nome').value=""; navegar('areas-lista');} }
+        function salvarProduto() { const n=document.getElementById('prod-nome').value, met=document.getElementById('prod-metodo-selecionado').value, min=Number(document.getElementById('prod-estoque-minimo').value)||0; if(!met){alert("Selecione um Método.");return;} const s=Array.from(document.querySelectorAll('#checks-areas input:checked')).map(i=>i.value); if(n&&s.length){const e={}; s.forEach(x=>e[x]={f:0,u:0}); db.ref('produtos').push({nome:n, categorias:catsNovo.length?catsNovo:null, metodoCompra:met, estoqueMinimo:min, locais:s, estoque:e}); document.getElementById('prod-nome').value=""; document.getElementById('prod-metodo-selecionado').value=""; document.getElementById('prod-estoque-minimo').value="0"; navegar('produtos-categorias');}else alert("Assinale área vinculada."); }
+        function abrirEdicaoProduto(k) { const p=produtos[k]; document.getElementById('edit-prod-id').value=k; document.getElementById('edit-prod-nome').value=p.nome; document.getElementById('edit-prod-metodo-selecionado').value=p.metodoCompra||""; document.getElementById('edit-prod-estoque-minimo').value=p.estoqueMinimo||0; catsEdit=getCategoriasProduto(p); atualizarLabelEstoqueMinimo('edit',catsEdit); renderizarPresets(); renderizarPresetsMetodos(); document.getElementById('edit-checks-areas').innerHTML=areas.map(a=>`<label class="check-item"><input type="checkbox" value="${a.nome}" ${(p.locais||[]).includes(a.nome)?'checked':''}> <span>${a.nome}</span></label>`).join(''); navegar('editar-produto'); }
+        function salvarEdicaoProduto() { const id=document.getElementById('edit-prod-id').value, n=document.getElementById('edit-prod-nome').value, met=document.getElementById('edit-prod-metodo-selecionado').value, min=Number(document.getElementById('edit-prod-estoque-minimo').value)||0; if(!met){alert("Selecione um Método.");return;} const l=Array.from(document.querySelectorAll('#edit-checks-areas input:checked')).map(i=>i.value); db.ref('produtos/'+id).update({nome:n, categorias:catsEdit.length?catsEdit:null, categoria:null, metodoCompra:met, estoqueMinimo:min, locais:l.length?l:null}); navegar('produtos-categorias'); }
+        function habilitarEdicaoArea() { document.getElementById('area-edit-box').style.display='block'; }
+        function salvarNovoNomeArea() { const nv=document.getElementById('edit-area-input').value, ant=document.getElementById('area-display-name').innerText; if(nv&&areaAtualKey&&nv!==ant){ db.ref('areas/'+areaAtualKey).set(nv).then(()=>{ Object.keys(produtos).forEach(pk=>{if(!produtos[pk])return; let p=produtos[pk], u=false, l=p.locais||[], e=p.estoque||{}; if(l.includes(ant)){l=l.map(x=>x===ant?nv:x);u=true;} if(e[ant]!==undefined){e[nv]=e[ant];delete e[ant];u=true;} if(u)db.ref('produtos/'+pk).update({locais:l, estoque:e}); }); document.getElementById('area-edit-box').style.display='none'; document.getElementById('edit-area-input').value=""; }); } }
+        function prepararExclusaoArea() { document.getElementById('modalMsg').innerHTML=`Excluir área <strong>${document.getElementById('area-display-name').innerText}</strong>?`; document.getElementById('modalDelete').style.display='flex'; document.getElementById('confirmDeleteBtn').onclick=()=>{db.ref('areas/'+areaAtualKey).remove();fecharModal();navegar('areas-lista');}; }
+        function prepararExclusaoProd() { document.getElementById('modalMsg').innerHTML=`Excluir <strong>${document.getElementById('edit-prod-nome').value}</strong>?`; document.getElementById('modalDelete').style.display='flex'; document.getElementById('confirmDeleteBtn').onclick=()=>{db.ref('produtos/'+document.getElementById('edit-prod-id').value).remove();fecharModal();navegar('produtos-categorias');}; }
+        function prepararExclusaoCat(k) { document.getElementById('modalMsg').innerHTML=`Excluir preset <strong>${categorias[k].nome}</strong>?`; document.getElementById('modalDelete').style.display='flex'; document.getElementById('confirmDeleteBtn').onclick=()=>{db.ref('categorias/'+k).remove();fecharModal();}; }
+        function prepararExclusaoMet(k) { document.getElementById('modalMsg').innerHTML=`Excluir método <strong>${metodosCompra[k].nome}</strong>?`; document.getElementById('modalDelete').style.display='flex'; document.getElementById('confirmDeleteBtn').onclick=()=>{db.ref('metodos/'+k).remove();fecharModal();}; }
     </script>
 </body>
 </html>
