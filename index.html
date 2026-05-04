@@ -21,33 +21,28 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { display: flex; background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
         
-        /* ================== REGRAS DE PERMISSÃO (CARGOS) ================== */
-        body.role-visualizador .req-dono, 
-        body.role-visualizador .req-contrib { display: none !important; }
-        
-        body.role-visualizador .input-qtd { pointer-events: none; border-color: transparent; background: transparent; color: var(--text-main); padding: 0; width: auto; text-align: center; font-size: 1rem; -moz-appearance: textfield; }
-        body.role-visualizador .input-qtd::-webkit-outer-spin-button, body.role-visualizador .input-qtd::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-
+        /* REGRAS DE PERMISSÃO */
+        body.role-visualizador .req-dono, body.role-visualizador .req-contrib { display: none !important; }
+        body.role-visualizador .input-qtd, body.role-visualizador .qty-btn { pointer-events: none; border-color: transparent; background: transparent; color: var(--text-main); text-align: center; }
+        body.role-visualizador .qty-arrows { display: none; }
         body.role-contribuidor .req-dono { display: none !important; }
 
-        /* MENU LATERAL E TOPBAR */
-        aside { width: 260px; background: var(--bg-sidebar); color: var(--text-sidebar); padding: 2rem 0.5rem 1rem 0.5rem; position: fixed; height: 100vh; z-index: 1000; transition: 0.3s; display: flex; flex-direction: column; }
+        /* MENU LATERAL */
+        aside { width: 260px; background: var(--bg-sidebar); color: var(--text-sidebar); padding: 2rem 0.5rem 1rem 0.5rem; position: fixed; height: 100vh; z-index: 1000; display: flex; flex-direction: column; transition: 0.3s; }
         .logo-container { display: flex; justify-content: center; align-items: center; margin-bottom: 2.5rem; width: 100%; height: 70px; }
         .logo-img { max-height: 100%; max-width: 90%; object-fit: contain; }
         aside nav { display: flex; flex-direction: column; width: 100%; flex-grow: 1; }
-        .nav-btn { width: 100%; padding: 0.8rem 1rem; background: transparent; border: none; color: var(--text-sidebar); text-align: left; cursor: pointer; border-radius: 8px; margin-bottom: 0.5rem; font-size: 0.95rem; transition: 0.3s; display: flex; align-items: center; gap: 10px; border-left: 4px solid transparent; }
+        .nav-btn { width: 100%; padding: 0.8rem 1rem; background: transparent; border: none; color: var(--text-sidebar); text-align: left; cursor: pointer; border-radius: 8px; margin-bottom: 0.5rem; font-size: 0.95rem; display: flex; align-items: center; gap: 10px; border-left: 4px solid transparent; }
         .nav-btn.active { background: var(--bg-sidebar-active); border-left: 4px solid var(--primary); color: white; font-weight: 600; }
         
         .mobile-topbar { display: none; }
         
-        /* Botão Config/Cargo (Topo Esquerda) */
+        /* Botões Topo */
         .btn-config { position: fixed; top: 15px; left: 15px; background: var(--bg-sidebar); color: white; border: none; border-radius: 50%; width: 42px; height: 42px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 2000; font-size: 1.1rem; box-shadow: 0 4px 8px rgba(0,0,0,0.3); transition: 0.2s; }
-        
-        /* Botão Novo (+) Topo Direita (Só mobile) */
         .btn-novo-top { display: none; }
 
-        /* GERAL */
-        main { margin-left: 260px; padding: 1.5rem; width: 100%; position: relative; padding-bottom: 100px; transition: 0.3s; min-height: 100vh; }
+        /* GERAL E ANIMAÇÕES */
+        main { margin-left: 260px; padding: 1.5rem; width: 100%; position: relative; padding-bottom: 100px; min-height: 100vh; transition: 0.3s; }
         h1 { margin-bottom: 1rem; color: var(--bg-sidebar); font-weight: 800; font-size: 1.4rem; }
         .header-com-acao { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px; }
         .btn-toggle-grupo { background: var(--primary); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s; font-size: 0.85rem; }
@@ -62,32 +57,35 @@
         .card { background: var(--card-bg); padding: 1.2rem; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); margin-bottom: 1rem; border: 1px solid var(--border-color); }
         .grid-home { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
         .grid-areas-layout { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
-        
         .card-nav { background: var(--card-bg); padding: 1.5rem 0.5rem; border-radius: 15px; text-align: center; cursor: pointer; border: 2px solid transparent; transition: 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .card-nav:hover { border-color: var(--primary); transform: translateY(-3px); }
         .card-nav i { font-size: 2.2rem; display: block; margin-bottom: 8px; font-style: normal; }
-        .card-nav h3 { font-size: 0.95rem; color: var(--bg-sidebar); }
 
-        /* CALENDÁRIO E TABELAS FLUIDAS */
-        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .cal-btn { background: var(--bg-sidebar); color: white; border: none; border-radius: 8px; padding: 8px 15px; cursor: pointer; font-weight: bold; }
-        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
-        .cal-day-name { font-weight: bold; text-align: center; padding: 10px 0; color: var(--bg-sidebar); text-transform: uppercase; font-size: 0.9rem; }
+        /* PESQUISA E QTD (NOVOS) */
+        .search-bar { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.95rem; outline: none; transition: 0.2s; box-sizing: border-box; }
+        .search-bar:focus { border-color: var(--primary); }
         
-        /* CORREÇÃO DO CONTRASTE DOS DIAS NA AGENDA */
-        .cal-day { background: white; border: 1px solid var(--border-color); border-radius: 8px; text-align: center; padding: 15px 0; cursor: pointer; transition: 0.2s; position: relative; font-weight: 700; color: var(--text-main) !important; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 50px; }
-        .cal-day:hover:not(.closed-day) { border-color: var(--primary); color: var(--primary) !important; background: #fff5f5; }
-        .cal-day.empty { background: transparent; border: none; pointer-events: none; }
-        .cal-day.has-reserva::after { content: ''; display: block; margin-top: 4px; width: 6px; height: 6px; background: var(--primary); border-radius: 50%; }
-        .cal-day.closed-day { background: #f1f5f9; color: #cbd5e1 !important; border-color: #e2e8f0; cursor: not-allowed; text-decoration: line-through; }
+        .qty-wrapper { display: inline-flex; align-items: stretch; border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; height: 36px; width: 80px; background: white; margin: 0 auto; }
+        .qty-wrapper input { flex: 1; width: 100%; min-width: 0; border: none; text-align: center; font-weight: 800; font-size: 0.95rem; -moz-appearance: textfield; outline: none; padding: 0; color: var(--text-main); }
+        .qty-wrapper input::-webkit-outer-spin-button, .qty-wrapper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .qty-arrows { display: flex; flex-direction: column; width: 26px; flex-shrink: 0; border-left: 1px solid var(--border-color); }
+        .qty-btn { flex: 1; border: none; cursor: pointer; color: white; font-size: 0.65rem; display: flex; align-items: center; justify-content: center; user-select: none; padding:0; margin:0;}
+        .qty-up { background: #10b981; }
+        .qty-up:active { background: #059669; }
+        .qty-down { background: #ef4444; }
+        .qty-down:active { background: #dc2626; }
 
+        /* ORDENAÇÃO DE LISTA DE ITENS NA ADMINISTRAÇÃO */
+        .sort-wrapper { display: flex; flex-direction: column; width: 34px; height: 46px; border-radius: 6px; overflow: hidden; margin-right: 12px; flex-shrink: 0; }
+        .sort-btn { flex: 1; border: none; cursor: pointer; color: white; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; padding:0; margin:0;}
+
+        /* TABELAS */
         .table-container { background: white; border-radius: 10px; overflow-x: auto; border: 1px solid var(--border-color); width: 100%; }
         table { width: 100%; border-collapse: collapse; }
         th { background: #fffaf7; padding: 0.8rem 0.5rem; text-align: left; border-bottom: 2px solid var(--border-color); font-size: 0.75rem; color: #64748b; font-weight: 700; white-space: nowrap; text-transform: uppercase; }
         td { padding: 0.8rem 0.5rem; border-bottom: 1px solid var(--border-color); vertical-align: middle; font-size: 0.85rem; }
         tbody tr:nth-child(even) { background-color: var(--row-even); }
         .col-item { font-weight: 600; min-width: 120px; }
-        .input-qtd { width: 60px; padding: 8px 4px; border: 1px solid var(--border-color); border-radius: 6px; text-align: center; font-size: 0.9rem; font-weight: 700; transition: 0.2s; }
         .total-container { display: flex; flex-direction: column; line-height: 1.2; text-align: right; }
         .total-fardos { font-weight: 800; color: var(--primary); font-size: 0.95rem; white-space: nowrap; }
         .total-unidades { font-weight: 600; color: #64748b; font-size: 0.75rem; white-space: nowrap; }
@@ -101,17 +99,25 @@
         .check-item { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
         input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary); }
 
-        /* ================== CSS MAPA DE SALÃO E LAYOUT BLINDADO ================== */
-        
+        /* AGENDA */
+        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; color: var(--bg-sidebar); }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+        .cal-day-name { font-weight: bold; text-align: center; padding: 10px 0; color: var(--primary); font-size: 0.85rem; text-transform: uppercase;}
+        .cal-day { background: white; border: 1px solid var(--border-color); border-radius: 8px; text-align: center; padding: 15px 0; cursor: pointer; transition: 0.2s; position: relative; font-weight: 700; color: var(--text-main) !important; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 50px; }
+        .cal-day:hover:not(.closed-day) { border-color: var(--primary); color: var(--primary) !important; background: #fff5f5; }
+        .cal-day.empty { background: transparent; border: none; cursor: default; pointer-events: none;}
+        .cal-day.closed-day { background: #f1f5f9; color: #cbd5e1 !important; border-color: #e2e8f0; text-decoration: line-through; cursor: not-allowed; }
+        .cal-day.has-reserva::after { content: ''; display: block; margin-top: 4px; width: 6px; height: 6px; background: var(--primary); border-radius: 50%; }
+
+        /* MAPA */
         body:has(#mapa-salao.active) main { padding-bottom: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         #mapa-salao.active { height: 100%; display: flex; flex-direction: column; overflow: hidden; }
 
         .mapa-layout-flex { display: flex; flex-direction: row; gap: 15px; flex-grow: 1; min-height: 0; margin-top: 5px; overflow: hidden; }
-        
         .mapa-coluna-mapa { flex: 1 1 0; display: flex; flex-direction: column; min-width: 0; order: 1; }
         .mapa-coluna-controles { flex: 0 0 350px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; padding-right: 5px; order: 2; }
 
-        .mapa-viewport { flex-grow: 1; position: relative; width: 100%; background: white; border-radius: 12px; border: 2px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; }
+        .mapa-viewport { flex-grow: 1; position: relative; width: 100%; background: white; border-radius: 12px; border: 2px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; transition: height 0.3s ease; }
         .planta-baixa { position: absolute; top: 0; left: 0; width: 750px; height: 950px; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); transform-origin: 0 0; }
 
         .bloco-macro { position: absolute; background: #f8fafc; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; border-radius: 8px; cursor: pointer; transition: 0.3s; z-index: 10; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
@@ -139,7 +145,7 @@
         .status-reservada { background: var(--primary); border: 2px solid #7f1d1d; color: white; cursor: not-allowed; }
         .label-vertical { position: absolute; color: var(--text-main); font-weight: bold; letter-spacing: 2px; transform: rotate(-90deg); transform-origin: left top; white-space: nowrap; font-size: 0.8rem; pointer-events: none; opacity: 0.8; }
 
-        /* FAB (+) E INPUTS */
+        /* FAB E MODAIS */
         .fab-container { position: fixed; bottom: 30px; right: 30px; z-index: 1500; display: flex; flex-direction: column-reverse; align-items: flex-end; gap: 15px; }
         .fab-main { width: 55px; height: 55px; background: var(--primary); color: white; border-radius: 50%; border: none; font-size: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 100; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .fab-options { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; opacity: 0; pointer-events: none; transition: 0.2s; transform: translateY(10px); position: fixed; bottom: 95px; right: 20px; z-index: 101; }
@@ -155,20 +161,15 @@
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(40, 6, 6, 0.7); z-index: 3000; align-items: center; justify-content: center; }
         .modal-box { background: var(--bg-body); padding: 1.5rem; border-radius: 12px; max-width: 320px; width: 90%; text-align: center; border: 2px solid var(--primary); }
 
-        /* ================== RESPONSIVIDADE MOBILE (Empilhamento Otimizado) ================== */
+        /* MOBILE FIXES */
         @media (max-width: 1024px) {
             body:has(#mapa-salao.active) main { padding: 65px 5px 5px 5px; } 
-            
             #mapa-salao.active { height: calc(100vh - 70px); }
-
             #mapa-salao .header-com-acao { margin-bottom: 5px; display: none; } 
             #mapa-salao > p { display: none; } 
-
             .mapa-layout-flex { flex-direction: column; gap: 5px; margin-top: 0; }
-            
             .mapa-coluna-controles { width: 100%; flex: 0 0 auto; max-height: 45vh; padding-right: 0; order: 1; }
             .mapa-coluna-mapa { width: 100%; flex: 1 1 0; order: 2; }
-            
             .grid-home, .grid-areas-layout { grid-template-columns: repeat(2, 1fr); }
         }
 
@@ -180,10 +181,9 @@
             aside nav { flex-direction: row; justify-content: space-around; height: 100%; align-items: center; }
             .logo-container { display: none; } 
             .nav-btn { flex-direction: column; justify-content: center; align-items: center; gap: 4px; padding: 5px; margin-bottom: 0; border-radius: 0; border-left: none; border-bottom: 3px solid transparent; height: 100%; }
-            .nav-btn.active { border-bottom: 3px solid var(--primary); background: var(--bg-sidebar-active); }
+            .nav-btn.active { border-bottom: 3px solid var(--primary); border-left: none; background: var(--bg-sidebar-active); }
             .nav-btn span { display: block !important; font-size: 0.60rem; font-weight: normal; text-align: center; }
             
-            /* Botão de Cargo na Esquerda e Botão (+) na Direita (Só Mobile) */
             .btn-config { top: 9px; left: 10px; width: 42px; height: 42px; font-size: 1.5rem; font-weight: bold; background: transparent; color: var(--primary); box-shadow: none; border-radius: 0; }
             
             .fab-main { display: none !important; }
@@ -199,16 +199,11 @@
 </head>
 <body class="role-visualizador">
 
-    <!-- TOPO MOBILE COM LOGO -->
     <div class="mobile-topbar"><img src="contamais.svg" alt="ContaMais Logo"></div>
 
-    <!-- BOTÃO TOPO ESQUERDA (ENGRENAGEM OU CARGO) -->
     <button id="btn-top-role" class="btn-config" onclick="if(currentRole==='dono') abrirConfig()"></button>
-    
-    <!-- BOTÃO TOPO DIREITA (+) APENAS NO MOBILE PARA DONO -->
     <button id="btn-novo-top" class="btn-novo-top req-dono" onclick="event.stopPropagation(); toggleFab()">+</button>
 
-    <!-- MODAL DE AUTENTICAÇÃO (LOGIN/CADASTRO COM CAMPO NOME) -->
     <div id="modalAuth" class="modal-overlay">
         <div class="modal-box">
             <h3 id="auth-title" style="margin-bottom: 10px; color: var(--primary);">👤 Entrar</h3>
@@ -225,7 +220,6 @@
         </div>
     </div>
 
-    <!-- MODAL CONFIRMAÇÃO EXCLUSÃO -->
     <div id="modalDelete" class="modal-overlay">
         <div class="modal-box">
             <p id="modalMsg" style="margin-bottom: 20px; font-weight: 600;"></p>
@@ -236,7 +230,6 @@
         </div>
     </div>
 
-    <!-- MENU LATERAL REESTRUTURADO -->
     <aside>
         <div class="logo-container"><img src="contamais.svg" alt="ContaMais Logo" class="logo-img"></div>
         <nav id="menu-navegacao">
@@ -244,14 +237,13 @@
             <button class="nav-btn" id="nav-produtos-hub" onclick="navegar('produtos-hub', this)">🍾 <span>Produtos</span></button>
             <button class="nav-btn" id="nav-reservas-hub" onclick="navegar('reservas-hub', this)">📅 <span>Reservas</span></button>
             
+            <!-- REMOVIDO nome e cargo do rodapé conforme pedido, mantido apenas o botão de Login -->
             <div style="margin-top: auto;"></div> 
-            <div id="user-info-sidebar" style="display:none; color: var(--text-sidebar); font-size: 0.8rem; padding: 0.5rem; text-align:center; background: rgba(0,0,0,0.3); border-radius:8px; margin-bottom:10px;"></div>
             <button class="nav-btn" onclick="abrirModalAuth()" id="btn-login-sidebar">👤 <span>Entrar</span></button>
         </nav>
     </aside>
 
     <main>
-        <!-- FAB (+) APENAS DONO -->
         <div class="fab-container req-dono">
             <button class="fab-main" onclick="event.stopPropagation(); toggleFab()">+</button>
             <div id="fabOptions" class="fab-options">
@@ -260,7 +252,6 @@
             </div>
         </div>
 
-        <!-- 1. GUIA: INÍCIO -->
         <section id="inicio" class="section active">
             <h1>Início</h1>
             <p style="color:#64748b; margin-bottom:20px;">Bem-vindo ao ContaMais. Selecione um dos módulos abaixo ou no menu lateral.</p>
@@ -270,7 +261,6 @@
             </div>
         </section>
 
-        <!-- 2. GUIA: HUB DE PRODUTOS -->
         <section id="produtos-hub" class="section">
             <h1>Produtos e Logística</h1>
             <div class="grid-home">
@@ -280,7 +270,6 @@
             </div>
         </section>
 
-        <!-- 3. GUIA: HUB DE RESERVAS -->
         <section id="reservas-hub" class="section">
             <h1>Gestão de Reservas</h1>
             <div class="grid-home">
@@ -289,9 +278,6 @@
             </div>
         </section>
 
-        <!-- ==============================================
-             SUB-TELAS DO MAPA DE SALÃO
-        =================================================== -->
         <section id="mapa-setup" class="section">
             <div class="btn-back-styled" onclick="navegar('reservas-hub')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
             <h1>Acessar Mapa de Salão</h1>
@@ -321,14 +307,11 @@
             <p style="font-size:0.85rem; color:#64748b; margin-bottom: 10px;">Selecione os blocos para dar zoom nas áreas. O sistema fará o corte espacial de 1 mesa automaticamente nas reservas.</p>
 
             <div class="mapa-layout-flex">
-                
                 <div class="mapa-coluna-controles">
-                    
                     <div id="painel-reservas-turno" class="card" style="margin-bottom:0; padding:10px; display:flex; flex-direction:column; min-height:0; border-color: var(--primary);">
                         <h3 style="color:var(--primary); font-size:1rem; margin-bottom: 8px;">📋 Reservas do Turno</h3>
                         <div id="lista-reservas-turno-mapa" style="display:flex; flex-direction:column; gap:6px; overflow-y:auto; flex-grow:1;"></div>
                     </div>
-
                     <button class="btn-submit" id="btn-voltar-mapa" style="display:none; margin-top:0; margin-bottom:0; background:#64748b; font-size:0.85rem;" onclick="desfocarArea()">⬅️ Voltar Visão Geral</button>
 
                     <div id="painel-controles-mapa" class="card req-contrib" style="display:none; margin-bottom:0; padding:10px; border-color: var(--primary);">
@@ -348,19 +331,14 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="mapa-coluna-mapa">
                     <div id="mapa-viewport" class="mapa-viewport">
                         <div id="mapa-container" class="planta-baixa"></div>
                     </div>
                 </div>
-
             </div>
         </section>
 
-        <!-- ==============================================
-             SUB-TELAS DA AGENDA
-        =================================================== -->
         <section id="agenda-view" class="section">
             <div class="btn-back-styled" onclick="navegar('reservas-hub')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
             <h1>Agenda de Reservas</h1>
@@ -396,9 +374,6 @@
             </div>
         </section>
 
-        <!-- ==============================================
-             SUB-TELAS DE LOGÍSTICA E ESTOQUE
-        =================================================== -->
         <section id="areas-lista" class="section">
             <div class="btn-back-styled" onclick="navegar('produtos-hub')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
             <h1>Áreas de Estoque</h1><div id="grid-areas" class="grid-areas-layout"></div>
@@ -420,6 +395,8 @@
         <section id="produtos-lista-filtrada" class="section">
             <div class="btn-back-styled" onclick="navegar('produtos-categorias')">✕</div>
             <h1 id="titulo-categoria-filtrada" style="font-size: 1.2rem;">Produtos</h1>
+            <!-- Barra de Pesquisa Integrada -->
+            <input type="text" id="busca-categoria" class="search-bar" placeholder="🔍 Pesquisar item na categoria..." onkeyup="filtrarTabela('busca-categoria', 'tabela-produtos-filtrada')">
             <div class="table-container"><table><thead><tr><th>Item</th><th style="text-align:right">Total</th></tr></thead><tbody id="tabela-produtos-filtrada"></tbody></table></div>
         </section>
 
@@ -436,6 +413,8 @@
                 </div>
                 <span class="req-dono" style="color:var(--primary); cursor:pointer; font-size:0.75rem; display:block; margin-top:8px;" onclick="prepararExclusaoArea()">Excluir Área</span>
             </div>
+            <!-- Barra de Pesquisa Integrada -->
+            <input type="text" id="busca-area" class="search-bar" placeholder="🔍 Pesquisar item nesta área..." onkeyup="filtrarTabela('busca-area', 'tabela-area-itens')">
             <div class="table-container"><table><thead id="head-area-itens"></thead><tbody id="tabela-area-itens"></tbody></table></div>
         </section>
 
@@ -489,11 +468,21 @@
             <button class="btn-submit" style="background:#444; margin-top:30px;" onclick="auth.signOut(); navegar('inicio')">Sair da Conta (Logout)</button>
         </section>
 
-        <!-- ATRIBUIÇÕES EM MASSA -->
+        <!-- SEÇÃO: ORDENAÇÃO DE CATEGORIA ADMIN -->
+        <section id="detalhe-categoria-admin" class="section req-dono">
+            <div class="btn-back-styled" onclick="navegar('configuracoes')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
+            <h1 id="titulo-config-cat">⚙️ Categoria</h1>
+            <div class="card" id="info-tecnica-cat"></div>
+            <div class="card" style="border-color: var(--primary);">
+                <h3 style="color:var(--primary);">Ordem de Exibição</h3>
+                <p style="font-size:0.8rem; color:#64748b; margin-bottom:15px;">Ajuste a prioridade customizada dos itens usando as setas laterais. Ela prevalece sobre a ordem alfabética em todo o sistema.</p>
+                <div id="lista-ordenacao-cat" style="display:flex; flex-direction:column; gap:8px;"></div>
+            </div>
+        </section>
+
         <section id="atribuir-categoria" class="section req-dono"><div class="btn-back-styled" onclick="navegar('configuracoes')">✕</div><h1 id="titulo-atribuir-cat">Atribuir</h1><div class="card"><input type="hidden" id="atribuir-cat-id"><div id="lista-produtos-atribuir" style="display: flex; flex-direction: column; gap: 8px; max-height: 55vh; overflow-y: auto;"></div><button class="btn-submit" onclick="salvarAtribuicaoCategoria()">SALVAR</button></div></section>
         <section id="atribuir-metodo" class="section req-dono"><div class="btn-back-styled" onclick="navegar('configuracoes')">✕</div><h1 id="titulo-atribuir-met">Atribuir Método</h1><div class="card"><input type="hidden" id="atribuir-met-id"><div id="lista-produtos-atribuir-met" style="display: flex; flex-direction: column; gap: 8px; max-height: 55vh; overflow-y: auto;"></div><button class="btn-submit" onclick="salvarAtribuicaoMetodo()">SALVAR</button></div></section>
 
-        <!-- NOVO PRODUTO E ÁREA -->
         <section id="novo-produto" class="section req-dono">
             <div class="btn-back-styled" onclick="navegar('inicio')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
             <h1 style="font-size: 1.3rem;">Novo Produto</h1>
@@ -560,6 +549,7 @@
         let mapasApp = {}; let modoMontagemMapa = false; let mesasSelecionadasMapa = []; let areaFocadaMapa = null; let mapaAtualData = ""; let mapaAtualTurno = "";
         let navDate = new Date();
         let dataAtualReserva = "";
+        let categoriaFocadaOrdenacao = "";
 
         // ==========================================
         // SISTEMA DE AUTENTICAÇÃO E CARGOS (RBAC)
@@ -701,7 +691,7 @@
         }
 
         // ==========================================
-        // NAVEGAÇÃO E FAB CLICK OUTSIDE
+        // NAVEGAÇÃO E FAB CLICK OUTSIDE E PESQUISA
         // ==========================================
         function navegar(id, btn) { 
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); 
@@ -710,10 +700,11 @@
             if(btn) { document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); } 
             window.scrollTo(0, 0); 
             if(id === 'mapa-salao') ajustarEscalaMapa();
-            
-            if(id === 'agenda-view') {
-                setTimeout(() => { renderizarCalendario(); }, 100);
-            }
+        }
+
+        function irParaAgenda() {
+            navegar('agenda-view');
+            setTimeout(() => { renderizarCalendario(); }, 100);
         }
 
         function toggleFab(event) { 
@@ -730,12 +721,22 @@
                 const isClickInsideMain = fabMain && fabMain.contains(event.target);
                 const isClickInsideTop = btnNovoTop && btnNovoTop.contains(event.target);
                 const isClickInsideOptions = fabOptions.contains(event.target);
-
-                if (!isClickInsideMain && !isClickInsideTop && !isClickInsideOptions) {
-                    fabOptions.classList.remove('active');
-                }
+                if (!isClickInsideMain && !isClickInsideTop && !isClickInsideOptions) fabOptions.classList.remove('active');
             }
         });
+
+        // BARRA DE PESQUISA
+        function filtrarTabela(inputId, tabelaId) {
+            const termo = document.getElementById(inputId).value.toLowerCase();
+            const linhas = document.querySelectorAll(`#${tabelaId} tr`);
+            linhas.forEach(linha => {
+                const item = linha.querySelector('.col-item');
+                if (item) {
+                    const txt = item.innerText.toLowerCase();
+                    linha.style.display = txt.includes(termo) ? '' : 'none';
+                }
+            });
+        }
 
         // ==========================================
         // INICIALIZAÇÃO E LISTENERS
@@ -748,7 +749,14 @@
         db.ref('users').on('value', s => { if(currentRole === 'dono') renderizarUsuariosAdmin(s.val() || {}); });
         db.ref('areas').on('value', s => { try { areas = s.val() ? Object.entries(s.val()).map(([key, nome]) => ({key, nome})) : []; renderizarAreas(); renderizarChecksConfig(); } catch(e){} });
         db.ref('produtos').on('value', s => { try { produtos = s.val() || {}; renderizarGradeAgrupada(); if(document.getElementById('pedidos-lista').classList.contains('active')){ const metKey = Object.keys(metodosCompra).find(k => metodosCompra[k].nome === document.getElementById('titulo-pedido-metodo').innerText.replace('Pedidos: ', '')); if(metKey) verPedidoPorMetodo(metKey); } } catch(e){} });
-        db.ref('categorias').on('value', s => { try { categorias = s.val() || {}; renderizarPresets(); renderizarGradeAgrupada(); } catch(e){} });
+        db.ref('categorias').on('value', s => { 
+            try { 
+                categorias = s.val() || {}; 
+                renderizarPresets(); 
+                renderizarGradeAgrupada(); 
+                if (document.getElementById('detalhe-categoria-admin').classList.contains('active')) renderizarOrdenacaoCategoria();
+            } catch(e){} 
+        });
         db.ref('metodos').on('value', s => { try { metodosCompra = s.val() || {}; renderizarMetodosConfig(); renderizarPresetsMetodos(); renderizarGradeAgrupada(); renderizarPedidosMetodos(); } catch(e){} });
         db.ref('reservas').on('value', s => { try { reservasApp = s.val() || {}; if(document.getElementById('agenda-view').classList.contains('active')) renderizarCalendario(); if(document.getElementById('agenda-detalhe').classList.contains('active')) renderizarReservasDia(); if(document.getElementById('mapa-salao').classList.contains('active')) carregarReservasMapa(); } catch(e){} });
         db.ref('mapas').on('value', s => { try { mapasApp = s.val() || {}; if(document.getElementById('mapa-salao').classList.contains('active')) { carregarMapa(); carregarReservasMapa(); } } catch(e){} });
@@ -763,18 +771,12 @@
             const dt = document.getElementById('setup-mapa-data').value;
             const tn = document.getElementById('setup-mapa-turno').value;
             if(!dt) { alert("Selecione uma data para o mapa."); return; }
-            
-            mapaAtualData = dt;
-            mapaAtualTurno = tn;
+            mapaAtualData = dt; mapaAtualTurno = tn;
             const [y, m, d] = dt.split('-');
-            const turnoStr = tn === 'dia' ? 'Dia (Almoço)' : 'Tarde/Noite';
-            document.getElementById('mapa-header-info').innerText = `${d}/${m}/${y} - ${turnoStr}`;
-            
-            areaFocadaMapa = null;
-            mesasSelecionadasMapa = [];
+            document.getElementById('mapa-header-info').innerText = `${d}/${m}/${y} - ${tn === 'dia' ? 'Dia' : 'Tarde/Noite'}`;
+            areaFocadaMapa = null; mesasSelecionadasMapa = [];
             document.getElementById('btn-voltar-mapa').style.display = 'none';
             document.getElementById('painel-controles-mapa').style.display = 'none';
-            
             navegar('mapa-salao');
             carregarReservasMapa();
             setTimeout(() => { ajustarEscalaMapa(); }, 100);
@@ -792,16 +794,13 @@
                         for(let mId in layout) { if(layout[mId].status === 'reservada' && layout[mId].nome === r.nome) { isMontada = true; break; } }
 
                         if(!isMontada) {
-                             resHtml += `
-                             <div style="padding:12px; border:1px solid var(--border-color); border-radius:8px; background:var(--row-even); display:flex; justify-content:space-between; align-items:center; margin-bottom: 5px;">
+                             resHtml += `<div style="padding:12px; border:1px solid var(--border-color); border-radius:8px; background:var(--row-even); display:flex; justify-content:space-between; align-items:center; margin-bottom: 5px;">
                                  <div><strong style="font-size:0.95rem; color:var(--bg-sidebar);">${r.nome}</strong><br><span style="font-size:0.75rem; color:#64748b;">📍 ${r.area} | 👥 ${r.lugares} lug.</span></div>
                                  <button class="btn-submit req-contrib" style="width:auto; margin:0; padding:8px 15px; font-size:0.8rem; background:var(--primary); border-radius:6px;" onclick="montarReservaNoMapa('${r.nome}', '${r.area}')">Montar</button>
                              </div>`;
                         } else {
-                             resHtml += `
-                             <div style="padding:10px; border:1px solid #10b981; border-radius:8px; background:#f0fdf4; display:flex; justify-content:space-between; align-items:center; opacity:0.8; margin-bottom: 5px;">
-                                 <div><strong style="font-size:0.95rem; color:#047857;">${r.nome}</strong><br><span style="font-size:0.75rem; color:#047857;">✅ Já montada no salão</span></div>
-                             </div>`;
+                             resHtml += `<div style="padding:10px; border:1px solid #10b981; border-radius:8px; background:#f0fdf4; display:flex; justify-content:space-between; align-items:center; opacity:0.8; margin-bottom: 5px;">
+                                 <div><strong style="font-size:0.95rem; color:#047857;">${r.nome}</strong><br><span style="font-size:0.75rem; color:#047857;">✅ Já montada no salão</span></div></div>`;
                         }
                     }
                 }
@@ -817,10 +816,8 @@
             else if(areaOriginal.includes("Corrimão")) macroNome = "Corrimão";
             else if(areaOriginal.includes("Redondas")) macroNome = "Mesas Redondas";
             else if(areaOriginal.includes("Bistrôs")) macroNome = "Bistrôs";
-
             if(!macroNome) { alert("Esta reserva pertence a uma área fora do Salão 2."); return; }
-            document.getElementById('mapa-reserva-nome').value = nome;
-            focarArea(macroNome);
+            document.getElementById('mapa-reserva-nome').value = nome; focarArea(macroNome);
         }
 
         function toggleModoLayoutMapa() {
@@ -1005,7 +1002,6 @@
             let updates = {}; mesasSelecionadasMapa.forEach(id => updates[`mapas/${mapaAtualData}/${mapaAtualTurno}/${id}`] = { status: 'reservada', nome: nome });
             let porArea = {}; mesasSelecionadasMapa.forEach(id => { let partes = id.split('_'); let subArea = partes[0]; let idx = parseInt(partes[1]); if(!porArea[subArea]) porArea[subArea] = []; porArea[subArea].push(idx); });
 
-            // Corte Espacial de Segurança
             for(let subArea in porArea) {
                 if(configMapa[subArea].tipo === 'redonda' || configMapa[subArea].tipo === 'bistro') continue; 
                 let indices = porArea[subArea]; let min = Math.min(...indices); let max = Math.max(...indices);
@@ -1110,42 +1106,59 @@
         }
 
         // ==========================================
-        // ORDENAÇÃO DE CATEGORIAS E PRODUTOS (PRIORIDADE)
+        // ORDENAÇÃO DE CATEGORIAS E PRODUTOS (PRIORIDADE MASTER)
         // ==========================================
         function removerAcentos(str) { return str ? str.normalize("NFD").replace(/[\u0300-\u036f]/g, "") : ""; }
         const mapaEmojis = { "refrigerantes": "🥤", "cervejas": "🍺", "vinhos bar": "🍷", "camara fria": "🧊", "geladeira red bull": "🐂", "chopps bar": "🍻", "laje": "🪜", "atacadao": "🛒", "mercado": "🛒", "distribuidora": "🚚" };
         function obterEmoji(nome) { const limpo = removerAcentos((nome||"").toLowerCase().trim()); for(let key in mapaEmojis) if(limpo.includes(key)) return mapaEmojis[key]; return "📦"; }
         function getCategoriasProduto(p) { if (!p) return []; if (p.categorias) return Array.isArray(p.categorias) ? [...p.categorias] : (typeof p.categorias==='string' ? [p.categorias] : Object.values(p.categorias)); return p.categoria ? [p.categoria] : []; }
 
-        // SISTEMA DE PRIORIDADE
         const ORDEM_CATEGORIAS = ["refrigerantes", "energeticos", "cervejas", "cervejas especiais", "frutas congeladas"];
+        
         function getPrioridadeCategoria(nomeCat) {
             if(!nomeCat) return 999;
             const limpo = removerAcentos(nomeCat.toLowerCase().trim());
             const idx = ORDEM_CATEGORIAS.indexOf(limpo);
             return idx !== -1 ? idx : 999;
         }
+
         function getPrioridadeProduto(p) {
             const cats = getCategoriasProduto(p);
             if(!cats || cats.length === 0) return 999;
             let minPrio = 999;
-            cats.forEach(c => {
-                const prio = getPrioridadeCategoria(c);
-                if(prio < minPrio) minPrio = prio;
-            });
+            cats.forEach(c => { const prio = getPrioridadeCategoria(c); if(prio < minPrio) minPrio = prio; });
             return minPrio;
         }
 
         // ==========================================
         // ESTOQUE E GESTÃO DE PRODUTOS
         // ==========================================
+        function getQtyHTML(id, val, pk, nomeArea, tam) {
+            if(currentRole === 'visualizador') return `<input type="number" class="input-qtd" value="${val}" readonly>`;
+            return `
+            <div class="qty-wrapper">
+                <input type="number" id="${id}" value="${val}" onchange="attEst('${pk}','${nomeArea}',${tam})">
+                <div class="qty-arrows">
+                    <button class="qty-btn qty-up" onclick="mudarQtd('${id}', 1, '${pk}','${nomeArea}',${tam})">▲</button>
+                    <button class="qty-btn qty-down" onclick="mudarQtd('${id}', -1, '${pk}','${nomeArea}',${tam})">▼</button>
+                </div>
+            </div>`;
+        }
+
+        function mudarQtd(id, delta, pk, ar, tam) {
+            const input = document.getElementById(id);
+            if(!input) return;
+            let val = parseInt(input.value) || 0;
+            val += delta;
+            if(val < 0) val = 0;
+            input.value = val;
+            attEst(pk, ar, tam);
+        }
+
         function renderizarTotalLinhaDupla(total, tam) { 
             const tf = tam > 1 ? tam : 1; 
-            if (tam > 1) {
-                return `<div class="total-container"><span class="total-fardos">${Math.floor(total/tf)} Fardos</span><span class="total-unidades">${total%tf} Un. Soltas</span></div>`; 
-            } else {
-                return `<div class="total-container"><span class="total-fardos" style="color:var(--primary); font-size:1.05rem;">${total} Un.</span></div>`;
-            }
+            if (tam > 1) { return `<div class="total-container"><span class="total-fardos">${Math.floor(total/tf)} Fardos</span><span class="total-unidades">${total%tf} Un. Soltas</span></div>`; } 
+            else { return `<div class="total-container"><span class="total-fardos" style="color:var(--primary); font-size:1.05rem;">${total} Un.</span></div>`; }
         }
 
         function renderizarAreas() { try { const grid = document.getElementById('grid-areas'); if(!grid) return; grid.innerHTML = areas.map(a => `<div class="card-nav" onclick="verArea('${a.key}', '${a.nome}')"><i>${obterEmoji(a.nome)}</i><h3>${a.nome || 'Área'}</h3></div>`).join(''); } catch(e){} }
@@ -1159,7 +1172,6 @@
                 const dbFonte = isC ? categorias : metodosCompra; 
                 let chavesFonte = Object.keys(dbFonte);
                 
-                // ORDENA AS PASTAS COM BASE NA PRIORIDADE E ORDEM ALFABÉTICA
                 if (isC) {
                     chavesFonte.sort((a, b) => {
                         const prioA = getPrioridadeCategoria(dbFonte[a]?.nome);
@@ -1167,9 +1179,7 @@
                         if (prioA !== prioB) return prioA - prioB;
                         return (dbFonte[a]?.nome || "").localeCompare(dbFonte[b]?.nome || "");
                     });
-                } else {
-                    chavesFonte.sort((a, b) => (dbFonte[a]?.nome || "").localeCompare(dbFonte[b]?.nome || ""));
-                }
+                } else { chavesFonte.sort((a, b) => (dbFonte[a]?.nome || "").localeCompare(dbFonte[b]?.nome || "")); }
 
                 if(chavesFonte.length === 0) g.innerHTML = `<p style="grid-column: 1 / -1; color:#64748b; font-size: 0.9rem;">Nenhum grupo cadastrado.</p>`;
                 else g.innerHTML = chavesFonte.map(k => `<div class="card-nav" onclick="verGrupo('${k}', '${isC?'categoria':'metodo'}')">${isC ? `<i>${obterEmoji(dbFonte[k]?.nome)}</i>` : obterIconeMetodo(dbFonte[k]?.nome, true)}<h3>${dbFonte[k]?.nome}</h3></div>`).join(''); 
@@ -1182,8 +1192,23 @@
 
         function verGrupo(key, tipo) { 
             try {
+                document.getElementById('busca-categoria').value = '';
                 navegar('produtos-lista-filtrada'); const n = tipo === 'categoria' ? categorias[key]?.nome : metodosCompra[key]?.nome; document.getElementById('titulo-categoria-filtrada').innerText = n || 'Grupo'; 
-                const prodsFiltrados = Object.keys(produtos).filter(k => tipo === 'categoria' ? getCategoriasProduto(produtos[k]).includes(n) : produtos[k].metodoCompra === n);
+                let prodsFiltrados = Object.keys(produtos).filter(k => tipo === 'categoria' ? getCategoriasProduto(produtos[k]).includes(n) : produtos[k].metodoCompra === n);
+                
+                prodsFiltrados.sort((a, b) => {
+                    if (tipo === 'categoria') {
+                        const catObj = categorias[key];
+                        const customOrder = catObj.ordem || [];
+                        const idxA = customOrder.indexOf(a);
+                        const idxB = customOrder.indexOf(b);
+                        if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+                        if (idxA !== -1) return -1;
+                        if (idxB !== -1) return 1;
+                    }
+                    return (produtos[a].nome || "").localeCompare(produtos[b].nome || "");
+                });
+
                 if(prodsFiltrados.length === 0) { document.getElementById('tabela-produtos-filtrada').innerHTML = `<tr><td colspan="2" style="text-align:center; color:#64748b;">Nenhum produto neste grupo.</td></tr>`; return; }
                 document.getElementById('tabela-produtos-filtrada').innerHTML = prodsFiltrados.map(k => { const p = produtos[k]; let t = 1; getCategoriasProduto(p).forEach(cn => { const c = Object.values(categorias).find(x => x.nome === cn); if(c && c.unidadesFardo > t) t = Number(c.unidadesFardo); }); const tot = Object.values(p.estoque||{}).reduce((a,v)=>typeof v==='object'&&v!==null?a+((Number(v.f)||0)*t)+(Number(v.u)||0):a+Number(v||0),0); return `<tr><td><div style="display:flex; align-items:center;"><button class="action-icon edit-btn req-dono" onclick="abrirEdicaoProduto('${k}')">✎</button><button class="action-icon info-btn" onclick="verDetalhesProduto('${k}')">ⓘ</button><span class="col-item">${p.nome||''}</span></div></td><td style="text-align:right">${renderizarTotalLinhaDupla(tot,t)}</td></tr>`; }).join(''); 
             } catch(e){}
@@ -1191,31 +1216,47 @@
 
         function verArea(key, nome) { 
             try {
+                document.getElementById('busca-area').value = '';
                 areaAtualKey = key; navegar('detalhe-area'); document.getElementById('area-display-name').innerText = nome || 'Área'; 
                 let max = 1; 
                 let iA = Object.keys(produtos).filter(pk => produtos[pk] && (produtos[pk].locais||[]).includes(nome)); 
                 
-                // ORDENA OS PRODUTOS DA ÁREA PELA PRIORIDADE
                 iA.sort((a, b) => {
                     const pA = produtos[a]; const pB = produtos[b];
                     const prioA = getPrioridadeProduto(pA); const prioB = getPrioridadeProduto(pB);
                     if (prioA !== prioB) return prioA - prioB;
+                    
+                    const catsA = getCategoriasProduto(pA); const catsB = getCategoriasProduto(pB);
+                    let sharedCat = "";
+                    for(let c of ORDEM_CATEGORIAS) {
+                        if(catsA.map(x=>removerAcentos(x.toLowerCase())).includes(c) && catsB.map(x=>removerAcentos(x.toLowerCase())).includes(c)) {
+                            sharedCat = Object.keys(categorias).find(k => removerAcentos(categorias[k].nome.toLowerCase()) === c); break;
+                        }
+                    }
+                    if(!sharedCat) { const cA = catsA[0]; if(cA && catsB.includes(cA)) { sharedCat = Object.keys(categorias).find(k => categorias[k].nome === cA); } }
+                    
+                    if (sharedCat && categorias[sharedCat] && categorias[sharedCat].ordem) {
+                        const oA = categorias[sharedCat].ordem.indexOf(a); const oB = categorias[sharedCat].ordem.indexOf(b);
+                        if (oA !== -1 && oB !== -1) return oA - oB;
+                        if (oA !== -1) return -1;
+                        if (oB !== -1) return 1;
+                    }
                     return (pA.nome || "").localeCompare(pB.nome || "");
                 });
 
                 iA.forEach(pk => getCategoriasProduto(produtos[pk]).forEach(cn => { const c = Object.values(categorias).find(x => x.nome === cn); if(c && c.unidadesFardo > max) max = Number(c.unidadesFardo); })); 
                 
                 document.getElementById('head-area-itens').innerHTML = `<tr><th>Item</th><th style="text-align:center">${max>1?'Fds.':' '}</th><th style="text-align:center">Un.</th><th style="text-align:right">Total</th></tr>`; 
-                
                 if(iA.length === 0) { document.getElementById('tabela-area-itens').innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">Nenhum produto alocado nesta área.</td></tr>`; return; }
                 
                 document.getElementById('tabela-area-itens').innerHTML = iA.map(pk => { 
                     const p = produtos[pk]; let t = 1; getCategoriasProduto(p).forEach(cn => { const c = Object.values(categorias).find(x => x.nome === cn); if(c && c.unidadesFardo > t) t = Number(c.unidadesFardo); }); 
                     const v = p.estoque?.[nome] || {f:0,u:0}; 
                     
-                    const fardoInput = t > 1 ? `<input type="number" class="input-qtd" id="f-${pk}" value="${v.f||0}" onchange="attEst('${pk}','${nome}',${t})">` : '';
+                    const fardoInput = t > 1 ? getQtyHTML(`f-${pk}`, v.f||0, pk, nome, t) : '';
+                    const unInput = getQtyHTML(`u-${pk}`, v.u||0, pk, nome, t);
                     
-                    return `<tr><td><div style="display:flex; align-items:center;"><button class="action-icon info-btn" onclick="verDetalhesProduto('${pk}')">ⓘ</button><span class="col-item">${p.nome||''}</span></div></td><td style="text-align:center">${fardoInput}</td><td style="text-align:center"><input type="number" class="input-qtd" id="u-${pk}" value="${v.u||0}" onchange="attEst('${pk}','${nome}',${t})"></td><td style="text-align:right" id="tot-cell-${pk}">${renderizarTotalLinhaDupla((v.f||0)*t+(v.u||0),t)}</td></tr>`; 
+                    return `<tr><td><div style="display:flex; align-items:center;"><button class="action-icon info-btn" onclick="verDetalhesProduto('${pk}')">ⓘ</button><span class="col-item">${p.nome||''}</span></div></td><td style="text-align:center">${fardoInput}</td><td style="text-align:center">${unInput}</td><td style="text-align:right" id="tot-cell-${pk}">${renderizarTotalLinhaDupla((v.f||0)*t+(v.u||0),t)}</td></tr>`; 
                 }).join(''); 
             } catch(e) {}
         }
@@ -1237,13 +1278,12 @@
                 document.getElementById('tabela-locais-produto').innerHTML = locaisHtml || `<tr><td colspan="2" style="text-align:center; color:#64748b;">Não alocado em nenhuma área.</td></tr>`; 
                 
                 const boxFardosGeral = t > 1 ? `<div><strong style="color:var(--primary);">Fardos Fechados:</strong> <span style="color:#64748b;">${Math.floor(tG/t)} Fardos (Geral)</span></div>` : '';
-                
                 document.getElementById('info-extra-prod').innerHTML = `<div style="padding:12px; background:var(--row-even); border-radius:8px; border:1px solid var(--border-color); display:flex; flex-direction:column; gap:8px; margin-top:10px;"><div><strong style="color:var(--primary);">Categorias:</strong> <span style="color:#64748b;">${pC.length>0?pC.join(', '):'Nenhuma'}</span></div><div><strong style="color:var(--primary);">Método:</strong> <span style="color:#64748b;">${p.metodoCompra||"Não atribuído"}</span></div><div><strong style="color:var(--primary);">Estoque Mín.:</strong> <span style="color:#64748b;">${p.estoqueMinimo||0} ${t>1?'Fardos':'Unidades'}</span></div>${boxFardosGeral}</div>`; 
             } catch(e) {}
         }
 
         // ==========================================
-        // MÉTODOS DE COMPRA E CONFIGURAÇÕES
+        // MÉTODOS DE COMPRA E CONFIGURAÇÕES ADMIN
         // ==========================================
         function obterIconeMetodo(nome, isCard = false) { 
             if (!nome) return isCard ? `<i>📦</i>` : `📦`; const limpo = removerAcentos(nome.toLowerCase().trim()); let img = null; 
@@ -1253,9 +1293,7 @@
         }
 
         function renderizarMetodosConfig() { 
-            try {
-                document.getElementById('lista-metodos-config').innerHTML = Object.keys(metodosCompra).map(k => `<div class="preset-config-item" style="padding:15px 10px; border-bottom:1px solid #e2e8f0; margin-bottom:12px;"><div style="display:flex; align-items:center;"><button class="action-icon edit-btn" onclick="editarMetodo('${k}')">✎</button><button class="action-icon add-btn" onclick="abrirAtribuirMetodo('${k}')">➕</button><strong style="font-size:1.1rem; margin-left:12px;">${metodosCompra[k].nome}</strong><span style="margin-left:auto; color:red; cursor:pointer; font-weight:bold; font-size:0.85rem;" onclick="prepararExclusaoMet('${k}')">Excluir</span></div></div>`).join(''); 
-            } catch(e) {}
+            try { document.getElementById('lista-metodos-config').innerHTML = Object.keys(metodosCompra).map(k => `<div class="preset-config-item" style="padding:15px 10px; border-bottom:1px solid #e2e8f0; margin-bottom:12px;"><div style="display:flex; align-items:center;"><button class="action-icon edit-btn" onclick="editarMetodo('${k}')">✎</button><button class="action-icon add-btn" onclick="abrirAtribuirMetodo('${k}')">➕</button><strong style="font-size:1.1rem; margin-left:12px;">${metodosCompra[k].nome}</strong><span style="margin-left:auto; color:red; cursor:pointer; font-weight:bold; font-size:0.85rem;" onclick="prepararExclusaoMet('${k}')">Excluir</span></div></div>`).join(''); } catch(e) {}
         }
 
         function renderizarPedidosMetodos() { 
@@ -1286,7 +1324,82 @@
         function selecionarMetodo(k, ctx) { document.getElementById(ctx==='novo'?'prod-metodo-selecionado':'edit-prod-metodo-selecionado').value=metodosCompra[k].nome; renderizarPresetsMetodos(); }
         
         function salvarCategoria() { const id=document.getElementById('edit-cat-id').value, n=document.getElementById('cat-nome').value, u=document.getElementById('cat-uso-fardo').checked, t=u?Number(document.getElementById('cat-qtd-fardo').value):1, sel=Array.from(document.querySelectorAll('#cat-checks-areas input:checked')).map(i=>i.value); if(n&&sel.length){ const d={nome:n,areas:sel,unidadesFardo:t}; if(id){ const old=categorias[id].nome; db.ref('categorias/'+id).update(d).then(()=>{if(old!==n)Object.keys(produtos).forEach(pk=>{if(!produtos[pk])return;let pc=getCategoriasProduto(produtos[pk]);if(pc.includes(old))db.ref('produtos/'+pk).update({categorias:pc.map(c=>c===old?n:c),categoria:null});});}); }else db.ref('categorias').push(d); resetarFormCategoria(); } }
-        function renderizarPresets() { document.getElementById('presets-container').innerHTML=Object.keys(categorias).map(k=>`<div class="chip ${catsNovo.includes(categorias[k].nome)?'active-chip':''}" onclick="togglePreset('${k}','novo')">${obterEmoji(categorias[k].nome)} ${categorias[k].nome}</div>`).join(''); document.getElementById('edit-presets-container').innerHTML=Object.keys(categorias).map(k=>`<div class="chip ${catsEdit.includes(categorias[k].nome)?'active-chip':''}" onclick="togglePreset('${k}','edit')">${obterEmoji(categorias[k].nome)} ${categorias[k].nome}</div>`).join(''); document.getElementById('lista-categorias-config').innerHTML=Object.keys(categorias).map(k=>{ const c=categorias[k]; return `<div class="preset-config-item" style="padding:12px; border:1px solid #ccc; border-radius:8px; margin-bottom:8px;"><div style="display:flex; align-items:center;"><button class="action-icon edit-btn" onclick="editarCategoria('${k}')">✎</button><button class="action-icon add-btn" onclick="abrirAtribuirCategoria('${k}')">➕</button><strong style="font-size:1.05rem; margin-left:5px;">${obterEmoji(c.nome)} ${c.nome}</strong><span style="margin-left:auto; color:red; cursor:pointer;" onclick="prepararExclusaoCat('${k}')">Excluir</span></div><div style="margin-top:8px; font-size:0.85rem; color:#64748b;">Áreas: ${(c.areas||[]).join(', ')} <br> Fardo: ${c.unidadesFardo>1?c.unidadesFardo+' un.':'Não'}</div></div>`; }).join(''); }
+        
+        function renderizarPresets() { 
+            document.getElementById('presets-container').innerHTML=Object.keys(categorias).map(k=>`<div class="chip ${catsNovo.includes(categorias[k].nome)?'active-chip':''}" onclick="togglePreset('${k}','novo')">${obterEmoji(categorias[k].nome)} ${categorias[k].nome}</div>`).join(''); 
+            document.getElementById('edit-presets-container').innerHTML=Object.keys(categorias).map(k=>`<div class="chip ${catsEdit.includes(categorias[k].nome)?'active-chip':''}" onclick="togglePreset('${k}','edit')">${obterEmoji(categorias[k].nome)} ${categorias[k].nome}</div>`).join(''); 
+            document.getElementById('lista-categorias-config').innerHTML=Object.keys(categorias).map(k=>{ 
+                const c=categorias[k]; 
+                return `<div class="preset-config-item" style="padding:12px; border:1px solid #ccc; border-radius:8px; margin-bottom:8px;"><div style="display:flex; align-items:center;"><button class="action-icon edit-btn" onclick="editarCategoria('${k}')">✎</button><button class="action-icon add-btn" onclick="abrirAtribuirCategoria('${k}')">➕</button><button class="action-icon info-btn" onclick="abrirConfigCategoria('${k}')">ⓘ</button><strong style="font-size:1.05rem; margin-left:5px;">${obterEmoji(c.nome)} ${c.nome}</strong><span style="margin-left:auto; color:red; cursor:pointer;" onclick="prepararExclusaoCat('${k}')">Excluir</span></div><div style="margin-top:8px; font-size:0.85rem; color:#64748b;">Áreas: ${(c.areas||[]).join(', ')} <br> Fardo: ${c.unidadesFardo>1?c.unidadesFardo+' un.':'Não'}</div></div>`; 
+            }).join(''); 
+        }
+
+        function abrirConfigCategoria(k) {
+            categoriaFocadaOrdenacao = k;
+            const c = categorias[k];
+            document.getElementById('titulo-config-cat').innerText = `⚙️ ${c.nome}`;
+            document.getElementById('info-tecnica-cat').innerHTML = `<p><strong>Unidades por Fardo:</strong> ${c.unidadesFardo}</p><p><strong>Áreas Armazenadas:</strong> ${(c.areas||[]).join(', ') || 'Nenhuma'}</p>`;
+            renderizarOrdenacaoCategoria();
+            navegar('detalhe-categoria-admin');
+        }
+
+        function renderizarOrdenacaoCategoria() {
+            const k = categoriaFocadaOrdenacao;
+            const c = categorias[k];
+            if(!c) return;
+
+            let prodsInCat = Object.keys(produtos).filter(pk => getCategoriasProduto(produtos[pk]).includes(c.nome));
+            const customOrder = c.ordem || [];
+            
+            prodsInCat.sort((a, b) => {
+                const idxA = customOrder.indexOf(a); const idxB = customOrder.indexOf(b);
+                if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+                if (idxA !== -1) return -1;
+                if (idxB !== -1) return 1;
+                return (produtos[a].nome || "").localeCompare(produtos[b].nome || "");
+            });
+
+            document.getElementById('lista-ordenacao-cat').innerHTML = prodsInCat.map((pk, index) => {
+                const p = produtos[pk];
+                return `<div style="display:flex; align-items:center; background:white; padding:10px; border-radius:8px; border:1px solid #ccc;">
+                    <div class="sort-wrapper">
+                        <button class="sort-btn qty-up" onclick="moverProdutoOrdem('${k}', '${pk}', -1)" ${index === 0 ? 'disabled style="opacity:0.3"' : ''}>▲</button>
+                        <button class="sort-btn qty-down" onclick="moverProdutoOrdem('${k}', '${pk}', 1)" ${index === prodsInCat.length - 1 ? 'disabled style="opacity:0.3"' : ''}>▼</button>
+                    </div>
+                    <strong style="font-size:0.95rem; color:var(--text-main);">${p.nome}</strong>
+                </div>`;
+            }).join('') || '<p style="font-size:0.85rem; color:#64748b;">Nenhum produto nesta categoria.</p>';
+        }
+
+        function moverProdutoOrdem(catKey, prodKey, direction) {
+            const c = categorias[catKey];
+            let prodsInCat = Object.keys(produtos).filter(pk => getCategoriasProduto(produtos[pk]).includes(c.nome));
+            const customOrder = c.ordem || [];
+            
+            prodsInCat.sort((a, b) => {
+                const idxA = customOrder.indexOf(a); const idxB = customOrder.indexOf(b);
+                if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+                if (idxA !== -1) return -1;
+                if (idxB !== -1) return 1;
+                return (produtos[a].nome || "").localeCompare(produtos[b].nome || "");
+            });
+
+            const index = prodsInCat.indexOf(prodKey);
+            if(index === -1) return;
+            
+            const newIndex = index + direction;
+            if(newIndex < 0 || newIndex >= prodsInCat.length) return;
+
+            const temp = prodsInCat[index];
+            prodsInCat[index] = prodsInCat[newIndex];
+            prodsInCat[newIndex] = temp;
+
+            db.ref(`categorias/${catKey}/ordem`).set(prodsInCat);
+        }
+
+        // ==========================================
+        // ATRIBUIÇÃO EM MASSA
+        // ==========================================
         function abrirAtribuirCategoria(k) { const c=categorias[k]; document.getElementById('atribuir-cat-id').value=k; document.getElementById('titulo-atribuir-cat').innerText=`Atribuir: ${c.nome}`; document.getElementById('lista-produtos-atribuir').innerHTML=Object.keys(produtos).filter(pk=>produtos[pk]&&produtos[pk].nome).sort((a,b)=>{const hA=getCategoriasProduto(produtos[a]).includes(c.nome)?1:0; const hB=getCategoriasProduto(produtos[b]).includes(c.nome)?1:0; return hA!==hB?hB-hA:produtos[a].nome.localeCompare(produtos[b].nome);}).map(pk=>{ const p=produtos[pk], has=getCategoriasProduto(p).includes(c.nome), out=getCategoriasProduto(p).filter(x=>x!==c.nome).length; return `<label class="check-item" style="padding:15px 10px; border:1px solid ${has?'var(--primary)':'var(--border-color)'}; border-radius:10px; background:${has?'#fff5f5':'#fff'}; display:flex; align-items:center; cursor:pointer;"><input type="checkbox" value="${pk}" ${has?'checked':''} style="width:22px; height:22px; margin-right:12px;"><strong style="font-size:1.05rem;">${p.nome}</strong><span style="font-size:0.65rem; background:${out>0||has?'#e2e8f0':'#fee2e2'}; color:${out>0||has?'#64748b':'#b91c1c'}; padding:4px 8px; border-radius:12px; margin-left:auto;">${out>0?`+${out} cat`:(has?'OK':'Vazio')}</span></label>`; }).join(''); navegar('atribuir-categoria'); }
         function salvarAtribuicaoCategoria() { const n=categorias[document.getElementById('atribuir-cat-id').value].nome, u={}; document.querySelectorAll('#lista-produtos-atribuir input:checked, #lista-produtos-atribuir input:not(:checked)').forEach(cb=>{ const p=produtos[cb.value]; if(!p)return; let pc=getCategoriasProduto(p), ch=false; if(cb.checked&&!pc.includes(n)){pc.push(n);ch=true;}else if(!cb.checked&&pc.includes(n)){pc=pc.filter(x=>x!==n);ch=true;} if(ch){u[`produtos/${cb.value}/categorias`]=pc.length?pc:null;u[`produtos/${cb.value}/categoria`]=null;} }); if(Object.keys(u).length) db.ref().update(u).then(()=>navegar('configuracoes')); else navegar('configuracoes'); }
         function abrirAtribuirMetodo(k) { const m=metodosCompra[k]; document.getElementById('atribuir-met-id').value=k; document.getElementById('titulo-atribuir-met').innerText=`Atribuir: ${m.nome}`; document.getElementById('lista-produtos-atribuir-met').innerHTML=Object.keys(produtos).filter(pk=>produtos[pk]&&produtos[pk].nome).sort((a,b)=>{const hA=produtos[a].metodoCompra===m.nome?1:0; const hB=produtos[b].metodoCompra===m.nome?1:0; return hA!==hB?hB-hA:produtos[a].nome.localeCompare(produtos[b].nome);}).map(pk=>{ const p=produtos[pk], has=p.metodoCompra===m.nome, out=p.metodoCompra&&p.metodoCompra!==m.nome; return `<label class="check-item" style="padding:15px 10px; border:1px solid ${has?'var(--primary)':'var(--border-color)'}; border-radius:10px; background:${has?'#fff5f5':'#fff'}; display:flex; align-items:center; cursor:pointer;"><input type="checkbox" value="${pk}" ${has?'checked':''} style="width:22px; height:22px; margin-right:12px;"><strong style="font-size:1.05rem;">${p.nome}</strong><span style="font-size:0.65rem; background:${out?'#e2e8f0':(has?'#e2e8f0':'#fee2e2')}; color:${out?'#64748b':(has?'#64748b':'#b91c1c')}; padding:4px 8px; border-radius:12px; margin-left:auto;">${out?p.metodoCompra:(has?'OK':'Sem método')}</span></label>`; }).join(''); navegar('atribuir-metodo'); }
