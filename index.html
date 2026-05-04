@@ -21,28 +21,33 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { display: flex; background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
         
-        /* REGRAS DE PERMISSÃO */
-        body.role-visualizador .req-dono, body.role-visualizador .req-contrib { display: none !important; }
-        body.role-visualizador .input-qtd, body.role-visualizador .qty-btn { pointer-events: none; border-color: transparent; background: transparent; color: var(--text-main); text-align: center; }
-        body.role-visualizador .qty-arrows { display: none; }
+        /* ================== REGRAS DE PERMISSÃO (CARGOS) ================== */
+        body.role-visualizador .req-dono, 
+        body.role-visualizador .req-contrib { display: none !important; }
+        
+        body.role-visualizador .input-qtd { pointer-events: none; border-color: transparent; background: transparent; color: var(--text-main); padding: 0; width: auto; text-align: center; font-size: 1rem; -moz-appearance: textfield; }
+        body.role-visualizador .input-qtd::-webkit-outer-spin-button, body.role-visualizador .input-qtd::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
         body.role-contribuidor .req-dono { display: none !important; }
 
-        /* MENU LATERAL */
-        aside { width: 260px; background: var(--bg-sidebar); color: var(--text-sidebar); padding: 2rem 0.5rem 1rem 0.5rem; position: fixed; height: 100vh; z-index: 1000; display: flex; flex-direction: column; transition: 0.3s; }
+        /* MENU LATERAL E TOPBAR */
+        aside { width: 260px; background: var(--bg-sidebar); color: var(--text-sidebar); padding: 2rem 0.5rem 1rem 0.5rem; position: fixed; height: 100vh; z-index: 1000; transition: 0.3s; display: flex; flex-direction: column; }
         .logo-container { display: flex; justify-content: center; align-items: center; margin-bottom: 2.5rem; width: 100%; height: 70px; }
         .logo-img { max-height: 100%; max-width: 90%; object-fit: contain; }
         aside nav { display: flex; flex-direction: column; width: 100%; flex-grow: 1; }
-        .nav-btn { width: 100%; padding: 0.8rem 1rem; background: transparent; border: none; color: var(--text-sidebar); text-align: left; cursor: pointer; border-radius: 8px; margin-bottom: 0.5rem; font-size: 0.95rem; display: flex; align-items: center; gap: 10px; border-left: 4px solid transparent; }
+        .nav-btn { width: 100%; padding: 0.8rem 1rem; background: transparent; border: none; color: var(--text-sidebar); text-align: left; cursor: pointer; border-radius: 8px; margin-bottom: 0.5rem; font-size: 0.95rem; transition: 0.3s; display: flex; align-items: center; gap: 10px; border-left: 4px solid transparent; }
         .nav-btn.active { background: var(--bg-sidebar-active); border-left: 4px solid var(--primary); color: white; font-weight: 600; }
         
         .mobile-topbar { display: none; }
         
-        /* Botões Topo */
+        /* Botão Config/Cargo (Topo Esquerda) */
         .btn-config { position: fixed; top: 15px; left: 15px; background: var(--bg-sidebar); color: white; border: none; border-radius: 50%; width: 42px; height: 42px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 2000; font-size: 1.1rem; box-shadow: 0 4px 8px rgba(0,0,0,0.3); transition: 0.2s; }
+        
+        /* Botão Novo (+) Topo Direita (Só mobile) */
         .btn-novo-top { display: none; }
 
-        /* GERAL E ANIMAÇÕES */
-        main { margin-left: 260px; padding: 1.5rem; width: 100%; position: relative; padding-bottom: 100px; min-height: 100vh; transition: 0.3s; }
+        /* GERAL */
+        main { margin-left: 260px; padding: 1.5rem; width: 100%; position: relative; padding-bottom: 100px; transition: 0.3s; min-height: 100vh; }
         h1 { margin-bottom: 1rem; color: var(--bg-sidebar); font-weight: 800; font-size: 1.4rem; }
         .header-com-acao { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px; }
         .btn-toggle-grupo { background: var(--primary); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s; font-size: 0.85rem; }
@@ -57,35 +62,32 @@
         .card { background: var(--card-bg); padding: 1.2rem; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); margin-bottom: 1rem; border: 1px solid var(--border-color); }
         .grid-home { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
         .grid-areas-layout { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+        
         .card-nav { background: var(--card-bg); padding: 1.5rem 0.5rem; border-radius: 15px; text-align: center; cursor: pointer; border: 2px solid transparent; transition: 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .card-nav:hover { border-color: var(--primary); transform: translateY(-3px); }
         .card-nav i { font-size: 2.2rem; display: block; margin-bottom: 8px; font-style: normal; }
+        .card-nav h3 { font-size: 0.95rem; color: var(--bg-sidebar); }
 
-        /* PESQUISA E QTD (NOVOS) */
-        .search-bar { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.95rem; outline: none; transition: 0.2s; box-sizing: border-box; }
-        .search-bar:focus { border-color: var(--primary); }
+        /* CALENDÁRIO E TABELAS FLUIDAS */
+        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .cal-btn { background: var(--bg-sidebar); color: white; border: none; border-radius: 8px; padding: 8px 15px; cursor: pointer; font-weight: bold; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+        .cal-day-name { font-weight: bold; text-align: center; padding: 10px 0; color: var(--bg-sidebar); text-transform: uppercase; font-size: 0.9rem; }
         
-        .qty-wrapper { display: inline-flex; align-items: stretch; border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; height: 36px; width: 80px; background: white; margin: 0 auto; }
-        .qty-wrapper input { flex: 1; width: 100%; min-width: 0; border: none; text-align: center; font-weight: 800; font-size: 0.95rem; -moz-appearance: textfield; outline: none; padding: 0; color: var(--text-main); }
-        .qty-wrapper input::-webkit-outer-spin-button, .qty-wrapper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        .qty-arrows { display: flex; flex-direction: column; width: 26px; flex-shrink: 0; border-left: 1px solid var(--border-color); }
-        .qty-btn { flex: 1; border: none; cursor: pointer; color: white; font-size: 0.65rem; display: flex; align-items: center; justify-content: center; user-select: none; padding:0; margin:0;}
-        .qty-up { background: #10b981; }
-        .qty-up:active { background: #059669; }
-        .qty-down { background: #ef4444; }
-        .qty-down:active { background: #dc2626; }
+        /* CORREÇÃO DO CONTRASTE DOS DIAS NA AGENDA */
+        .cal-day { background: white; border: 1px solid var(--border-color); border-radius: 8px; text-align: center; padding: 15px 0; cursor: pointer; transition: 0.2s; position: relative; font-weight: 700; color: var(--text-main) !important; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 50px; }
+        .cal-day:hover:not(.closed-day) { border-color: var(--primary); color: var(--primary) !important; background: #fff5f5; }
+        .cal-day.empty { background: transparent; border: none; pointer-events: none; }
+        .cal-day.has-reserva::after { content: ''; display: block; margin-top: 4px; width: 6px; height: 6px; background: var(--primary); border-radius: 50%; }
+        .cal-day.closed-day { background: #f1f5f9; color: #cbd5e1 !important; border-color: #e2e8f0; cursor: not-allowed; text-decoration: line-through; }
 
-        /* ORDENAÇÃO DE LISTA DE ITENS NA ADMINISTRAÇÃO */
-        .sort-wrapper { display: flex; flex-direction: column; width: 34px; height: 46px; border-radius: 6px; overflow: hidden; margin-right: 12px; flex-shrink: 0; }
-        .sort-btn { flex: 1; border: none; cursor: pointer; color: white; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; padding:0; margin:0;}
-
-        /* TABELAS */
         .table-container { background: white; border-radius: 10px; overflow-x: auto; border: 1px solid var(--border-color); width: 100%; }
         table { width: 100%; border-collapse: collapse; }
         th { background: #fffaf7; padding: 0.8rem 0.5rem; text-align: left; border-bottom: 2px solid var(--border-color); font-size: 0.75rem; color: #64748b; font-weight: 700; white-space: nowrap; text-transform: uppercase; }
         td { padding: 0.8rem 0.5rem; border-bottom: 1px solid var(--border-color); vertical-align: middle; font-size: 0.85rem; }
         tbody tr:nth-child(even) { background-color: var(--row-even); }
         .col-item { font-weight: 600; min-width: 120px; }
+        .input-qtd { width: 60px; padding: 8px 4px; border: 1px solid var(--border-color); border-radius: 6px; text-align: center; font-size: 0.9rem; font-weight: 700; transition: 0.2s; }
         .total-container { display: flex; flex-direction: column; line-height: 1.2; text-align: right; }
         .total-fardos { font-weight: 800; color: var(--primary); font-size: 0.95rem; white-space: nowrap; }
         .total-unidades { font-weight: 600; color: #64748b; font-size: 0.75rem; white-space: nowrap; }
@@ -99,25 +101,17 @@
         .check-item { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
         input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary); }
 
-        /* AGENDA */
-        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; color: var(--bg-sidebar); }
-        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
-        .cal-day-name { font-weight: bold; text-align: center; padding: 10px 0; color: var(--primary); font-size: 0.85rem; text-transform: uppercase;}
-        .cal-day { background: white; border: 1px solid var(--border-color); border-radius: 8px; text-align: center; padding: 15px 0; cursor: pointer; transition: 0.2s; position: relative; font-weight: 700; color: var(--text-main) !important; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 50px; }
-        .cal-day:hover:not(.closed-day) { border-color: var(--primary); color: var(--primary) !important; background: #fff5f5; }
-        .cal-day.empty { background: transparent; border: none; cursor: default; pointer-events: none;}
-        .cal-day.closed-day { background: #f1f5f9; color: #cbd5e1 !important; border-color: #e2e8f0; text-decoration: line-through; cursor: not-allowed; }
-        .cal-day.has-reserva::after { content: ''; display: block; margin-top: 4px; width: 6px; height: 6px; background: var(--primary); border-radius: 50%; }
-
-        /* MAPA */
+        /* ================== CSS MAPA DE SALÃO E LAYOUT BLINDADO ================== */
+        
         body:has(#mapa-salao.active) main { padding-bottom: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         #mapa-salao.active { height: 100%; display: flex; flex-direction: column; overflow: hidden; }
 
         .mapa-layout-flex { display: flex; flex-direction: row; gap: 15px; flex-grow: 1; min-height: 0; margin-top: 5px; overflow: hidden; }
+        
         .mapa-coluna-mapa { flex: 1 1 0; display: flex; flex-direction: column; min-width: 0; order: 1; }
         .mapa-coluna-controles { flex: 0 0 350px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; padding-right: 5px; order: 2; }
 
-        .mapa-viewport { flex-grow: 1; position: relative; width: 100%; background: white; border-radius: 12px; border: 2px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; transition: height 0.3s ease; }
+        .mapa-viewport { flex-grow: 1; position: relative; width: 100%; background: white; border-radius: 12px; border: 2px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; }
         .planta-baixa { position: absolute; top: 0; left: 0; width: 750px; height: 950px; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); transform-origin: 0 0; }
 
         .bloco-macro { position: absolute; background: #f8fafc; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; border-radius: 8px; cursor: pointer; transition: 0.3s; z-index: 10; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
@@ -145,7 +139,7 @@
         .status-reservada { background: var(--primary); border: 2px solid #7f1d1d; color: white; cursor: not-allowed; }
         .label-vertical { position: absolute; color: var(--text-main); font-weight: bold; letter-spacing: 2px; transform: rotate(-90deg); transform-origin: left top; white-space: nowrap; font-size: 0.8rem; pointer-events: none; opacity: 0.8; }
 
-        /* FAB E MODAIS */
+        /* FAB (+) E INPUTS */
         .fab-container { position: fixed; bottom: 30px; right: 30px; z-index: 1500; display: flex; flex-direction: column-reverse; align-items: flex-end; gap: 15px; }
         .fab-main { width: 55px; height: 55px; background: var(--primary); color: white; border-radius: 50%; border: none; font-size: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 100; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .fab-options { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; opacity: 0; pointer-events: none; transition: 0.2s; transform: translateY(10px); position: fixed; bottom: 95px; right: 20px; z-index: 101; }
@@ -161,15 +155,20 @@
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(40, 6, 6, 0.7); z-index: 3000; align-items: center; justify-content: center; }
         .modal-box { background: var(--bg-body); padding: 1.5rem; border-radius: 12px; max-width: 320px; width: 90%; text-align: center; border: 2px solid var(--primary); }
 
-        /* MOBILE FIXES */
+        /* ================== RESPONSIVIDADE MOBILE (Empilhamento Otimizado) ================== */
         @media (max-width: 1024px) {
             body:has(#mapa-salao.active) main { padding: 65px 5px 5px 5px; } 
+            
             #mapa-salao.active { height: calc(100vh - 70px); }
+
             #mapa-salao .header-com-acao { margin-bottom: 5px; display: none; } 
             #mapa-salao > p { display: none; } 
+
             .mapa-layout-flex { flex-direction: column; gap: 5px; margin-top: 0; }
+            
             .mapa-coluna-controles { width: 100%; flex: 0 0 auto; max-height: 45vh; padding-right: 0; order: 1; }
             .mapa-coluna-mapa { width: 100%; flex: 1 1 0; order: 2; }
+            
             .grid-home, .grid-areas-layout { grid-template-columns: repeat(2, 1fr); }
         }
 
@@ -181,10 +180,11 @@
             aside nav { flex-direction: row; justify-content: space-around; height: 100%; align-items: center; }
             .logo-container { display: none; } 
             .nav-btn { flex-direction: column; justify-content: center; align-items: center; gap: 4px; padding: 5px; margin-bottom: 0; border-radius: 0; border-left: none; border-bottom: 3px solid transparent; height: 100%; }
-            .nav-btn.active { border-bottom: 3px solid var(--primary); border-left: none; background: var(--bg-sidebar-active); }
+            .nav-btn.active { border-bottom: 3px solid var(--primary); background: var(--bg-sidebar-active); }
             .nav-btn span { display: block !important; font-size: 0.60rem; font-weight: normal; text-align: center; }
             
-            .btn-config { top: 9px; left: 10px; width: 42px; height: 42px; font-size: 1.5rem; font-weight: bold; background: transparent; color: var(--primary); box-shadow: none; border-radius: 0; }
+            /* Botão de Cargo na Esquerda e Botão (+) na Direita (Só Mobile) */
+            .btn-config { top: 9px; left: 10px; width: 42px; height: 42px; font-size: 1.5rem; font-weight: bold; background: transparent; color: white; box-shadow: none; border-radius: 0; text-shadow: 0 1px 3px rgba(0,0,0,0.3); }
             
             .fab-main { display: none !important; }
             .btn-novo-top { display: flex; position: fixed; top: 9px; right: 10px; z-index: 2001; font-size: 1.8rem; color: var(--primary); background: transparent; border: none; cursor: pointer; align-items: center; justify-content: center; width: 42px; height: 42px; }
@@ -199,11 +199,16 @@
 </head>
 <body class="role-visualizador">
 
+    <!-- TOPO MOBILE COM LOGO -->
     <div class="mobile-topbar"><img src="contamais.svg" alt="ContaMais Logo"></div>
 
+    <!-- BOTÃO TOPO ESQUERDA (ENGRENAGEM OU CARGO) -->
     <button id="btn-top-role" class="btn-config" onclick="if(currentRole==='dono') abrirConfig()"></button>
+    
+    <!-- BOTÃO TOPO DIREITA (+) APENAS NO MOBILE PARA DONO -->
     <button id="btn-novo-top" class="btn-novo-top req-dono" onclick="event.stopPropagation(); toggleFab()">+</button>
 
+    <!-- MODAL DE AUTENTICAÇÃO (LOGIN/CADASTRO COM CAMPO NOME) -->
     <div id="modalAuth" class="modal-overlay">
         <div class="modal-box">
             <h3 id="auth-title" style="margin-bottom: 10px; color: var(--primary);">👤 Entrar</h3>
@@ -220,6 +225,7 @@
         </div>
     </div>
 
+    <!-- MODAL CONFIRMAÇÃO EXCLUSÃO -->
     <div id="modalDelete" class="modal-overlay">
         <div class="modal-box">
             <p id="modalMsg" style="margin-bottom: 20px; font-weight: 600;"></p>
@@ -230,6 +236,7 @@
         </div>
     </div>
 
+    <!-- MENU LATERAL REESTRUTURADO -->
     <aside>
         <div class="logo-container"><img src="contamais.svg" alt="ContaMais Logo" class="logo-img"></div>
         <nav id="menu-navegacao">
@@ -237,13 +244,13 @@
             <button class="nav-btn" id="nav-produtos-hub" onclick="navegar('produtos-hub', this)">🍾 <span>Produtos</span></button>
             <button class="nav-btn" id="nav-reservas-hub" onclick="navegar('reservas-hub', this)">📅 <span>Reservas</span></button>
             
-            <!-- REMOVIDO nome e cargo do rodapé conforme pedido, mantido apenas o botão de Login -->
             <div style="margin-top: auto;"></div> 
             <button class="nav-btn" onclick="abrirModalAuth()" id="btn-login-sidebar">👤 <span>Entrar</span></button>
         </nav>
     </aside>
 
     <main>
+        <!-- FAB (+) APENAS DONO -->
         <div class="fab-container req-dono">
             <button class="fab-main" onclick="event.stopPropagation(); toggleFab()">+</button>
             <div id="fabOptions" class="fab-options">
@@ -252,6 +259,7 @@
             </div>
         </div>
 
+        <!-- 1. GUIA: INÍCIO -->
         <section id="inicio" class="section active">
             <h1>Início</h1>
             <p style="color:#64748b; margin-bottom:20px;">Bem-vindo ao ContaMais. Selecione um dos módulos abaixo ou no menu lateral.</p>
@@ -261,6 +269,7 @@
             </div>
         </section>
 
+        <!-- 2. GUIA: HUB DE PRODUTOS -->
         <section id="produtos-hub" class="section">
             <h1>Produtos e Logística</h1>
             <div class="grid-home">
@@ -270,6 +279,7 @@
             </div>
         </section>
 
+        <!-- 3. GUIA: HUB DE RESERVAS -->
         <section id="reservas-hub" class="section">
             <h1>Gestão de Reservas</h1>
             <div class="grid-home">
@@ -278,6 +288,9 @@
             </div>
         </section>
 
+        <!-- ==============================================
+             SUB-TELAS DO MAPA DE SALÃO
+        =================================================== -->
         <section id="mapa-setup" class="section">
             <div class="btn-back-styled" onclick="navegar('reservas-hub')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
             <h1>Acessar Mapa de Salão</h1>
@@ -307,11 +320,14 @@
             <p style="font-size:0.85rem; color:#64748b; margin-bottom: 10px;">Selecione os blocos para dar zoom nas áreas. O sistema fará o corte espacial de 1 mesa automaticamente nas reservas.</p>
 
             <div class="mapa-layout-flex">
+                
                 <div class="mapa-coluna-controles">
+                    
                     <div id="painel-reservas-turno" class="card" style="margin-bottom:0; padding:10px; display:flex; flex-direction:column; min-height:0; border-color: var(--primary);">
                         <h3 style="color:var(--primary); font-size:1rem; margin-bottom: 8px;">📋 Reservas do Turno</h3>
                         <div id="lista-reservas-turno-mapa" style="display:flex; flex-direction:column; gap:6px; overflow-y:auto; flex-grow:1;"></div>
                     </div>
+
                     <button class="btn-submit" id="btn-voltar-mapa" style="display:none; margin-top:0; margin-bottom:0; background:#64748b; font-size:0.85rem;" onclick="desfocarArea()">⬅️ Voltar Visão Geral</button>
 
                     <div id="painel-controles-mapa" class="card req-contrib" style="display:none; margin-bottom:0; padding:10px; border-color: var(--primary);">
@@ -331,14 +347,19 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="mapa-coluna-mapa">
                     <div id="mapa-viewport" class="mapa-viewport">
                         <div id="mapa-container" class="planta-baixa"></div>
                     </div>
                 </div>
+
             </div>
         </section>
 
+        <!-- ==============================================
+             SUB-TELAS DA AGENDA
+        =================================================== -->
         <section id="agenda-view" class="section">
             <div class="btn-back-styled" onclick="navegar('reservas-hub')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
             <h1>Agenda de Reservas</h1>
@@ -368,12 +389,19 @@
                 <select id="res-area" onchange="atualizarFormReserva()">
                     <option value="Varanda">Varanda</option><option value="Salão 1 - Frente">Salão 1 - Frente</option><option value="Salão 1 - Corredor">Salão 1 - Corredor</option><option value="Salão 2 - Parede">Salão 2 - Parede</option><option value="Salão 2 - Meio">Salão 2 - Meio</option><option value="Salão 2 - Corrimão">Salão 2 - Corrimão</option><option value="Salão 2 - Mesas Redondas">Salão 2 - Mesas Redondas</option><option value="Salão 2 - Bistrôs">Salão 2 - Bistrôs</option><option value="Salão 2 - Brinquedão">Salão 2 - Brinquedão</option><option value="Laje">Laje</option>
                 </select>
+                
+                <!-- CAPACIDADE DA ÁREA AVISO (NOVO) -->
+                <div id="res-capacidade-aviso" style="font-size: 0.85rem; color: var(--primary); margin: 5px 0 10px 0; font-weight: bold;"></div>
+                
                 <input type="number" id="res-lugares" placeholder="Lugares (Qtd de pessoas)">
                 <input type="text" id="res-nome" placeholder="Ex: Aniversário do João">
                 <button class="btn-submit" onclick="salvarReserva()" style="margin-top: 15px;">CADASTRAR RESERVA</button>
             </div>
         </section>
 
+        <!-- ==============================================
+             SUB-TELAS DE LOGÍSTICA E ESTOQUE
+        =================================================== -->
         <section id="areas-lista" class="section">
             <div class="btn-back-styled" onclick="navegar('produtos-hub')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
             <h1>Áreas de Estoque</h1><div id="grid-areas" class="grid-areas-layout"></div>
@@ -395,8 +423,7 @@
         <section id="produtos-lista-filtrada" class="section">
             <div class="btn-back-styled" onclick="navegar('produtos-categorias')">✕</div>
             <h1 id="titulo-categoria-filtrada" style="font-size: 1.2rem;">Produtos</h1>
-            <!-- Barra de Pesquisa Integrada -->
-            <input type="text" id="busca-categoria" class="search-bar" placeholder="🔍 Pesquisar item na categoria..." onkeyup="filtrarTabela('busca-categoria', 'tabela-produtos-filtrada')">
+            <input type="text" id="busca-categoria" class="search-bar" placeholder="🔍 Pesquisar item..." onkeyup="filtrarTabela('busca-categoria', 'tabela-produtos-filtrada')">
             <div class="table-container"><table><thead><tr><th>Item</th><th style="text-align:right">Total</th></tr></thead><tbody id="tabela-produtos-filtrada"></tbody></table></div>
         </section>
 
@@ -413,8 +440,7 @@
                 </div>
                 <span class="req-dono" style="color:var(--primary); cursor:pointer; font-size:0.75rem; display:block; margin-top:8px;" onclick="prepararExclusaoArea()">Excluir Área</span>
             </div>
-            <!-- Barra de Pesquisa Integrada -->
-            <input type="text" id="busca-area" class="search-bar" placeholder="🔍 Pesquisar item nesta área..." onkeyup="filtrarTabela('busca-area', 'tabela-area-itens')">
+            <input type="text" id="busca-area" class="search-bar" placeholder="🔍 Pesquisar item..." onkeyup="filtrarTabela('busca-area', 'tabela-area-itens')">
             <div class="table-container"><table><thead id="head-area-itens"></thead><tbody id="tabela-area-itens"></tbody></table></div>
         </section>
 
@@ -480,15 +506,17 @@
             </div>
         </section>
 
+        <!-- ATRIBUIÇÕES EM MASSA -->
         <section id="atribuir-categoria" class="section req-dono"><div class="btn-back-styled" onclick="navegar('configuracoes')">✕</div><h1 id="titulo-atribuir-cat">Atribuir</h1><div class="card"><input type="hidden" id="atribuir-cat-id"><div id="lista-produtos-atribuir" style="display: flex; flex-direction: column; gap: 8px; max-height: 55vh; overflow-y: auto;"></div><button class="btn-submit" onclick="salvarAtribuicaoCategoria()">SALVAR</button></div></section>
         <section id="atribuir-metodo" class="section req-dono"><div class="btn-back-styled" onclick="navegar('configuracoes')">✕</div><h1 id="titulo-atribuir-met">Atribuir Método</h1><div class="card"><input type="hidden" id="atribuir-met-id"><div id="lista-produtos-atribuir-met" style="display: flex; flex-direction: column; gap: 8px; max-height: 55vh; overflow-y: auto;"></div><button class="btn-submit" onclick="salvarAtribuicaoMetodo()">SALVAR</button></div></section>
 
+        <!-- NOVO PRODUTO E ÁREA -->
         <section id="novo-produto" class="section req-dono">
             <div class="btn-back-styled" onclick="navegar('inicio')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
             <h1 style="font-size: 1.3rem;">Novo Produto</h1>
             <div class="card">
                 <input type="text" id="prod-nome" placeholder="Ex: Coca-Cola">
-                <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">1. Assinale as Categorias <span style="font-size:0.75rem; font-weight:normal; color:#64748b;">(Pode ser mais de uma)</span>:</p>
+                <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">1. Assinale a Categoria <span style="font-size:0.75rem; font-weight:normal; color:var(--primary);">*(Apenas uma)*</span>:</p>
                 <div id="presets-container" style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"></div>
                 <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">2. Selecione o Método de Compra <span style="font-size:0.75rem; font-weight:normal; color:var(--primary);">*(Apenas um)*</span>:</p>
                 <div id="metodos-container" style="display:flex; flex-wrap:wrap; gap:5px;"></div>
@@ -505,7 +533,7 @@
             <div class="btn-back-styled" onclick="navegar('produtos-categorias')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div><h1 style="font-size: 1.3rem;">Editar Produto</h1>
             <div class="card">
                 <input type="hidden" id="edit-prod-id"><input type="text" id="edit-prod-nome">
-                <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">1. Assinale as Categorias <span style="font-size:0.75rem; font-weight:normal; color:#64748b;">(Pode ser mais de uma)</span>:</p>
+                <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">1. Assinale a Categoria <span style="font-size:0.75rem; font-weight:normal; color:var(--primary);">*(Apenas uma)*</span>:</p>
                 <div id="edit-presets-container" style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"></div>
                 <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">2. Selecione o Método de Compra <span style="font-size:0.75rem; font-weight:normal; color:var(--primary);">*(Apenas um)*</span>:</p>
                 <div id="edit-metodos-container" style="display:flex; flex-wrap:wrap; gap:5px;"></div>
@@ -543,6 +571,9 @@
         let currentRole = 'visualizador'; 
         let currentUserName = '';
         
+        // CAPACIDADE DAS ÁREAS
+        const CAPACIDADE_AREAS = { "Varanda": 20, "Salão 1 - Frente": 30, "Salão 1 - Corredor": 30, "Salão 2 - Parede": 40, "Salão 2 - Meio": 40, "Salão 2 - Corrimão": 15, "Salão 2 - Mesas Redondas": 3, "Salão 2 - Bistrôs": 3, "Salão 2 - Brinquedão": 60, "Laje": 60 };
+
         let areas = [], produtos = {}, categorias = {}, metodosCompra = {}, reservasApp = {};
         let areaAtualKey = "", catsNovo = [], catsEdit = [], agrupamentoAtual = 'categorias'; 
         
@@ -771,12 +802,18 @@
             const dt = document.getElementById('setup-mapa-data').value;
             const tn = document.getElementById('setup-mapa-turno').value;
             if(!dt) { alert("Selecione uma data para o mapa."); return; }
-            mapaAtualData = dt; mapaAtualTurno = tn;
+            
+            mapaAtualData = dt;
+            mapaAtualTurno = tn;
             const [y, m, d] = dt.split('-');
-            document.getElementById('mapa-header-info').innerText = `${d}/${m}/${y} - ${tn === 'dia' ? 'Dia' : 'Tarde/Noite'}`;
-            areaFocadaMapa = null; mesasSelecionadasMapa = [];
+            const turnoStr = tn === 'dia' ? 'Dia (Almoço)' : 'Tarde/Noite';
+            document.getElementById('mapa-header-info').innerText = `${d}/${m}/${y} - ${turnoStr}`;
+            
+            areaFocadaMapa = null;
+            mesasSelecionadasMapa = [];
             document.getElementById('btn-voltar-mapa').style.display = 'none';
             document.getElementById('painel-controles-mapa').style.display = 'none';
+            
             navegar('mapa-salao');
             carregarReservasMapa();
             setTimeout(() => { ajustarEscalaMapa(); }, 100);
@@ -794,13 +831,16 @@
                         for(let mId in layout) { if(layout[mId].status === 'reservada' && layout[mId].nome === r.nome) { isMontada = true; break; } }
 
                         if(!isMontada) {
-                             resHtml += `<div style="padding:12px; border:1px solid var(--border-color); border-radius:8px; background:var(--row-even); display:flex; justify-content:space-between; align-items:center; margin-bottom: 5px;">
+                             resHtml += `
+                             <div style="padding:12px; border:1px solid var(--border-color); border-radius:8px; background:var(--row-even); display:flex; justify-content:space-between; align-items:center; margin-bottom: 5px;">
                                  <div><strong style="font-size:0.95rem; color:var(--bg-sidebar);">${r.nome}</strong><br><span style="font-size:0.75rem; color:#64748b;">📍 ${r.area} | 👥 ${r.lugares} lug.</span></div>
                                  <button class="btn-submit req-contrib" style="width:auto; margin:0; padding:8px 15px; font-size:0.8rem; background:var(--primary); border-radius:6px;" onclick="montarReservaNoMapa('${r.nome}', '${r.area}')">Montar</button>
                              </div>`;
                         } else {
-                             resHtml += `<div style="padding:10px; border:1px solid #10b981; border-radius:8px; background:#f0fdf4; display:flex; justify-content:space-between; align-items:center; opacity:0.8; margin-bottom: 5px;">
-                                 <div><strong style="font-size:0.95rem; color:#047857;">${r.nome}</strong><br><span style="font-size:0.75rem; color:#047857;">✅ Já montada no salão</span></div></div>`;
+                             resHtml += `
+                             <div style="padding:10px; border:1px solid #10b981; border-radius:8px; background:#f0fdf4; display:flex; justify-content:space-between; align-items:center; opacity:0.8; margin-bottom: 5px;">
+                                 <div><strong style="font-size:0.95rem; color:#047857;">${r.nome}</strong><br><span style="font-size:0.75rem; color:#047857;">✅ Já montada no salão</span></div>
+                             </div>`;
                         }
                     }
                 }
@@ -816,8 +856,10 @@
             else if(areaOriginal.includes("Corrimão")) macroNome = "Corrimão";
             else if(areaOriginal.includes("Redondas")) macroNome = "Mesas Redondas";
             else if(areaOriginal.includes("Bistrôs")) macroNome = "Bistrôs";
+
             if(!macroNome) { alert("Esta reserva pertence a uma área fora do Salão 2."); return; }
-            document.getElementById('mapa-reserva-nome').value = nome; focarArea(macroNome);
+            document.getElementById('mapa-reserva-nome').value = nome;
+            focarArea(macroNome);
         }
 
         function toggleModoLayoutMapa() {
@@ -1002,6 +1044,7 @@
             let updates = {}; mesasSelecionadasMapa.forEach(id => updates[`mapas/${mapaAtualData}/${mapaAtualTurno}/${id}`] = { status: 'reservada', nome: nome });
             let porArea = {}; mesasSelecionadasMapa.forEach(id => { let partes = id.split('_'); let subArea = partes[0]; let idx = parseInt(partes[1]); if(!porArea[subArea]) porArea[subArea] = []; porArea[subArea].push(idx); });
 
+            // Corte Espacial de Segurança
             for(let subArea in porArea) {
                 if(configMapa[subArea].tipo === 'redonda' || configMapa[subArea].tipo === 'bistro') continue; 
                 let indices = porArea[subArea]; let min = Math.min(...indices); let max = Math.max(...indices);
@@ -1077,12 +1120,39 @@
             }).join('') || `<p style="font-size:0.85rem; color:#64748b; text-align:center; margin-top:20px;">Nenhuma reserva para este dia.</p>`;
             
             document.getElementById('lista-reservas-dia').innerHTML = html;
+            atualizarFormReserva();
+        }
+
+        function calcularCapacidadeRestante() {
+            const areaSelecionada = document.getElementById('res-area').value;
+            const periodoSelecionado = document.getElementById('res-periodo').value;
+            const capTotal = CAPACIDADE_AREAS[areaSelecionada] || 0;
+            
+            let ocupados = 0;
+            const listaReservas = reservasApp[dataAtualReserva] || {};
+            for (let k in listaReservas) {
+                const r = listaReservas[k];
+                if (r.area === areaSelecionada && r.periodo === periodoSelecionado) {
+                    ocupados += (parseInt(r.lugares) || 0);
+                }
+            }
+            const restante = capTotal - ocupados;
+            return restante > 0 ? restante : 0;
         }
 
         function atualizarFormReserva() { 
             const per = document.getElementById('res-periodo').value; 
             document.getElementById('res-time-dia').style.display = per === 'dia' ? 'block' : 'none'; 
             document.getElementById('res-time-tarde').style.display = per === 'dia' ? 'none' : 'flex'; 
+
+            // CÁLCULO DE CAPACIDADE INTELIGENTE
+            const areaSelecionada = document.getElementById('res-area').value;
+            const restante = calcularCapacidadeRestante();
+            const isUnidade = areaSelecionada.includes('Redondas') || areaSelecionada.includes('Bistrôs');
+            const lblUnidade = isUnidade ? 'unidades' : 'lugares';
+            
+            document.getElementById('res-capacidade-aviso').innerText = `Restam: ${restante} ${lblUnidade} livres nesta área (Turno: ${per === 'dia' ? 'Dia' : 'Tarde/Noite'}).`;
+            document.getElementById('res-lugares').placeholder = isUnidade ? 'Quantidade de mesas' : 'Lugares (Qtd de pessoas)';
         }
 
         function salvarReserva() {
@@ -1095,6 +1165,14 @@
             
             if(!nome || lug <= 0) { alert("Preencha corretamente!"); return; } 
             
+            // TRAVA DE SEGURANÇA (OVERBOOKING)
+            const restante = calcularCapacidadeRestante();
+            if (lug > restante) {
+                const isUnidade = area.includes('Redondas') || area.includes('Bistrôs');
+                alert(`Capacidade excedida! Restam apenas ${restante} ${isUnidade ? 'unidades' : 'lugares'} para esta área.`);
+                return;
+            }
+
             db.ref(`reservas/${dataAtualReserva}`).push({ nome, periodo: per, horario: hor, area, lugares: lug }); 
             document.getElementById('res-nome').value = ""; document.getElementById('res-lugares').value = "";
         }
@@ -1404,7 +1482,7 @@
         function salvarAtribuicaoCategoria() { const n=categorias[document.getElementById('atribuir-cat-id').value].nome, u={}; document.querySelectorAll('#lista-produtos-atribuir input:checked, #lista-produtos-atribuir input:not(:checked)').forEach(cb=>{ const p=produtos[cb.value]; if(!p)return; let pc=getCategoriasProduto(p), ch=false; if(cb.checked&&!pc.includes(n)){pc.push(n);ch=true;}else if(!cb.checked&&pc.includes(n)){pc=pc.filter(x=>x!==n);ch=true;} if(ch){u[`produtos/${cb.value}/categorias`]=pc.length?pc:null;u[`produtos/${cb.value}/categoria`]=null;} }); if(Object.keys(u).length) db.ref().update(u).then(()=>navegar('configuracoes')); else navegar('configuracoes'); }
         function abrirAtribuirMetodo(k) { const m=metodosCompra[k]; document.getElementById('atribuir-met-id').value=k; document.getElementById('titulo-atribuir-met').innerText=`Atribuir: ${m.nome}`; document.getElementById('lista-produtos-atribuir-met').innerHTML=Object.keys(produtos).filter(pk=>produtos[pk]&&produtos[pk].nome).sort((a,b)=>{const hA=produtos[a].metodoCompra===m.nome?1:0; const hB=produtos[b].metodoCompra===m.nome?1:0; return hA!==hB?hB-hA:produtos[a].nome.localeCompare(produtos[b].nome);}).map(pk=>{ const p=produtos[pk], has=p.metodoCompra===m.nome, out=p.metodoCompra&&p.metodoCompra!==m.nome; return `<label class="check-item" style="padding:15px 10px; border:1px solid ${has?'var(--primary)':'var(--border-color)'}; border-radius:10px; background:${has?'#fff5f5':'#fff'}; display:flex; align-items:center; cursor:pointer;"><input type="checkbox" value="${pk}" ${has?'checked':''} style="width:22px; height:22px; margin-right:12px;"><strong style="font-size:1.05rem;">${p.nome}</strong><span style="font-size:0.65rem; background:${out?'#e2e8f0':(has?'#e2e8f0':'#fee2e2')}; color:${out?'#64748b':(has?'#64748b':'#b91c1c')}; padding:4px 8px; border-radius:12px; margin-left:auto;">${out?p.metodoCompra:(has?'OK':'Sem método')}</span></label>`; }).join(''); navegar('atribuir-metodo'); }
         function salvarAtribuicaoMetodo() { const n=metodosCompra[document.getElementById('atribuir-met-id').value].nome, u={}; document.querySelectorAll('#lista-produtos-atribuir-met input').forEach(cb=>{ const p=produtos[cb.value]; if(!p)return; let nm=p.metodoCompra, ch=false; if(cb.checked&&nm!==n){nm=n;ch=true;}else if(!cb.checked&&nm===n){nm=null;ch=true;} if(ch)u[`produtos/${cb.value}/metodoCompra`]=nm; }); if(Object.keys(u).length)db.ref().update(u).then(()=>navegar('configuracoes')); else navegar('configuracoes'); }
-        function togglePreset(k, ctx) { const n=categorias[k].nome, t=ctx==='novo'?'checks-areas':'edit-checks-areas', a=ctx==='novo'?catsNovo:catsEdit, idx=a.indexOf(n); if(idx>-1)a.splice(idx,1); else{a.push(n);document.querySelectorAll(`#${t} input`).forEach(cb=>{if(categorias[k].areas?.includes(cb.value))cb.checked=true;});} atualizarLabelEstoqueMinimo(ctx, a); renderizarPresets(); }
+        function togglePreset(k, ctx) { const n=categorias[k].nome, t=ctx==='novo'?'checks-areas':'edit-checks-areas', a=ctx==='novo'?catsNovo:catsEdit; document.querySelectorAll('#'+t+' input').forEach(cb=>cb.checked=false); if(a.includes(n)) { a.length=0; } else { a.length=0; a.push(n); document.querySelectorAll('#'+t+' input').forEach(cb=>{if(categorias[k].areas?.includes(cb.value))cb.checked=true;}); } atualizarLabelEstoqueMinimo(ctx, a); renderizarPresets(); }
         function editarCategoria(k) { const c=categorias[k]; document.getElementById('edit-cat-id').value=k; document.getElementById('cat-nome').value=c.nome; document.getElementById('cat-uso-fardo').checked=c.unidadesFardo>1; document.getElementById('cat-qtd-fardo').value=c.unidadesFardo; toggleFardoInput(); document.querySelectorAll('#cat-checks-areas input').forEach(cb=>cb.checked=c.areas?.includes(cb.value)); document.getElementById('btn-salvar-cat').innerText="Atualizar"; window.scrollTo({top:0}); }
         function resetarFormCategoria() { document.getElementById('edit-cat-id').value=""; document.getElementById('cat-nome').value=""; document.getElementById('cat-uso-fardo').checked=false; document.getElementById('cat-qtd-fardo').value=""; toggleFardoInput(); document.querySelectorAll('#cat-checks-areas input').forEach(cb=>cb.checked=false); document.getElementById('btn-salvar-cat').innerText="Criar"; }
         function toggleFardoInput() { document.getElementById('div-unidades-fardo').style.display = document.getElementById('cat-uso-fardo').checked ? 'block' : 'none'; }
