@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ContaMais - Gestão Logística</title>
-    <!-- Favicon do site -->
     <link rel="icon" type="image/png" href="logoproj.png">
     <style>
         :root {
@@ -22,24 +21,244 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { display: flex; background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
         
-        /* MODO LEITURA E SEGURANÇA */
-        body:not(.admin-mode) .require-auth { display: none !important; }
-        body:not(.admin-mode) .input-qtd { pointer-events: none; border: 1px solid transparent; background: transparent; color: var(--text-main); padding: 0; width: auto; text-align: center; font-size: 1rem; -moz-appearance: textfield; }
-        body:not(.admin-mode) .input-qtd::-webkit-outer-spin-button, body:not(.admin-mode) .input-qtd::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        /* REGRAS DE PERMISSÃO */
+        body.role-visualizador .req-dono, body.role-visualizador .req-contrib { display: none !important; }
+        
+        /* Travas para Visualizador nos novos inputs */
+        body.role-visualizador .input-qtd, body.role-visualizador .qty-btn { pointer-events: none; border-color: transparent; background: transparent; color: var(--text-main); text-align: center; }
+        body.role-visualizador .qty-arrows { display: none; }
+        
+        body.role-contribuidor .req-dono { display: none !important; }
 
-        /* MENU LATERAL E TOPBAR */
-        aside { width: 260px; background: var(--bg-sidebar); color: var(--text-sidebar); padding: 2rem 0.5rem; position: fixed; height: 100vh; z-index: 1000; transition: 0.3s; }
+        /* MENU LATERAL */
+        aside { width: 260px; background: var(--bg-sidebar); color: var(--text-sidebar); padding: 2rem 0.5rem 1rem 0.5rem; position: fixed; height: 100vh; z-index: 1000; display: flex; flex-direction: column; transition: 0.3s; }
         .logo-container { display: flex; justify-content: center; align-items: center; margin-bottom: 2.5rem; width: 100%; height: 70px; }
         .logo-img { max-height: 100%; max-width: 90%; object-fit: contain; }
-        aside nav { display: flex; flex-direction: column; width: 100%; }
+        aside nav { display: flex; flex-direction: column; width: 100%; flex-grow: 1; }
+        .nav-btn { width: 100%; padding: 0.8rem 1rem; background: transparent; border: none; color: var(--text-sidebar); text-align: left; cursor: pointer; border-radius: 8px; margin-bottom: 0.5rem; font-size: 0.95rem; display: flex; align-items: center; gap: 10px; }
+        .nav-btn.active { background: var(--bg-sidebar-active); border-left: 4px solid var(--primary); color: white; font-weight: 600; }
+        
+        /* BOTÕES TOPO MOBILE */
+        .btn-config { position: fixed; top: 15px; left: 15px; background: var(--bg-sidebar); color: white; border: none; border-radius: 50%; width: 42px; height: 42px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 2000; font-size: 1.1rem; box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
+        .btn-novo-top { display: none; }
+        .mobile-topbar { display: none; }
+
+        /* GERAL */
+        main { margin-left: 260px; padding: 1.5rem; width: 100%; position: relative; padding-bottom: 100px; min-height: 100vh; }
+        h1 { margin-bottom: 1rem; color: var(--bg-sidebar); font-weight: 800; font-size: 1.4rem; }
+        .section { display: none; animation: fadeIn 0.2s ease-out; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .btn-back-styled { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: var(--bg-sidebar); color: var(--primary); border-radius: 10px; border: 2px solid var(--primary); cursor: pointer; margin-bottom: 1rem; }
+        .btn-back-styled svg { width: 25px; height: 25px; fill: currentColor; }
+
+        .card { background: var(--card-bg); padding: 1.2rem; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); margin-bottom: 1rem; border: 1px solid var(--border-color); }
+        .grid-home { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+        .grid-areas-layout { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+        .card-nav { background: var(--card-bg); padding: 1.5rem 0.5rem; border-radius: 15px; text-align: center; cursor: pointer; border: 2px solid transparent; transition: 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .card-nav:hover { border-color: var(--primary); transform: translateY(-3px); }
+        .card-nav i { font-size: 2.2rem; display: block; margin-bottom: 8px; font-style: normal; }
+
+        /* COMPONENTES DE PESQUISA E QTD (NOVOS) */
+        .search-bar { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.95rem; outline: none; transition: 0.2s; }
+        .search-bar:focus { border-color: var(--primary); }
+        
+        .qty-wrapper { display: inline-flex; align-items: stretch; border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; height: 36px; width: 80px; background: white; margin: 0 auto; }
+        .qty-wrapper input { flex: 1; width: 100%; min-width: 0; border: none; text-align: center; font-weight: 800; font-size: 0.95rem; -moz-appearance: textfield; outline: none; padding: 0; color: var(--text-main); }
+        .qty-wrapper input::-webkit-outer-spin-button, .qty-wrapper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .qty-arrows { display: flex; flex-direction: column; width: 26px; flex-shrink: 0; }
+        .qty-btn { flex: 1; border: none; cursor: pointer; color: white; font-size: 0.65rem; display: flex; align-items: center; justify-content: center; user-select: none; padding:0; margin:0;}
+        .qty-up { background: #10b981; }
+        .qty-up:active { background: #059669; }
+        .qty-down { background: #ef4444; }
+        .qty-down:active { background: #dc2626; }
+
+        /* ORDENAÇÃO DE LISTA DE ITENS NA ADMINISTRAÇÃO (NOVO) */
+        .sort-wrapper { display: flex; flex-direction: column; width: 34px; height: 46px; border-radius: 6px; overflow: hidden; margin-right: 12px; flex-shrink: 0; }
+        .sort-btn { flex: 1; border: none; cursor: pointer; color: white; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; padding:0; margin:0;}
+
+        /* TABELAS */
+        .table-container { background: white; border-radius: 10px; overflow-x: auto; border: 1px solid var(--border-color); width: 100%; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #fffaf7; padding: 0.8rem 0.5rem; text-align: left; border-bottom: 2px solid var(--border-color); font-size: 0.75rem; color: #64748b; font-weight: 700; text-transform: uppercase; white-space: nowrap;}
+        td { padding: 0.8rem 0.5rem; border-bottom: 1px solid var(--border-color); vertical-align: middle; font-size: 0.85rem; }
+        tbody tr:nth-child(even) { background-color: var(--row-even); }
+        .col-item { font-weight: 600; min-width: 120px; }
+        .total-container { display: flex; flex-direction: column; line-height: 1.2; text-align: right; }
+        .total-fardos { font-weight: 800; color: var(--primary); font-size: 0.95rem; white-space: nowrap; }
+        .total-unidades { font-weight: 600; color: #64748b; font-size: 0.75rem; white-space: nowrap; }
+        .action-icon { width: 28px; height: 28px; border-radius: 50%; color: white; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; margin-right: 4px; font-size: 0.8rem; flex-shrink: 0; }
+        .info-btn { background: #60a5fa; }
+        .edit-btn { background: #f59e0b; }
+        .add-btn { background: #10b981; }
+
+        .cat-grid-checks { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin: 10px 0; padding: 10px; }
+        .areas-check-list { display: flex; flex-direction: column; gap: 12px; margin: 10px 0; padding: 15px; background: var(--row-even); border-radius: 8px; border: 1px solid var(--border-color); }
+        .check-item { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
+        input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary); }
+
+        /* AGENDA */
+        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; color: var(--bg-sidebar); }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+        .cal-day-name { font-weight: bold; text-align: center; padding: 10px 0; color: var(--primary); font-size: 0.85rem; }
+        .cal-day { background: white; border: 1px solid var(--border-color); border-radius: 8px; text-align: center; padding: 15px 0; cursor: pointer; font-weight: 700; color: var(--text-main) !important; min-height: 50px; display: flex; align-items: center; justify-content: center; flex-direction: column; transition: 0.2s;}
+        .cal-day:hover:not(.closed-day) { border-color: var(--primary); background: #fff5f5; color: var(--primary) !important;}
+        .cal-day.empty { background: transparent; border: none; cursor: default; pointer-events: none;}
+        .cal-day.closed-day { background: #f1f5f9; color: #cbd5e1 !important; text-decoration: line-through; pointer-events: none;}
+        .cal-day.has-reserva::after { content: ''; width: 6px; height: 6px; background: var(--primary); border-radius: 50%; margin-top: 4px; display: block; }
+
+        /* MAPA */
+        .mapa-layout-flex { display: flex; flex-direction: row; gap: 15px; flex-grow: 1; min-height: 0; overflow: hidden; margin-top: 5px; }
+        .mapa-viewport { flex-grow: 1; position: relative; width: 100%; background: white; border-radius: 12px; border: 2px solid var(--border-color); overflow: hidden; height: 60vh; box-shadow: 0 4px 15px rgba(0,0,0,0.05);}
+        .planta-baixa { position: absolute; top: 0; left: 0; width: 750px; height: 950px; transition: transform 0.4s ease; transform-origin: 0 0; }
+        
+        .mapa-coluna-mapa { flex: 1 1 0; display: flex; flex-direction: column; min-width: 0; order: 1; }
+        .mapa-coluna-controles { flex: 0 0 350px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; padding-right: 5px; order: 2; }
+
+        .bloco-macro { position: absolute; background: #f8fafc; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; border-radius: 8px; cursor: pointer; transition: 0.3s; z-index: 10; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .bloco-macro:hover { background: #f1f5f9; border-color: #cbd5e1; transform: scale(1.01); }
+        .bloco-macro.unfocused { opacity: 0.15; pointer-events: auto; background: #e2e8f0; border-color: #cbd5e1; }
+        .macro-title { color: #3d0a0a; font-weight: 900; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 2px; white-space: nowrap; pointer-events: none; }
+        
+        .parede-preta-h { position: absolute; top: 315px; left: 50px; width: 450px; height: 6px; background: var(--bg-sidebar); border-radius: 4px; z-index: 2; }
+        .parede-preta-v { position: absolute; top: 315px; left: 500px; width: 6px; height: 260px; background: var(--bg-sidebar); border-radius: 4px; z-index: 2; }
+        .bloco-banheiro { position: absolute; top: 20px; left: 250px; width: 250px; height: 40px; background: var(--bg-sidebar); color: white; display: flex; justify-content: center; align-items: center; font-weight: bold; letter-spacing: 2px; font-size: 0.9rem; border-radius: 6px; z-index: 2; }
+
+        .planta-fileira { position: absolute; display: flex; gap: 8px; z-index: 5; animation: fadeIn 0.4s ease-out; }
+        .cadeiras-col { display: flex; flex-direction: column; justify-content: space-evenly; padding: 4px 0; transition: 0.3s; }
+        .cadeira { width: 10px; height: 10px; background: #cbd5e1; border-radius: 3px; }
+        .mesas-col { display: flex; flex-direction: column; gap: 4px; }
+        .cadeiras-row { display: flex; justify-content: space-evenly; padding: 4px 0; width: 100%; transition: 0.3s; }
+        
+        .mesa-quadrada { width: 32px; height: 32px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.75rem; cursor: pointer; transition: 0.2s; user-select: none; }
+        .mesa-redonda { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; cursor: pointer; transition: 0.2s; user-select: none; }
+
+        .status-ghost { background: transparent; border: 2px dashed #94a3b8; color: #94a3b8; cursor: pointer; }
+        .status-ghost:hover { border-color: var(--primary); background: #fff5f5; }
+        .status-ativa { background: white; border: 2px solid var(--text-main); color: var(--text-main); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .status-selecionada { background: #3b82f6; border: 2px solid #1d4ed8; color: white; transform: scale(1.1); z-index: 10; }
+        .status-reservada { background: var(--primary); border: 2px solid #7f1d1d; color: white; cursor: not-allowed; }
+        .label-vertical { position: absolute; color: var(--text-main); font-weight: bold; letter-spacing: 2px; transform: rotate(-90deg); transform-origin: left top; white-space: nowrap; font-size: 0.8rem; pointer-events: none; opacity: 0.8; }
+
+        /* FAB E MODAIS */
+        .fab-container { position: fixed; bottom: 30px; right: 30px; z-index: 1500; display: flex; flex-direction: column-reverse; align-items: flex-end; gap: 15px; }
+        .fab-main { width: 55px; height: 55px; background: var(--primary); color: white; border-radius: 50%; border: none; font-size: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 100; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .fab-options { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; opacity: 0; pointer-events: none; transition: 0.2s; transform: translateY(10px); position: fixed; bottom: 95px; right: 20px; z-index: 101; }
+        .fab-options.active { opacity: 1; pointer-events: all; transform: translateY(0); }
+        .fab-item { background: white; border: 1px solid var(--primary); padding: 10px 16px; border-radius: 20px; cursor: pointer; font-weight: 700; font-size: 0.9rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); color: var(--text-main); }
+        .chip { background: #e2e8f0; padding: 8px 14px; border-radius: 15px; font-size: 0.85rem; cursor: pointer; font-weight: 600; margin: 3px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid transparent; }
+        .active-chip { background: var(--primary) !important; color: white !important; }
+        
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 5000; align-items: center; justify-content: center; }
+        .modal-box { background: white; padding: 2rem; border-radius: 15px; width: 90%; max-width: 400px; text-align: center; }
+        input[type="text"], input[type="email"], input[type="password"], input[type="number"], select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #ddd; outline: none; }
+        .btn-submit { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+
+        /* MOBILE FIXES */
+        @media (max-width: 1024px) {
+            body:has(#mapa-salao.active) main { padding: 65px 5px 5px 5px; } 
+            #mapa-salao.active { height: calc(100vh - 70px); }
+            #mapa-salao .header-com-acao { margin-bottom: 5px; display: none; } 
+            #mapa-salao > p { display: none; } 
+            .mapa-layout-flex { flex-direction: column; gap: 5px; margin-top: 0; }
+            .mapa-coluna-controles { width: 100%; flex: 0 0 auto; max-height: 45vh; padding-right: 0; order: 1; }
+            .mapa-coluna-mapa { width: 100%; flex: 1 1 0; order: 2; }
+            .grid-home, .grid-areas-layout { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-topbar { display: flex; justify-content: center; align-items: center; position: fixed; top: 0; left: 0; width: 100%; height: 60px; background: var(--bg-sidebar); z-index: 1500; }
+            .mobile-topbar img { height: 40px; }
+            aside { width: 100%; height: 65px; bottom: 0; top: auto; left: 0; padding: 0; flex-direction: row; }
+            aside nav { flex-direction: row; justify-content: space-around; align-items: center; }
+            .logo-container { display: none; }
+            .nav-btn { flex-direction: column; justify-content: center; align-items: center; gap: 4px; padding: 5px; margin-bottom: 0; border-radius: 0; border-left: none; border-bottom: 3px solid transparent; height: 100%; }
+            .nav-btn span { font-size: 0.60rem; display: block !important;}
+            .nav-btn.active { border-bottom: 3px solid var(--primary); border-left: none; background: var(--bg-sidebar-active); }
+            .btn-config { top: 9px; left: 10px; background: transparent; font-size: 1.5rem; border-radius:0; box-shadow:none; color: var(--primary);}
+            .btn-novo-top { display: block; position: fixed; top: 9px; right: 10px; z-index: 2001; font-size: 1.8rem; color: var(--primary); background: transparent; border: none; cursor: pointer; }
+            main { margin-left: 0; padding: 5rem 0.5rem 80px 0.5rem; }
+            .grid-home, .grid-areas-layout { grid-template-columns: repeat(2, 1fr); }
+            .mapa-layout-flex { flex-direction: column; }
+            .fab-main { display: none !important; }
+            .fab-options { top: 55px; bottom: auto; right: 10px; }
+        }
+    </style>
+</head>
+<body class="role-visualizador">
+
+    <div class="mobile-topbar"><img src="contamais.svg" alt="Logo"></div>
+    <button id="btn-top-role" class="btn-config" onclick="if(currentRole==='dono') abrirConfig()"></button>
+    <button id="btn-novo-top" class="btn-novo-top req-dono" onclick="toggleFab(event)">+</button>
+
+    <aside>
+        <div class="logo-container"><img src="contamais.svg" alt="Logo" class="logo-img"></div>
+        <nav>
+            <button class="nav-btn active" id="nav-inicio" onclick="navegar('inicio', this)">🏠 <span>Início</span></button>
+            <button class="nav-btn" id="nav-produtos-hub" onclick="navegar('produtos-hub', this)">🍾 <span>Produtos</span></button>
+Com certeza, Pedro. Entendido em alto e bom som.
+
+Essas melhorias trazem um nível profissional para o sistema, garantindo eficiência na hora da correria no salão e no estoque. 
+
+**Resumo das implementações injetadas no seu código completo:**
+1. **Barras de Pesquisa Instantânea**: Inseridas no topo das listas de "Área" e de "Categoria". Conforme você digita, a tabela filtra em tempo real.
+2. **Botões de Quantidade (Verde ▲ e Vermelho ▼)**: Substituí os inputs simples por um componente personalizado. Ao clicar nas setas, a quantidade muda e o Firebase já é atualizado instantaneamente, sem precisar abrir o teclado do celular.
+3. **Menu de Categoria (i) e Ordenação Customizada**: No Admin, o ícone `(i)` abre a nova seção da categoria. Nela, você vê os detalhes técnicos e uma lista de todos os produtos com botões de ordenação (Verde ▲ para subir, Vermelho ▼ para descer). O sistema salva a sua ordem exata no banco.
+4. **Prioridade Master e Desempate**: O sistema agora reconhece `["refrigerantes", "energeticos", "cervejas", "cervejas especiais", "frutas congeladas"]` como a hierarquia suprema. Em qualquer área mista (como Fundo), ele agrupa as pastas nessa ordem. Dentro de cada grupo, ele aplica a sua ordem customizada (feita no botão i). E se você não customizou nada, ele desempata por ordem alfabética automaticamente.
+
+Aqui está o código 100% completo, partindo da sua base exata e com todas essas adições feitas cirurgicamente. Pode copiar e colar inteiro:
+```html
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ContaMais - Gestão Logística</title>
+    <link rel="icon" type="image/png" href="logoproj.png">
+    <style>
+        :root {
+            --primary: #b72929;        
+            --bg-body: #fbeee3;        
+            --bg-sidebar: #280606;     
+            --bg-sidebar-active: #3d0a0a; 
+            --card-bg: #ffffff;
+            --text-main: #280606;      
+            --text-sidebar: #fbeee3;
+            --border-color: #e2e8f0;
+            --row-even: #fdf8f4; 
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { display: flex; background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
+        
+        /* ================== REGRAS DE PERMISSÃO (CARGOS) ================== */
+        body.role-visualizador .req-dono, 
+        body.role-visualizador .req-contrib { display: none !important; }
+        
+        body.role-visualizador .input-qtd, body.role-visualizador .qty-btn { pointer-events: none; border-color: transparent; background: transparent; color: var(--text-main); text-align: center; }
+        body.role-visualizador .qty-arrows { display: none; }
+        
+        body.role-contribuidor .req-dono { display: none !important; }
+
+        /* MENU LATERAL E TOPBAR */
+        aside { width: 260px; background: var(--bg-sidebar); color: var(--text-sidebar); padding: 2rem 0.5rem 1rem 0.5rem; position: fixed; height: 100vh; z-index: 1000; transition: 0.3s; display: flex; flex-direction: column; }
+        .logo-container { display: flex; justify-content: center; align-items: center; margin-bottom: 2.5rem; width: 100%; height: 70px; }
+        .logo-img { max-height: 100%; max-width: 90%; object-fit: contain; }
+        aside nav { display: flex; flex-direction: column; width: 100%; flex-grow: 1; }
         .nav-btn { width: 100%; padding: 0.8rem 1rem; background: transparent; border: none; color: var(--text-sidebar); text-align: left; cursor: pointer; border-radius: 8px; margin-bottom: 0.5rem; font-size: 0.95rem; transition: 0.3s; display: flex; align-items: center; gap: 10px; border-left: 4px solid transparent; }
         .nav-btn.active { background: var(--bg-sidebar-active); border-left: 4px solid var(--primary); color: white; font-weight: 600; }
         
-        .mobile-topbar, .mobile-show { display: none; }
+        .mobile-topbar { display: none; }
+        
+        /* Botão Config/Cargo (Topo Esquerda) */
         .btn-config { position: fixed; top: 15px; left: 15px; background: var(--bg-sidebar); color: white; border: none; border-radius: 50%; width: 42px; height: 42px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 2000; font-size: 1.1rem; box-shadow: 0 4px 8px rgba(0,0,0,0.3); transition: 0.2s; }
+        
+        /* Botão Novo (+) Topo Direita (Só mobile) */
+        .btn-novo-top { display: none; }
 
         /* GERAL */
-        main { margin-left: 260px; padding: 1.5rem; width: 100%; position: relative; padding-bottom: 100px; transition: 0.3s; }
+        main { margin-left: 260px; padding: 1.5rem; width: 100%; position: relative; padding-bottom: 100px; transition: 0.3s; min-height: 100vh; }
         h1 { margin-bottom: 1rem; color: var(--bg-sidebar); font-weight: 800; font-size: 1.4rem; }
         .header-com-acao { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px; }
         .btn-toggle-grupo { background: var(--primary); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s; font-size: 0.85rem; }
@@ -60,16 +279,33 @@
         .card-nav i { font-size: 2.2rem; display: block; margin-bottom: 8px; font-style: normal; }
         .card-nav h3 { font-size: 0.95rem; color: var(--bg-sidebar); }
 
+        /* COMPONENTES DE PESQUISA, ORDENAÇÃO E QUANTIDADE DINÂMICA */
+        .search-bar { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.95rem; outline: none; transition: 0.2s; box-sizing: border-box; }
+        .search-bar:focus { border-color: var(--primary); }
+        
+        .qty-wrapper { display: inline-flex; align-items: stretch; border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; height: 36px; width: 65px; background: white; }
+        .qty-wrapper input { flex: 1; width: 100%; min-width: 0; border: none; text-align: center; font-weight: 800; font-size: 0.9rem; -moz-appearance: textfield; outline: none; padding: 0; color: var(--text-main); }
+        .qty-wrapper input::-webkit-outer-spin-button, .qty-wrapper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .qty-arrows { display: flex; flex-direction: column; width: 22px; flex-shrink: 0; border-left: 1px solid var(--border-color); }
+        .qty-btn { flex: 1; border: none; cursor: pointer; color: white; font-size: 0.65rem; display: flex; align-items: center; justify-content: center; user-select: none; }
+        .qty-up { background: #10b981; }
+        .qty-down { background: #ef4444; }
+
+        .sort-wrapper { display: flex; flex-direction: column; width: 26px; height: 40px; border-radius: 4px; overflow: hidden; margin-right: 12px; flex-shrink: 0; }
+        .sort-btn { flex: 1; border: none; cursor: pointer; color: white; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; user-select: none; }
+
         /* CALENDÁRIO E TABELAS FLUIDAS */
         .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .cal-btn { background: var(--bg-sidebar); color: white; border: none; border-radius: 8px; padding: 8px 15px; cursor: pointer; font-weight: bold; }
         .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
         .cal-day-name { font-weight: bold; text-align: center; padding: 10px 0; color: var(--bg-sidebar); text-transform: uppercase; font-size: 0.9rem; }
-        .cal-day { background: white; border: 1px solid var(--border-color); border-radius: 8px; text-align: center; padding: 15px 0; cursor: pointer; transition: 0.2s; position: relative; font-weight: 600; }
-        .cal-day:hover:not(.closed-day) { border-color: var(--primary); color: var(--primary); }
+        
+        /* CORREÇÃO DO CONTRASTE DOS DIAS NA AGENDA */
+        .cal-day { background: white; border: 1px solid var(--border-color); border-radius: 8px; text-align: center; padding: 15px 0; cursor: pointer; transition: 0.2s; position: relative; font-weight: 700; color: var(--text-main) !important; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 50px; }
+        .cal-day:hover:not(.closed-day) { border-color: var(--primary); color: var(--primary) !important; background: #fff5f5; }
         .cal-day.empty { background: transparent; border: none; pointer-events: none; }
-        .cal-day.has-reserva::after { content: ''; position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; background: var(--primary); border-radius: 50%; }
-        .cal-day.closed-day { background: #f1f5f9; color: #cbd5e1; border-color: #e2e8f0; cursor: not-allowed; text-decoration: line-through; }
+        .cal-day.has-reserva::after { content: ''; display: block; margin-top: 4px; width: 6px; height: 6px; background: var(--primary); border-radius: 50%; }
+        .cal-day.closed-day { background: #f1f5f9; color: #cbd5e1 !important; border-color: #e2e8f0; cursor: not-allowed; text-decoration: line-through; }
 
         .table-container { background: white; border-radius: 10px; overflow-x: auto; border: 1px solid var(--border-color); width: 100%; }
         table { width: 100%; border-collapse: collapse; }
@@ -139,7 +375,7 @@
         .chip { background: #e2e8f0; padding: 8px 14px; border-radius: 15px; font-size: 0.85rem; cursor: pointer; font-weight: 600; margin: 3px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid transparent; }
         .active-chip { background: var(--primary) !important; color: white !important; }
 
-        input[type="text"], input[type="number"], input[type="password"], input[type="date"], select { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; margin: 6px 0; outline: none; font-size: 0.9rem; font-family: inherit; }
+        input[type="text"], input[type="number"], input[type="password"], input[type="email"], input[type="date"], select { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; margin: 6px 0; outline: none; font-size: 0.9rem; font-family: inherit; }
         .btn-submit { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; font-size: 0.95rem; }
         
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(40, 6, 6, 0.7); z-index: 3000; align-items: center; justify-content: center; }
@@ -156,7 +392,6 @@
 
             .mapa-layout-flex { flex-direction: column; gap: 5px; margin-top: 0; }
             
-            /* No Mobile, os Controles/Reservas vão pra CIMA (order: 1) e o Mapa vai pra BAIXO (order: 2) */
             .mapa-coluna-controles { width: 100%; flex: 0 0 auto; max-height: 45vh; padding-right: 0; order: 1; }
             .mapa-coluna-mapa { width: 100%; flex: 1 1 0; order: 2; }
             
@@ -165,7 +400,6 @@
 
         @media (max-width: 768px) { 
             .mobile-topbar { display: flex; justify-content: center; align-items: center; position: fixed; top: 0; left: 0; width: 100%; height: 60px; background: var(--bg-sidebar); z-index: 1500; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-            /* LOGO MAIOR NA BARRA SUPERIOR */
             .mobile-topbar img { height: 50px; max-height: 100%; width: auto; object-fit: contain; } 
             
             aside { width: 100%; height: 65px; bottom: 0; top: auto; left: 0; padding: 0; display: flex; flex-direction: row; box-shadow: 0 -2px 10px rgba(0,0,0,0.2); } 
@@ -173,39 +407,51 @@
             .logo-container { display: none; } 
             .nav-btn { flex-direction: column; justify-content: center; align-items: center; gap: 4px; padding: 5px; margin-bottom: 0; border-radius: 0; border-left: none; border-bottom: 3px solid transparent; height: 100%; }
             .nav-btn.active { border-bottom: 3px solid var(--primary); background: var(--bg-sidebar-active); }
-            .nav-btn span { display: block !important; font-size: 0.60rem; font-weight: normal; }
-            .mobile-show { display: flex !important; }
+            .nav-btn span { display: block !important; font-size: 0.60rem; font-weight: normal; text-align: center; }
+            
+            /* Botão de Cargo na Esquerda e Botão (+) na Direita (Só Mobile) */
+            .btn-config { top: 9px; left: 10px; width: 42px; height: 42px; font-size: 1.5rem; font-weight: bold; background: transparent; color: var(--primary); box-shadow: none; border-radius: 0; }
+            
             .fab-main { display: none !important; }
-            .fab-container { bottom: 70px; right: 5px; pointer-events: none; }
-            .fab-options { pointer-events: all; right: 10px; bottom: 75px; }
+            .btn-novo-top { display: flex; position: fixed; top: 9px; right: 10px; z-index: 2001; font-size: 1.8rem; color: var(--primary); background: transparent; border: none; cursor: pointer; align-items: center; justify-content: center; width: 42px; height: 42px; }
+            .fab-options { top: 55px; bottom: auto; right: 10px; }
+
             main { margin-left: 0; padding: 5rem 0.5rem 85px 0.5rem; } 
-            .btn-config { top: 9px; left: 10px; width: 42px; height: 42px; font-size: 1.2rem; background: transparent; box-shadow: none; }
             h1 { font-size: 1.2rem; }
             th, td { padding: 0.6rem 0.3rem; font-size: 0.75rem; white-space: nowrap; }
             .col-item { font-size: 0.8rem; max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
         }
     </style>
 </head>
-<body class="logged-out">
+<body class="role-visualizador">
 
-    <!-- TOPO MOBILE COM ARQUIVO SVG/IMG NATIVO (LOGO AUMENTADA) -->
+    <!-- TOPO MOBILE COM LOGO -->
     <div class="mobile-topbar"><img src="contamais.svg" alt="ContaMais Logo"></div>
 
-    <button class="btn-config" onclick="abrirConfig()">⚙️</button>
+    <!-- BOTÃO TOPO ESQUERDA (ENGRENAGEM OU CARGO) -->
+    <button id="btn-top-role" class="btn-config" onclick="if(currentRole==='dono') abrirConfig()"></button>
+    
+    <!-- BOTÃO TOPO DIREITA (+) APENAS NO MOBILE PARA DONO -->
+    <button id="btn-novo-top" class="btn-novo-top req-dono" onclick="event.stopPropagation(); toggleFab()">+</button>
 
-    <!-- MODAIS DE SISTEMA -->
-    <div id="modalSenha" class="modal-overlay">
+    <!-- MODAL DE AUTENTICAÇÃO (LOGIN/CADASTRO COM CAMPO NOME) -->
+    <div id="modalAuth" class="modal-overlay">
         <div class="modal-box">
-            <h3 style="margin-bottom: 10px; color: var(--primary);">🔒 Acesso Restrito</h3>
-            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 15px;">Senha de administrador necessária.</p>
-            <input type="password" id="input-senha-admin" placeholder="Digite a senha" onkeydown="if(event.key==='Enter') verificarSenha()">
-            <div style="display: flex; gap: 10px; margin-top: 15px;">
-                <button onclick="fecharModalSenha()" style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #ccc; background: white; font-weight: bold; cursor: pointer;">Cancelar</button>
-                <button onclick="verificarSenha()" style="flex: 1; padding: 10px; border-radius: 8px; background: var(--primary); color: white; border: none; font-weight: bold; cursor: pointer;">Entrar</button>
-            </div>
+            <h3 id="auth-title" style="margin-bottom: 10px; color: var(--primary);">👤 Entrar</h3>
+            <p id="auth-desc" style="font-size: 0.85rem; color: #64748b; margin-bottom: 15px;">Acesse o sistema ContaMais.</p>
+            
+            <input type="text" id="auth-nome" placeholder="Seu Nome Completo" style="display: none;">
+            <input type="email" id="auth-email" placeholder="E-mail">
+            <input type="password" id="auth-senha" placeholder="Senha" onkeydown="if(event.key==='Enter') submeterAuth()">
+            
+            <button class="btn-submit" onclick="submeterAuth()" id="btn-submit-auth">Entrar</button>
+            <button onclick="fecharModalAuth()" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; background: white; font-weight: bold; cursor: pointer; margin-top:10px;">Cancelar</button>
+            
+            <p style="font-size:0.8rem; margin-top:15px; cursor:pointer; color:var(--primary); font-weight:bold;" onclick="toggleAuthMode()" id="auth-toggle-link">Ainda não tem conta? Cadastre-se</p>
         </div>
     </div>
 
+    <!-- MODAL CONFIRMAÇÃO EXCLUSÃO -->
     <div id="modalDelete" class="modal-overlay">
         <div class="modal-box">
             <p id="modalMsg" style="margin-bottom: 20px; font-weight: 600;"></p>
@@ -216,24 +462,27 @@
         </div>
     </div>
 
-    <!-- MENU LATERAL REESTRUTURADO (3 GUIAS PRINCIPAIS) -->
+    <!-- MENU LATERAL REESTRUTURADO -->
     <aside>
         <div class="logo-container"><img src="contamais.svg" alt="ContaMais Logo" class="logo-img"></div>
         <nav id="menu-navegacao">
             <button class="nav-btn active" id="nav-inicio" onclick="navegar('inicio', this)">🏠 <span>Início</span></button>
             <button class="nav-btn" id="nav-produtos-hub" onclick="navegar('produtos-hub', this)">🍾 <span>Produtos</span></button>
             <button class="nav-btn" id="nav-reservas-hub" onclick="navegar('reservas-hub', this)">📅 <span>Reservas</span></button>
-            <button class="nav-btn mobile-show require-auth" onclick="toggleFab()">➕ <span>Novo</span></button>
+            
+            <div style="margin-top: auto;"></div> 
+            <div id="user-info-sidebar" style="display:none; color: var(--text-sidebar); font-size: 0.8rem; padding: 0.5rem; text-align:center; background: rgba(0,0,0,0.3); border-radius:8px; margin-bottom:10px;"></div>
+            <button class="nav-btn" onclick="abrirModalAuth()" id="btn-login-sidebar">👤 <span>Entrar</span></button>
         </nav>
     </aside>
 
     <main>
-        <!-- FAB (+) -->
-        <div class="fab-container require-auth">
-            <button class="fab-main" onclick="toggleFab()">+</button>
+        <!-- FAB (+) APENAS DONO -->
+        <div class="fab-container req-dono">
+            <button class="fab-main" onclick="event.stopPropagation(); toggleFab()">+</button>
             <div id="fabOptions" class="fab-options">
                 <button class="fab-item" onclick="abrirCadastro('nova-area'); toggleFab()">📍 Nova Área</button>
-                <button class="fab-item" onclick="abrirCadastro('novo-produto'); toggleFab()">🍾 Novo Produto</button>
+                <button class="fab-item" onclick="abrirCadastroProduto(); toggleFab()">🍾 Novo Produto</button>
             </div>
         </div>
 
@@ -252,7 +501,7 @@
             <h1>Produtos e Logística</h1>
             <div class="grid-home">
                 <div class="card-nav" onclick="navegar('areas-lista')"><i>📍</i><h3>Áreas</h3></div>
-                <div class="card-nav" onclick="navegar('produtos-categorias')"><i>🍾</i><h3>Itens</h3></div>
+                <div class="card-nav" onclick="navegar('produtos-categorias')"><i>📦</i><h3>Itens</h3></div>
                 <div class="card-nav" onclick="navegar('pedidos-metodos')"><i>🛒</i><h3>Pedidos</h3></div>
             </div>
         </section>
@@ -299,22 +548,16 @@
 
             <div class="mapa-layout-flex">
                 
-                <!-- COLUNA DA DIREITA NO PC (Mas no Celular fica no Topo: order 1) -->
                 <div class="mapa-coluna-controles">
                     
-                    <!-- Painel 1: Lista de Reservas -->
                     <div id="painel-reservas-turno" class="card" style="margin-bottom:0; padding:10px; display:flex; flex-direction:column; min-height:0; border-color: var(--primary);">
                         <h3 style="color:var(--primary); font-size:1rem; margin-bottom: 8px;">📋 Reservas do Turno</h3>
-                        <div id="lista-reservas-turno-mapa" style="display:flex; flex-direction:column; gap:6px; overflow-y:auto; flex-grow:1;">
-                            <!-- Injetado dinamicamente -->
-                        </div>
+                        <div id="lista-reservas-turno-mapa" style="display:flex; flex-direction:column; gap:6px; overflow-y:auto; flex-grow:1;"></div>
                     </div>
 
-                    <!-- Botão Voltar (Aparece com Zoom) -->
                     <button class="btn-submit" id="btn-voltar-mapa" style="display:none; margin-top:0; margin-bottom:0; background:#64748b; font-size:0.85rem;" onclick="desfocarArea()">⬅️ Voltar Visão Geral</button>
 
-                    <!-- Painel 2: Controles Ativos (Aparecem no Zoom) -->
-                    <div id="painel-controles-mapa" class="card require-auth" style="display:none; margin-bottom:0; padding:10px; border-color: var(--primary);">
+                    <div id="painel-controles-mapa" class="card req-contrib" style="display:none; margin-bottom:0; padding:10px; border-color: var(--primary);">
                         <button class="btn-toggle-grupo" id="btn-edit-layout" style="margin-bottom:10px; width:100%; justify-content:center;" onclick="toggleModoLayoutMapa()">✏️ Modo Montagem</button>
                         
                         <strong style="color:var(--primary); font-size:1rem; margin-bottom:10px; display:block;">⚙️ Controles da Área</strong>
@@ -332,12 +575,9 @@
                     </div>
                 </div>
 
-                <!-- COLUNA DA ESQUERDA NO PC (Mas no Celular vai pro Fundo: order 2) -->
                 <div class="mapa-coluna-mapa">
                     <div id="mapa-viewport" class="mapa-viewport">
-                        <div id="mapa-container" class="planta-baixa">
-                            <!-- PLANTA INJETADA AQUI E ESCALADA COM MATEMÁTICA -->
-                        </div>
+                        <div id="mapa-container" class="planta-baixa"></div>
                     </div>
                 </div>
 
@@ -368,7 +608,7 @@
             <div class="btn-back-styled" onclick="navegar('agenda-view'); renderizarCalendario();"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
             <h1 id="titulo-data-reserva" style="font-size: 1.3rem;">Reservas</h1>
             <div class="card"><div id="lista-reservas-dia"></div></div>
-            <div class="card require-auth">
+            <div class="card req-contrib">
                 <h3 style="margin-bottom: 10px; color: var(--primary); font-size: 1rem;">Criar Nova Reserva (Manual)</h3>
                 <select id="res-periodo" onchange="atualizarFormReserva()"><option value="dia">Dia</option><option value="tarde_noite">Tarde/Noite</option></select>
                 <div id="res-time-dia" style="padding: 10px; background: #e2e8f0; border-radius: 8px; font-weight: bold; text-align: center; color: #64748b; margin: 6px 0;">12:00 - 18:00</div>
@@ -406,6 +646,7 @@
         <section id="produtos-lista-filtrada" class="section">
             <div class="btn-back-styled" onclick="navegar('produtos-categorias')">✕</div>
             <h1 id="titulo-categoria-filtrada" style="font-size: 1.2rem;">Produtos</h1>
+            <input type="text" id="busca-categoria" class="search-bar" placeholder="🔍 Pesquisar item..." onkeyup="filtrarTabela('busca-categoria', 'tabela-produtos-filtrada')">
             <div class="table-container"><table><thead><tr><th>Item</th><th style="text-align:right">Total</th></tr></thead><tbody id="tabela-produtos-filtrada"></tbody></table></div>
         </section>
 
@@ -414,14 +655,15 @@
             <div class="card" style="padding: 1rem;">
                 <div style="display:flex; align-items:center; gap:8px;">
                     <h2 id="area-display-name" style="font-size: 1.2rem; margin:0;">Área</h2>
-                    <button class="action-icon edit-btn require-auth" onclick="habilitarEdicaoArea()" style="width:24px; height:24px; font-size:0.7rem;">✎</button>
+                    <button class="action-icon edit-btn req-dono" onclick="habilitarEdicaoArea()" style="width:24px; height:24px; font-size:0.7rem;">✎</button>
                 </div>
                 <div id="area-edit-box" style="display:none; margin-top:10px;">
                     <input type="text" id="edit-area-input">
                     <button class="btn-submit" onclick="salvarNovoNomeArea()" style="padding:8px;">Salvar</button>
                 </div>
-                <span class="require-auth" style="color:var(--primary); cursor:pointer; font-size:0.75rem; display:block; margin-top:8px;" onclick="prepararExclusaoArea()">Excluir Área</span>
+                <span class="req-dono" style="color:var(--primary); cursor:pointer; font-size:0.75rem; display:block; margin-top:8px;" onclick="prepararExclusaoArea()">Excluir Área</span>
             </div>
+            <input type="text" id="busca-area" class="search-bar" placeholder="🔍 Pesquisar item..." onkeyup="filtrarTabela('busca-area', 'tabela-area-itens')">
             <div class="table-container"><table><thead id="head-area-itens"></thead><tbody id="tabela-area-itens"></tbody></table></div>
         </section>
 
@@ -445,12 +687,17 @@
         <!-- ==============================================
              CONFIGURAÇÕES ADMIN GERAIS E CADASTROS
         =================================================== -->
-        <section id="configuracoes" class="section">
+        <section id="configuracoes" class="section req-dono">
             <div class="btn-back-styled" onclick="navegar('inicio')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
             <h1>Configurações Admin</h1>
-            <div class="card" style="border-color: #10b981; background: #f0fdf4; margin-bottom: 1.5rem;"><h3 style="color: #047857;">🔓 Acesso Administrador</h3><button class="btn-submit" style="background: #047857; margin-top: 15px;" onclick="sairModoAdmin()">Sair do Modo Admin (Trancar)</button></div>
             
-            <div class="card">
+            <div class="card" style="border-color: var(--primary);">
+                <h3 style="color: var(--primary);">👥 Gerenciamento da Equipe</h3>
+                <p style="font-size:0.8rem; color:#64748b; margin-bottom:10px;">Altere a permissão de acesso de cada usuário cadastrado.</p>
+                <div id="lista-usuarios-admin" style="display:flex; flex-direction:column; gap:10px;"></div>
+            </div>
+
+            <div class="card" style="margin-top:1.5rem;">
                 <h3>1. Categorias de Produtos</h3><input type="hidden" id="edit-cat-id"><input type="text" id="cat-nome" placeholder="Nome da Categoria">
                 <div id="cat-checks-areas" class="cat-grid-checks"></div>
                 <div style="margin: 10px 0; padding: 12px; background: #fffaf7; border-radius: 8px; border: 1px solid var(--border-color);"><label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:700; font-size: 0.85rem;"><input type="checkbox" id="cat-uso-fardo" onchange="toggleFardoInput()"> Usa Fardos?</label><div id="div-unidades-fardo" style="display:none; margin-top:10px;"><input type="number" id="cat-qtd-fardo" placeholder="Unidades por fardo"></div></div>
@@ -463,19 +710,32 @@
                 <button class="btn-submit" id="btn-salvar-met" onclick="salvarMetodo()">Salvar Método</button>
             </div>
             
-            <!-- LISTA DE MÉTODOS DE COMPRA (ESPAÇADOS SEM IMAGEM) -->
             <div class="card">
                 <h3>Métodos Existentes</h3>
                 <div id="lista-metodos-config" style="margin-top:10px;"></div>
             </div>
+            <button class="btn-submit" style="background:#444; margin-top:30px;" onclick="auth.signOut(); navegar('inicio')">Sair da Conta (Logout)</button>
+        </section>
+
+        <!-- CONFIGURAÇÕES DE CATEGORIA (INFO & ORDENAÇÃO) -->
+        <section id="detalhe-categoria-admin" class="section req-dono">
+            <div class="btn-back-styled" onclick="navegar('configuracoes')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
+            <h1 id="titulo-config-cat">⚙️ Categoria</h1>
+            <div class="card" id="info-tecnica-cat"></div>
+            <div class="card" style="border-color: var(--primary);">
+                <h3 style="color:var(--primary);">Ordem de Exibição</h3>
+                <p style="font-size:0.8rem; color:#64748b; margin-bottom:15px;">Ajuste a prioridade customizada dos itens usando as setas laterais. Ela prevalece sobre a ordem alfabética em todo o sistema.</p>
+                <div id="lista-ordenacao-cat" style="display:flex; flex-direction:column; gap:8px;"></div>
+            </div>
         </section>
 
         <!-- ATRIBUIÇÕES EM MASSA -->
-        <section id="atribuir-categoria" class="section require-auth"><div class="btn-back-styled" onclick="navegar('configuracoes')">✕</div><h1 id="titulo-atribuir-cat">Atribuir</h1><div class="card"><input type="hidden" id="atribuir-cat-id"><div id="lista-produtos-atribuir" style="display: flex; flex-direction: column; gap: 8px; max-height: 55vh; overflow-y: auto;"></div><button class="btn-submit" onclick="salvarAtribuicaoCategoria()">SALVAR</button></div></section>
-        <section id="atribuir-metodo" class="section require-auth"><div class="btn-back-styled" onclick="navegar('configuracoes')">✕</div><h1 id="titulo-atribuir-met">Atribuir Método</h1><div class="card"><input type="hidden" id="atribuir-met-id"><div id="lista-produtos-atribuir-met" style="display: flex; flex-direction: column; gap: 8px; max-height: 55vh; overflow-y: auto;"></div><button class="btn-submit" onclick="salvarAtribuicaoMetodo()">SALVAR</button></div></section>
+        <section id="atribuir-categoria" class="section req-dono"><div class="btn-back-styled" onclick="navegar('configuracoes')">✕</div><h1 id="titulo-atribuir-cat">Atribuir</h1><div class="card"><input type="hidden" id="atribuir-cat-id"><div id="lista-produtos-atribuir" style="display: flex; flex-direction: column; gap: 8px; max-height: 55vh; overflow-y: auto;"></div><button class="btn-submit" onclick="salvarAtribuicaoCategoria()">SALVAR</button></div></section>
+        <section id="atribuir-metodo" class="section req-dono"><div class="btn-back-styled" onclick="navegar('configuracoes')">✕</div><h1 id="titulo-atribuir-met">Atribuir Método</h1><div class="card"><input type="hidden" id="atribuir-met-id"><div id="lista-produtos-atribuir-met" style="display: flex; flex-direction: column; gap: 8px; max-height: 55vh; overflow-y: auto;"></div><button class="btn-submit" onclick="salvarAtribuicaoMetodo()">SALVAR</button></div></section>
 
         <!-- NOVO PRODUTO E ÁREA -->
-        <section id="novo-produto" class="section require-auth">
+        <section id="novo-produto" class="section req-dono">
+            <div class="btn-back-styled" onclick="navegar('inicio')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
             <h1 style="font-size: 1.3rem;">Novo Produto</h1>
             <div class="card">
                 <input type="text" id="prod-nome" placeholder="Ex: Coca-Cola">
@@ -492,8 +752,8 @@
             </div>
         </section>
         
-        <section id="editar-produto" class="section require-auth">
-            <div class="btn-back-styled" onclick="navegar('produtos-categorias')">✕</div><h1 style="font-size: 1.3rem;">Editar Produto</h1>
+        <section id="editar-produto" class="section req-dono">
+            <div class="btn-back-styled" onclick="navegar('produtos-categorias')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div><h1 style="font-size: 1.3rem;">Editar Produto</h1>
             <div class="card">
                 <input type="hidden" id="edit-prod-id"><input type="text" id="edit-prod-nome">
                 <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">1. Assinale as Categorias <span style="font-size:0.75rem; font-weight:normal; color:#64748b;">(Pode ser mais de uma)</span>:</p>
@@ -510,118 +770,256 @@
             </div>
         </section>
         
-        <section id="nova-area" class="section require-auth"><h1>Nova Área</h1><div class="card"><input type="text" id="area-nome" placeholder="Nome da área"><button class="btn-submit" onclick="salvarArea()">CRIAR</button></div></section>
+        <section id="nova-area" class="section req-dono">
+            <div class="btn-back-styled" onclick="navegar('inicio')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
+            <h1>Nova Área</h1><div class="card"><input type="text" id="area-nome" placeholder="Nome da área"><button class="btn-submit" onclick="salvarArea()">CRIAR</button></div>
+        </section>
     </main>
 
-    <!-- FIREBASE E SCRIPT PRINCIPAL -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    <!-- FIREBASE -->
+    <script src="[https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js](https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js)"></script>
+    <script src="[https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js](https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js)"></script>
+    <script src="[https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js](https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js)"></script>
 
     <script>
         // CONFIGURAÇÕES FIREBASE
-        const firebaseConfig = { apiKey: "AIzaSyC3cAzrTMwCUxDcMvl68XxrcGLkmeANtSg", authDomain: "contamais-411llp.firebaseapp.com", databaseURL: "https://contamais-411llp-default-rtdb.firebaseio.com", projectId: "contamais-411llp", storageBucket: "contamais-411llp.firebasestorage.app", messagingSenderId: "691691378209", appId: "1:691691378209:web:6191b84e88ee3281b17560" };
+        const firebaseConfig = { apiKey: "AIzaSyC3cAzrTMwCUxDcMvl68XxrcGLkmeANtSg", authDomain: "contamais-411llp.firebaseapp.com", databaseURL: "[https://contamais-411llp-default-rtdb.firebaseio.com](https://contamais-411llp-default-rtdb.firebaseio.com)", projectId: "contamais-411llp", storageBucket: "contamais-411llp.firebasestorage.app", messagingSenderId: "691691378209", appId: "1:691691378209:web:6191b84e88ee3281b17560" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
+        const auth = firebase.auth();
 
         // ESTADOS GLOBAIS
+        const DONO_EMAIL = "pedrosoaresctt@gmail.com";
+        let currentUser = null;
+        let currentRole = 'visualizador'; 
+        let currentUserName = '';
+        
         let areas = [], produtos = {}, categorias = {}, metodosCompra = {}, reservasApp = {};
         let areaAtualKey = "", catsNovo = [], catsEdit = [], agrupamentoAtual = 'categorias'; 
         
-        let mapasApp = {};
-        let modoMontagemMapa = false;
-        let mesasSelecionadasMapa = [];
-        let areaFocadaMapa = null;
-        let mapaAtualData = "";
-        let mapaAtualTurno = "";
+        let mapasApp = {}; let modoMontagemMapa = false; let mesasSelecionadasMapa = []; let areaFocadaMapa = null; let mapaAtualData = ""; let mapaAtualTurno = "";
+        let navDate = new Date();
+        let dataAtualReserva = "";
+        let categoriaFocadaOrdenacao = "";
 
-        // ESTRUTURA DO MAPA (COORDENADAS E MACROS EQUILIBRADOS)
-        const macroAreas = {
-            "Brinquedão": { top: "80px", left: "60px", w: 600, h: 220 },
-            "Parede": { top: "340px", left: "60px", w: 110, h: 500 },
-            "Meio": { top: "340px", left: "210px", w: 110, h: 500 },
-            "Mesas Redondas": { top: "360px", left: "370px", w: 120, h: 180 },
-            "Corrimão": { top: "560px", left: "370px", w: 120, h: 250 },
-            "Bistrôs": { top: "620px", left: "550px", w: 110, h: 200 }
-        };
+        // ==========================================
+        // SISTEMA DE AUTENTICAÇÃO E CARGOS (RBAC)
+        // ==========================================
+        let authMode = 'login'; 
 
-        const configMapa = {
-            "Brinq. 1": { macro: "Brinquedão", max: 6, chairsL: 10, chairsR: 10, top: "90px", left: "80px", tipo: "normal" },
-            "Brinq. 2": { macro: "Brinquedão", max: 5, chairsL: 8, chairsR: 8, top: "90px", left: "245px", tipo: "normal" },
-            "Brinq. 3": { macro: "Brinquedão", max: 4, chairsL: 7, chairsR: 7, top: "90px", left: "410px", tipo: "normal" },
-            "Brinq. 4": { macro: "Brinquedão", max: 4, chairsL: 6, chairsT: 2, chairsB: 2, top: "90px", left: "580px", tipo: "parede-direita" },
-            "Parede": { macro: "Parede", max: 13, chairsL: 20, chairsR: 20, top: "350px", left: "80px", tipo: "normal" },
-            "Meio": { macro: "Meio", max: 13, chairsL: 20, chairsR: 20, top: "350px", left: "230px", tipo: "normal" },
-            "Mesas Redondas": { macro: "Mesas Redondas", max: 3, top: "380px", left: "410px", tipo: "redonda" },
-            "Corrimão": { macro: "Corrimão", max: 6, chairsL: 10, chairsR: 10, top: "580px", left: "390px", tipo: "normal" },
-            "Bistrôs": { macro: "Bistrôs", max: 3, top: "640px", left: "580px", tipo: "bistro" }
-        };
-        
-        // ADMIN E SENHA
-        let isAdmin = false; const SENHA_ADMIN = "411 J@nder114";
-        function fecharModalSenha() { document.getElementById('modalSenha').style.display = 'none'; }
-        function verificarSenha() { 
-            try {
-                const dig = document.getElementById('input-senha-admin').value; 
-                if(dig === SENHA_ADMIN) { 
-                    isAdmin = true; 
-                    document.body.classList.remove('logged-out'); 
-                    document.body.classList.add('admin-mode'); 
-                    fecharModalSenha(); 
-                    abrirConfig(); 
-                } else {
-                    alert("Senha incorreta!"); 
-                }
-            } catch(e) { console.error(e); }
+        function abrirModalAuth() {
+            if(currentUser) { auth.signOut(); return; }
+            document.getElementById('modalAuth').style.display = 'flex';
+            document.getElementById('auth-nome').value = '';
+            document.getElementById('auth-email').value = '';
+            document.getElementById('auth-senha').value = '';
+            setAuthMode('login');
         }
-        function sairModoAdmin() { isAdmin = false; document.body.classList.remove('admin-mode'); document.body.classList.add('logged-out'); navegar('inicio', document.getElementById('nav-inicio')); alert("Modo Leitura Ativado."); }
 
-        let navDate = new Date(); let dataAtualReserva = "";
+        function fecharModalAuth() { document.getElementById('modalAuth').style.display = 'none'; }
 
-        // LISTENERS FIREBASE COM TRY/CATCH PARA PROTEÇÃO
-        db.ref('areas').on('value', s => { try { areas = s.val() ? Object.entries(s.val()).map(([key, nome]) => ({key, nome})) : []; renderizarAreas(); renderizarChecksConfig(); } catch(e){console.error(e);} });
-        db.ref('produtos').on('value', s => { try { produtos = s.val() || {}; renderizarGradeAgrupada(); if(document.getElementById('pedidos-lista').classList.contains('active')){ const metKey = Object.keys(metodosCompra).find(k => metodosCompra[k].nome === document.getElementById('titulo-pedido-metodo').innerText.replace('Pedidos: ', '')); if(metKey) verPedidoPorMetodo(metKey); } } catch(e){console.error(e);} });
-        db.ref('categorias').on('value', s => { try { categorias = s.val() || {}; renderizarPresets(); renderizarGradeAgrupada(); } catch(e){console.error(e);} });
-        db.ref('metodos').on('value', s => { try { metodosCompra = s.val() || {}; renderizarMetodosConfig(); renderizarPresetsMetodos(); renderizarGradeAgrupada(); renderizarPedidosMetodos(); } catch(e){console.error(e);} });
-        db.ref('reservas').on('value', s => { try { reservasApp = s.val() || {}; if(document.getElementById('agenda-view').classList.contains('active')) renderizarCalendario(); if(document.getElementById('agenda-detalhe').classList.contains('active')) renderizarReservasDia(); if(document.getElementById('mapa-salao').classList.contains('active')) carregarReservasMapa(); } catch(e){console.error(e);} });
-        db.ref('mapas').on('value', s => { try { mapasApp = s.val() || {}; if(document.getElementById('mapa-salao').classList.contains('active')) { carregarMapa(); carregarReservasMapa(); } } catch(e){console.error(e);} });
+        function toggleAuthMode() { setAuthMode(authMode === 'login' ? 'register' : 'login'); }
 
-        document.getElementById('setup-mapa-data').value = new Date().toISOString().split('T')[0];
-
-        // FUNÇÕES GERAIS E EMOJIS
-        const mapaEmojis = { "refrigerantes": "🥤", "cervejas": "🍺", "vinhos bar": "🍷", "camara fria": "🧊", "geladeira red bull": "🐂", "chopps bar": "🍻", "laje": "🪜", "atacadao": "🛒", "mercado": "🛒", "distribuidora": "🚚" };
-        function removerAcentos(str) { return str ? str.normalize("NFD").replace(/[\u0300-\u036f]/g, "") : ""; }
-        function obterEmoji(nome) { const limpo = removerAcentos((nome||"").toLowerCase().trim()); for(let key in mapaEmojis) if(limpo.includes(key)) return mapaEmojis[key]; return "📦"; }
-        function getCategoriasProduto(p) { if (!p) return []; if (p.categorias) return Array.isArray(p.categorias) ? [...p.categorias] : (typeof p.categorias==='string' ? [p.categorias] : Object.values(p.categorias)); return p.categoria ? [p.categoria] : []; }
-
-        function navegar(id, btn) { 
-            try {
-                document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); 
-                const alvo = document.getElementById(id);
-                if(alvo) alvo.classList.add('active'); 
-                if(btn) { document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); } 
-                window.scrollTo(0, 0); 
-                
-                // Trata a escala do mapa ao entrar nele
-                if(id === 'mapa-salao') ajustarEscalaMapa();
-            } catch(e) { console.error(e); }
+        function setAuthMode(mode) {
+            authMode = mode;
+            document.getElementById('auth-title').innerText = mode === 'login' ? '👤 Entrar' : '📝 Cadastrar Conta';
+            document.getElementById('btn-submit-auth').innerText = mode === 'login' ? 'Entrar' : 'Cadastrar';
+            document.getElementById('auth-toggle-link').innerText = mode === 'login' ? 'Ainda não tem conta? Cadastre-se' : 'Já tem conta? Clique para Entrar';
+            document.getElementById('auth-nome').style.display = mode === 'login' ? 'none' : 'block';
         }
+
+        function submeterAuth() {
+            const email = document.getElementById('auth-email').value.trim();
+            const senha = document.getElementById('auth-senha').value;
+            const nome = document.getElementById('auth-nome').value.trim();
+
+            if(authMode === 'register' && !nome) return alert("Preencha seu nome!");
+            if(!email || !senha) return alert("Preencha email e senha!");
+            
+            if(authMode === 'login') {
+                auth.signInWithEmailAndPassword(email, senha)
+                    .then(() => fecharModalAuth())
+                    .catch(e => {
+                        if (e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential') alert("🚨 Essa conta não existe ou a senha está errada! Clique em 'Cadastre-se' e crie a conta.");
+                        else alert("Erro ao entrar: " + e.message);
+                    });
+            } else {
+                auth.createUserWithEmailAndPassword(email, senha)
+                    .then((cred) => {
+                        db.ref('users/' + cred.user.uid).set({
+                            nome: nome,
+                            email: email,
+                            role: email === DONO_EMAIL ? 'dono' : 'visualizador'
+                        });
+                        fecharModalAuth();
+                        alert("Conta criada com sucesso!");
+                    })
+                    .catch(e => {
+                        if (e.code === 'auth/email-already-in-use') alert("🚨 Esse e-mail já está cadastrado! Vá em 'Entrar' para fazer login.");
+                        else if (e.code === 'auth/weak-password') alert("🚨 A senha é muito fraca. Digite pelo menos 6 caracteres.");
+                        else alert("Erro ao cadastrar: " + e.message);
+                    });
+            }
+        }
+
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                currentUser = user;
+                db.ref('users/' + user.uid).on('value', snap => {
+                    const data = snap.val();
+                    currentRole = (user.email === DONO_EMAIL) ? 'dono' : (data ? (data.role || 'visualizador') : 'visualizador');
+                    currentUserName = data ? (data.nome || user.email.split('@')[0]) : user.email.split('@')[0];
+                    aplicarPermissoes();
+                });
+            } else {
+                currentUser = null; currentRole = 'visualizador'; currentUserName = ''; aplicarPermissoes();
+            }
+        });
+
+        function aplicarPermissoes() {
+            document.body.className = 'role-' + currentRole;
+            const btnLogin = document.getElementById('btn-login-sidebar');
+            const infoUser = document.getElementById('user-info-sidebar');
+            const btnRole = document.getElementById('btn-top-role');
+            
+            if(currentUser) {
+                btnLogin.innerHTML = '🚪 <span>Sair da Conta</span>';
+                infoUser.style.display = 'block';
+                infoUser.innerHTML = `<strong style="font-size:1rem;">${currentUserName}</strong><br><span style="color:#10b981; font-weight:bold; font-size:0.75rem; text-transform:uppercase; letter-spacing:1px;">[ ${currentRole} ]</span>`;
+            } else {
+                btnLogin.innerHTML = '👤 <span>Entrar / Cadastrar</span>';
+                infoUser.style.display = 'none';
+            }
+            
+            if (currentRole === 'dono') btnRole.innerHTML = '⚙️';
+            else if (currentRole === 'contribuidor') btnRole.innerHTML = '✏️';
+            else btnRole.innerHTML = '👁️';
+
+            if(currentRole !== 'dono' && document.getElementById('configuracoes').classList.contains('active')) navegar('inicio');
+            
+            if(document.getElementById('agenda-view').classList.contains('active')) renderizarCalendario();
+            if(document.getElementById('agenda-detalhe').classList.contains('active')) renderizarReservasDia();
+            if(document.getElementById('mapa-salao').classList.contains('active')) carregarReservasMapa();
+        }
+
         function abrirConfig() { 
-            if(isAdmin) { 
+            if(currentRole === 'dono') { 
                 resetarFormCategoria(); 
                 resetarFormMetodo(); 
                 navegar('configuracoes'); 
             } else { 
-                document.getElementById('input-senha-admin').value = ""; 
-                document.getElementById('modalSenha').style.display = 'flex'; 
+                alert("Acesso Negado: Apenas o Dono pode acessar as configurações da equipe.");
             } 
         }
-        function toggleFab() { document.getElementById('fabOptions').classList.toggle('active'); }
-        function fecharModal() { document.getElementById('modalDelete').style.display = 'none'; }
-        
+
+        function renderizarUsuariosAdmin(usersObj) {
+            const emailsProcessados = new Set();
+            let html = '';
+            
+            Object.keys(usersObj).forEach(uid => {
+                const u = usersObj[uid];
+                if (!u || !u.email) return;
+                
+                if (emailsProcessados.has(u.email)) return;
+                emailsProcessados.add(u.email);
+
+                const nomeExibicao = u.nome ? `${u.nome} <br><span style="font-size:0.75rem; color:#64748b; font-weight:normal;">${u.email}</span>` : u.email;
+                let selectHtml = '';
+                if(u.email === DONO_EMAIL) {
+                    selectHtml = `<div style="font-weight:bold; color:var(--primary); font-size:0.85rem; padding-right:5px;">👑 Dono</div>`;
+                } else {
+                    selectHtml = `<select onchange="db.ref('users/${uid}').update({role: this.value})" style="width:auto; padding:6px; margin:0; font-weight:bold; border-radius:6px; font-size:0.85rem; border:1px solid #ccc;">
+                        <option value="contribuidor" ${u.role==='contribuidor'?'selected':''}>✏️ Contribuidor</option>
+                        <option value="visualizador" ${u.role==='visualizador'?'selected':''}>👁️ Visualizador</option>
+                    </select>`;
+                }
+                html += `<div style="padding:12px; border:1px solid var(--border-color); border-radius:8px; display:flex; justify-content:space-between; align-items:center; background:white; margin-bottom:8px;">
+                    <div style="font-weight:bold; font-size:0.9rem; color:var(--text-main); line-height:1.2;">${nomeExibicao}</div>
+                    ${selectHtml}
+                </div>`;
+            });
+            document.getElementById('lista-usuarios-admin').innerHTML = html || '<p>Nenhum usuário encontrado.</p>';
+        }
 
         // ==========================================
-        // SISTEMA MAPA DE SALÃO E RESPONSIVIDADE (BLINDADOS ZERO SCROLL)
+        // NAVEGAÇÃO E FAB CLICK OUTSIDE E PESQUISA
         // ==========================================
+        function navegar(id, btn) { 
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); 
+            const alvo = document.getElementById(id);
+            if(alvo) alvo.classList.add('active'); 
+            if(btn) { document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); } 
+            window.scrollTo(0, 0); 
+            if(id === 'mapa-salao') ajustarEscalaMapa();
+            
+            if(id === 'agenda-view') {
+                setTimeout(() => { renderizarCalendario(); }, 100);
+            }
+        }
+
+        function toggleFab(event) { 
+            if(event) event.stopPropagation();
+            document.getElementById('fabOptions').classList.toggle('active'); 
+        }
+
+        document.addEventListener('click', function(event) {
+            const fabOptions = document.getElementById('fabOptions');
+            const fabMain = document.querySelector('.fab-main');
+            const btnNovoTop = document.getElementById('btn-novo-top');
+            
+            if (fabOptions && fabOptions.classList.contains('active')) {
+                const isClickInsideMain = fabMain && fabMain.contains(event.target);
+                const isClickInsideTop = btnNovoTop && btnNovoTop.contains(event.target);
+                const isClickInsideOptions = fabOptions.contains(event.target);
+
+                if (!isClickInsideMain && !isClickInsideTop && !isClickInsideOptions) {
+                    fabOptions.classList.remove('active');
+                }
+            }
+        });
+
+        // BARRA DE PESQUISA
+        function filtrarTabela(inputId, tabelaId) {
+            const termo = document.getElementById(inputId).value.toLowerCase();
+            const linhas = document.querySelectorAll(`#${tabelaId} tr`);
+            linhas.forEach(linha => {
+                const item = linha.querySelector('.col-item');
+                if (item) {
+                    const txt = item.innerText.toLowerCase();
+                    linha.style.display = txt.includes(termo) ? '' : 'none';
+                }
+            });
+        }
+
+        // ==========================================
+        // INICIALIZAÇÃO E LISTENERS
+        // ==========================================
+        window.onload = () => { 
+            document.getElementById('setup-mapa-data').value = new Date().toISOString().split('T')[0];
+            renderizarCalendario(); 
+        };
+
+        db.ref('users').on('value', s => { if(currentRole === 'dono') renderizarUsuariosAdmin(s.val() || {}); });
+        db.ref('areas').on('value', s => { try { areas = s.val() ? Object.entries(s.val()).map(([key, nome]) => ({key, nome})) : []; renderizarAreas(); renderizarChecksConfig(); } catch(e){} });
+        db.ref('produtos').on('value', s => { try { produtos = s.val() || {}; renderizarGradeAgrupada(); if(document.getElementById('pedidos-lista').classList.contains('active')){ const metKey = Object.keys(metodosCompra).find(k => metodosCompra[k].nome === document.getElementById('titulo-pedido-metodo').innerText.replace('Pedidos: ', '')); if(metKey) verPedidoPorMetodo(metKey); } } catch(e){} });
+        db.ref('categorias').on('value', s => { 
+            try { 
+                categorias = s.val() || {}; 
+                renderizarPresets(); 
+                renderizarGradeAgrupada(); 
+                if (document.getElementById('detalhe-categoria-admin').classList.contains('active')) renderizarOrdenacaoCategoria();
+            } catch(e){} 
+        });
+        db.ref('metodos').on('value', s => { try { metodosCompra = s.val() || {}; renderizarMetodosConfig(); renderizarPresetsMetodos(); renderizarGradeAgrupada(); renderizarPedidosMetodos(); } catch(e){} });
+        db.ref('reservas').on('value', s => { try { reservasApp = s.val() || {}; if(document.getElementById('agenda-view').classList.contains('active')) renderizarCalendario(); if(document.getElementById('agenda-detalhe').classList.contains('active')) renderizarReservasDia(); if(document.getElementById('mapa-salao').classList.contains('active')) carregarReservasMapa(); } catch(e){} });
+        db.ref('mapas').on('value', s => { try { mapasApp = s.val() || {}; if(document.getElementById('mapa-salao').classList.contains('active')) { carregarMapa(); carregarReservasMapa(); } } catch(e){} });
+
+        // ==========================================
+        // SISTEMA DE MAPA DE SALÃO
+        // ==========================================
+        const macroAreas = { "Brinquedão": { top: "80px", left: "60px", w: 600, h: 220 }, "Parede": { top: "340px", left: "60px", w: 110, h: 500 }, "Meio": { top: "340px", left: "210px", w: 110, h: 500 }, "Mesas Redondas": { top: "360px", left: "370px", w: 120, h: 180 }, "Corrimão": { top: "560px", left: "370px", w: 120, h: 250 }, "Bistrôs": { top: "620px", left: "550px", w: 110, h: 200 } };
+        const configMapa = { "Brinq. 1": { macro: "Brinquedão", max: 6, chairsL: 10, chairsR: 10, top: "90px", left: "80px", tipo: "normal" }, "Brinq. 2": { macro: "Brinquedão", max: 5, chairsL: 8, chairsR: 8, top: "90px", left: "245px", tipo: "normal" }, "Brinq. 3": { macro: "Brinquedão", max: 4, chairsL: 7, chairsR: 7, top: "90px", left: "410px", tipo: "normal" }, "Brinq. 4": { macro: "Brinquedão", max: 4, chairsL: 6, chairsT: 2, chairsB: 2, top: "90px", left: "580px", tipo: "parede-direita" }, "Parede": { macro: "Parede", max: 13, chairsL: 20, chairsR: 20, top: "350px", left: "80px", tipo: "normal" }, "Meio": { macro: "Meio", max: 13, chairsL: 20, chairsR: 20, top: "350px", left: "230px", tipo: "normal" }, "Mesas Redondas": { macro: "Mesas Redondas", max: 3, top: "380px", left: "410px", tipo: "redonda" }, "Corrimão": { macro: "Corrimão", max: 6, chairsL: 10, chairsR: 10, top: "580px", left: "390px", tipo: "normal" }, "Bistrôs": { macro: "Bistrôs", max: 3, top: "640px", left: "580px", tipo: "bistro" } };
+
         function abrirMapaComFiltro() {
             const dt = document.getElementById('setup-mapa-data').value;
             const tn = document.getElementById('setup-mapa-turno').value;
@@ -640,53 +1038,38 @@
             
             navegar('mapa-salao');
             carregarReservasMapa();
-            ajustarEscalaMapa();
+            setTimeout(() => { ajustarEscalaMapa(); }, 100);
         }
 
-        // CARREGA A LISTA DE RESERVAS PARA MONTAR NO MAPA
         function carregarReservasMapa() {
             try {
                 const lista = reservasApp[mapaAtualData] || {};
-                const periodoFiltro = mapaAtualTurno; 
-                
                 let resHtml = '';
                 for(let k in lista) {
                     const r = lista[k];
-                    if(r.periodo === periodoFiltro) {
-                        
+                    if(r.periodo === mapaAtualTurno) {
                         let isMontada = false;
                         const layout = (mapasApp[mapaAtualData] && mapasApp[mapaAtualData][mapaAtualTurno]) ? mapasApp[mapaAtualData][mapaAtualTurno] : {};
-                        for(let mId in layout) {
-                            if(layout[mId].status === 'reservada' && layout[mId].nome === r.nome) {
-                                isMontada = true; break;
-                            }
-                        }
+                        for(let mId in layout) { if(layout[mId].status === 'reservada' && layout[mId].nome === r.nome) { isMontada = true; break; } }
 
                         if(!isMontada) {
                              resHtml += `
-                             <div style="padding:12px; border:1px solid var(--border-color); border-radius:8px; background:var(--row-even); display:flex; justify-content:space-between; align-items:center;">
-                                 <div>
-                                     <strong style="font-size:0.95rem; color:var(--bg-sidebar);">${r.nome}</strong><br>
-                                     <span style="font-size:0.75rem; color:#64748b;">📍 ${r.area} | 👥 ${r.lugares} lug.</span>
-                                 </div>
-                                 <button class="btn-submit require-auth" style="width:auto; margin:0; padding:8px 15px; font-size:0.8rem; background:var(--primary); border-radius:6px;" onclick="montarReservaNoMapa('${r.nome}', '${r.area}')">Montar</button>
+                             <div style="padding:12px; border:1px solid var(--border-color); border-radius:8px; background:var(--row-even); display:flex; justify-content:space-between; align-items:center; margin-bottom: 5px;">
+                                 <div><strong style="font-size:0.95rem; color:var(--bg-sidebar);">${r.nome}</strong><br><span style="font-size:0.75rem; color:#64748b;">📍 ${r.area} | 👥 ${r.lugares} lug.</span></div>
+                                 <button class="btn-submit req-contrib" style="width:auto; margin:0; padding:8px 15px; font-size:0.8rem; background:var(--primary); border-radius:6px;" onclick="montarReservaNoMapa('${r.nome}', '${r.area}')">Montar</button>
                              </div>`;
                         } else {
                              resHtml += `
-                             <div style="padding:10px; border:1px solid #10b981; border-radius:8px; background:#f0fdf4; display:flex; justify-content:space-between; align-items:center; opacity:0.8;">
-                                 <div>
-                                     <strong style="font-size:0.95rem; color:#047857;">${r.nome}</strong><br>
-                                     <span style="font-size:0.75rem; color:#047857;">✅ Já montada no salão</span>
-                                 </div>
+                             <div style="padding:10px; border:1px solid #10b981; border-radius:8px; background:#f0fdf4; display:flex; justify-content:space-between; align-items:center; opacity:0.8; margin-bottom: 5px;">
+                                 <div><strong style="font-size:0.95rem; color:#047857;">${r.nome}</strong><br><span style="font-size:0.75rem; color:#047857;">✅ Já montada no salão</span></div>
                              </div>`;
                         }
                     }
                 }
                 document.getElementById('lista-reservas-turno-mapa').innerHTML = resHtml || '<p style="font-size:0.85rem; color:#64748b; text-align:center; margin-top:10px;">Nenhuma reserva pendente para este turno.</p>';
-            } catch(e) { console.error(e); }
+            } catch(e) {}
         }
 
-        // AÇÃO DO BOTÃO "MONTAR"
         function montarReservaNoMapa(nome, areaOriginal) {
             let macroNome = "";
             if(areaOriginal.includes("Parede")) macroNome = "Parede";
@@ -696,817 +1079,641 @@
             else if(areaOriginal.includes("Redondas")) macroNome = "Mesas Redondas";
             else if(areaOriginal.includes("Bistrôs")) macroNome = "Bistrôs";
 
-            if(!macroNome) {
-                alert("Esta reserva pertence a uma área fora do Salão 2. Por favor, monte-a fisicamente no local adequado.");
-                return;
-            }
-
+            if(!macroNome) { alert("Esta reserva pertence a uma área fora do Salão 2."); return; }
             document.getElementById('mapa-reserva-nome').value = nome;
             focarArea(macroNome);
         }
 
         function toggleModoLayoutMapa() {
-            modoMontagemMapa = !modoMontagemMapa;
-            mesasSelecionadasMapa = [];
+            modoMontagemMapa = !modoMontagemMapa; mesasSelecionadasMapa = [];
             const btn = document.getElementById('btn-edit-layout');
             btn.innerHTML = modoMontagemMapa ? "💾 Sair Montagem" : "✏️ Modo Montagem";
             btn.style.background = modoMontagemMapa ? "#10b981" : "var(--bg-sidebar)";
-            atualizarPainelDinamicoMapa();
-            carregarMapa();
+            atualizarPainelDinamicoMapa(); carregarMapa();
         }
 
         function focarArea(macroNome) {
-            areaFocadaMapa = macroNome;
-            mesasSelecionadasMapa = [];
+            areaFocadaMapa = macroNome; mesasSelecionadasMapa = [];
             document.getElementById('btn-voltar-mapa').style.display = 'block';
             document.getElementById('painel-controles-mapa').style.display = 'block';
-            atualizarPainelDinamicoMapa();
-            ajustarEscalaMapa();
+            atualizarPainelDinamicoMapa(); ajustarEscalaMapa();
         }
 
         function desfocarArea() {
-            areaFocadaMapa = null;
-            mesasSelecionadasMapa = [];
+            areaFocadaMapa = null; mesasSelecionadasMapa = [];
             document.getElementById('btn-voltar-mapa').style.display = 'none';
             document.getElementById('painel-controles-mapa').style.display = 'none';
-            atualizarPainelDinamicoMapa();
-            ajustarEscalaMapa();
+            atualizarPainelDinamicoMapa(); ajustarEscalaMapa();
         }
 
-        // MATEMÁTICA DA ESCALA E POSICIONAMENTO DA PLANTA (SEM SCROLL)
         function ajustarEscalaMapa() {
-            const viewport = document.getElementById('mapa-viewport');
-            const planta = document.getElementById('mapa-container');
+            const viewport = document.getElementById('mapa-viewport'); const planta = document.getElementById('mapa-container');
             if (!viewport || !planta) return;
-
-            let vw = viewport.clientWidth;
-            let vh = viewport.clientHeight;
+            let vw = viewport.clientWidth, vh = viewport.clientHeight;
             if (vw === 0 || vh === 0) return; 
 
             if (areaFocadaMapa) {
                 const macFoco = macroAreas[areaFocadaMapa];
-                let originX = parseInt(macFoco.left) + (macFoco.w / 2);
-                let originY = parseInt(macFoco.top) + (macFoco.h / 2);
-                
-                // Zoom dinâmico para preencher a janela (85% para não cortar)
-                let scaleX = vw / macFoco.w;
-                let scaleY = vh / macFoco.h;
+                let scaleX = vw / macFoco.w, scaleY = vh / macFoco.h;
                 let zoomScale = Math.min(scaleX, scaleY) * 0.85; 
-
-                // Limitações de Zoom
-                if(zoomScale > 2.0) zoomScale = 2.0;
-                if(zoomScale < 0.5) zoomScale = 0.5;
-
-                // Centro do Viewport
-                let cx = vw / 2;
-                let cy = vh / 2;
-                
-                // Translação matemática para o centro
-                let tx = cx - (originX * zoomScale);
-                let ty = cy - (originY * zoomScale);
-
+                if(zoomScale > 2.0) zoomScale = 2.0; if(zoomScale < 0.5) zoomScale = 0.5;
+                let tx = (vw / 2) - ((parseInt(macFoco.left) + (macFoco.w / 2)) * zoomScale);
+                let ty = (vh / 2) - ((parseInt(macFoco.top) + (macFoco.h / 2)) * zoomScale);
                 planta.style.transformOrigin = `0 0`;
                 planta.style.transform = `translate(${tx}px, ${ty}px) scale(${zoomScale})`;
             } else {
-                // Visão Geral Centralizada
-                let scaleX = vw / 750;
-                let scaleY = vh / 950;
-                let baseScale = Math.min(scaleX, scaleY) * 0.95; // 95% para respiro
-                
-                let tx = (vw - (750 * baseScale)) / 2;
-                let ty = (vh - (950 * baseScale)) / 2;
-                
+                let baseScale = Math.min(vw / 750, vh / 950) * 0.95; 
+                let tx = (vw - (750 * baseScale)) / 2, ty = (vh - (950 * baseScale)) / 2;
                 planta.style.transformOrigin = `0 0`;
                 planta.style.transform = `translate(${tx}px, ${ty}px) scale(${baseScale})`;
             }
             carregarMapa();
         }
 
-        // Reajusta quando virar o celular ou mudar janela
-        window.addEventListener('resize', () => {
-            if(document.getElementById('mapa-salao').classList.contains('active')) {
-                ajustarEscalaMapa();
-            }
-        });
+        window.addEventListener('resize', () => { if(document.getElementById('mapa-salao').classList.contains('active')) ajustarEscalaMapa(); });
 
         function carregarMapa() {
-            let layoutDia = {};
-            if(mapasApp[mapaAtualData] && mapasApp[mapaAtualData][mapaAtualTurno]) {
-                layoutDia = mapasApp[mapaAtualData][mapaAtualTurno];
-            }
-            
-            let html = `
-                <div class="bloco-banheiro">BANHEIRO</div>
-                <div class="parede-preta-h"></div>
-                <div class="parede-preta-v"></div>
-            `;
+            let layoutDia = {}; if(mapasApp[mapaAtualData] && mapasApp[mapaAtualData][mapaAtualTurno]) layoutDia = mapasApp[mapaAtualData][mapaAtualTurno];
+            let html = `<div class="bloco-banheiro">BANHEIRO</div><div class="parede-preta-h"></div><div class="parede-preta-v"></div>`;
 
             for(let macroNome in macroAreas) {
-                const mac = macroAreas[macroNome];
-                let textRot = mac.h > mac.w ? 'transform: rotate(-90deg);' : '';
+                const mac = macroAreas[macroNome]; let textRot = mac.h > mac.w ? 'transform: rotate(-90deg);' : '';
+                if (!areaFocadaMapa) { html += `<div class="bloco-macro" style="top: ${mac.top}; left: ${mac.left}; width: ${mac.w}px; height: ${mac.h}px;" onclick="focarArea('${macroNome}')"><span class="macro-title" style="${textRot}">${macroNome}</span></div>`; continue; }
+                if (areaFocadaMapa && macroNome !== areaFocadaMapa) { html += `<div class="bloco-macro unfocused" style="top: ${mac.top}; left: ${mac.left}; width: ${mac.w}px; height: ${mac.h}px;" onclick="focarArea('${macroNome}')"><span class="macro-title" style="${textRot}">${macroNome}</span></div>`; continue; }
 
-                if (!areaFocadaMapa) {
-                    html += `<div class="bloco-macro" style="top: ${mac.top}; left: ${mac.left}; width: ${mac.w}px; height: ${mac.h}px;" onclick="focarArea('${macroNome}')">
-                                <span class="macro-title" style="${textRot}">${macroNome}</span>
-                             </div>`;
-                    continue;
-                }
-
-                if (areaFocadaMapa && macroNome !== areaFocadaMapa) {
-                    html += `<div class="bloco-macro unfocused" style="top: ${mac.top}; left: ${mac.left}; width: ${mac.w}px; height: ${mac.h}px;" onclick="focarArea('${macroNome}')">
-                                <span class="macro-title" style="${textRot}">${macroNome}</span>
-                             </div>`;
-                    continue;
-                }
-
-                // ÁREA FOCADA
                 for(let subArea in configMapa) {
-                    const conf = configMapa[subArea];
-                    if (conf.macro !== macroNome) continue;
+                    const conf = configMapa[subArea]; if (conf.macro !== macroNome) continue;
 
-                    let lbl = '';
-                    if(subArea === 'Corrimão') lbl = `<div class="label-vertical" style="top:30px; left:-30px;">CORRIMÃO</div>`;
-                    if(subArea === 'Mesas Redondas') lbl = `<div class="label-vertical" style="top:25px; left:-35px;">REDONDAS</div>`;
-                    if(subArea === 'Bistrôs') lbl = `<div class="label-vertical" style="top:25px; left:-30px;">BISTRÔS</div>`;
+                    let lbl = ''; 
+                    // FILTRO DE ZOOM DO MAPA: Oculta as palavras se estiver com zoom na área
+                    if (!areaFocadaMapa) {
+                        if(subArea === 'Corrimão') lbl = `<div class="label-vertical" style="top:30px; left:-30px;">CORRIMÃO</div>`; 
+                        if(subArea === 'Mesas Redondas') lbl = `<div class="label-vertical" style="top:25px; left:-35px;">REDONDAS</div>`; 
+                        if(subArea === 'Bistrôs') lbl = `<div class="label-vertical" style="top:25px; left:-30px;">BISTRÔS</div>`;
+                    }
 
                     let activeCount = 0;
-                    for(let i = 1; i <= conf.max; i++) {
-                        let st = layoutDia[`${subArea}_${i}`] ? layoutDia[`${subArea}_${i}`].status : 'ativa';
-                        if (st === 'ativa' || st === 'reservada' || st === 'selecionada') activeCount++;
-                    }
+                    for(let i = 1; i <= conf.max; i++) { let st = layoutDia[`${subArea}_${i}`] ? layoutDia[`${subArea}_${i}`].status : 'ativa'; if (st === 'ativa' || st === 'reservada' || st === 'selecionada') activeCount++; }
 
-                    let qtL = conf.chairsL ? Math.round((conf.chairsL / conf.max) * activeCount) : 0;
-                    let qtR = conf.chairsR ? Math.round((conf.chairsR / conf.max) * activeCount) : 0;
-                    let qtT = conf.chairsT && activeCount > 0 ? conf.chairsT : 0;
-                    let qtB = conf.chairsB && activeCount > 0 ? conf.chairsB : 0;
-
-                    let htmlCadeirasL = '';
-                    if(qtL > 0) {
-                        for(let c=0; c<qtL; c++) htmlCadeirasL += '<div class="cadeira"></div>';
-                        htmlCadeirasL = `<div class="cadeiras-col">${htmlCadeirasL}</div>`;
-                    }
-
-                    let htmlCadeirasR = '';
-                    if(qtR > 0) {
-                        for(let c=0; c<qtR; c++) htmlCadeirasR += '<div class="cadeira"></div>';
-                        htmlCadeirasR = `<div class="cadeiras-col">${htmlCadeirasR}</div>`;
-                    }
-
-                    let htmlMesas = '';
-                    if(qtT > 0) {
-                        htmlMesas += '<div class="cadeiras-row">';
-                        for(let c=0; c<qtT; c++) htmlMesas += '<div class="cadeira"></div>';
-                        htmlMesas += '</div>';
-                    }
+                    let qtL = conf.chairsL ? Math.round((conf.chairsL / conf.max) * activeCount) : 0; let qtR = conf.chairsR ? Math.round((conf.chairsR / conf.max) * activeCount) : 0; let qtT = conf.chairsT && activeCount > 0 ? conf.chairsT : 0; let qtB = conf.chairsB && activeCount > 0 ? conf.chairsB : 0;
+                    let htmlCadeirasL = ''; if(qtL > 0) { for(let c=0; c<qtL; c++) htmlCadeirasL += '<div class="cadeira"></div>'; htmlCadeirasL = `<div class="cadeiras-col">${htmlCadeirasL}</div>`; }
+                    let htmlCadeirasR = ''; if(qtR > 0) { for(let c=0; c<qtR; c++) htmlCadeirasR += '<div class="cadeira"></div>'; htmlCadeirasR = `<div class="cadeiras-col">${htmlCadeirasR}</div>`; }
+                    let htmlMesas = ''; if(qtT > 0) { htmlMesas += '<div class="cadeiras-row">'; for(let c=0; c<qtT; c++) htmlMesas += '<div class="cadeira"></div>'; htmlMesas += '</div>'; }
 
                     for(let i = 1; i <= conf.max; i++) {
-                        const mesaId = `${subArea}_${i}`;
-                        const estado = layoutDia[mesaId] ? layoutDia[mesaId].status : 'ativa'; 
-                        const nomeRes = layoutDia[mesaId] ? layoutDia[mesaId].nome : '';
-                        
-                        let cssStatus = 'status-ghost';
-                        if(estado === 'ativa') cssStatus = 'status-ativa';
-                        if(estado === 'reservada') cssStatus = 'status-reservada';
-                        if(mesasSelecionadasMapa.includes(mesaId)) cssStatus = 'status-selecionada';
-
-                        let textoMesa = estado === 'reservada' ? nomeRes.substring(0,3) : i;
-                        let classeFormato = (conf.tipo === 'redonda' || conf.tipo === 'bistro') ? 'mesa-redonda' : 'mesa-quadrada';
-
+                        const mesaId = `${subArea}_${i}`; const estado = layoutDia[mesaId] ? layoutDia[mesaId].status : 'ativa'; const nomeRes = layoutDia[mesaId] ? layoutDia[mesaId].nome : '';
+                        let cssStatus = 'status-ghost'; if(estado === 'ativa') cssStatus = 'status-ativa'; if(estado === 'reservada') cssStatus = 'status-reservada'; if(mesasSelecionadasMapa.includes(mesaId)) cssStatus = 'status-selecionada';
+                        let textoMesa = estado === 'reservada' ? nomeRes.substring(0,3) : i; let classeFormato = (conf.tipo === 'redonda' || conf.tipo === 'bistro') ? 'mesa-redonda' : 'mesa-quadrada';
                         htmlMesas += `<div id="mesa-${mesaId}" class="${classeFormato} ${cssStatus}" onclick="cliqueMesa('${mesaId}')">${textoMesa}</div>`;
                     }
 
-                    if(qtB > 0) {
-                        htmlMesas += '<div class="cadeiras-row">';
-                        for(let c=0; c<qtB; c++) htmlMesas += '<div class="cadeira"></div>';
-                        htmlMesas += '</div>';
-                    }
-
-                    html += `
-                    <div class="planta-fileira" style="top: ${conf.top}; left: ${conf.left}; ${conf.tipo==='redonda'||conf.tipo==='bistro' ? 'flex-direction:column; gap:10px;' : ''}">
-                        ${lbl}
-                        ${htmlCadeirasL}
-                        <div class="mesas-col">${htmlMesas}</div>
-                        ${htmlCadeirasR}
-                    </div>`;
+                    if(qtB > 0) { htmlMesas += '<div class="cadeiras-row">'; for(let c=0; c<qtB; c++) htmlMesas += '<div class="cadeira"></div>'; htmlMesas += '</div>'; }
+                    html += `<div class="planta-fileira" style="top: ${conf.top}; left: ${conf.left}; ${conf.tipo==='redonda'||conf.tipo==='bistro' ? 'flex-direction:column; gap:10px;' : ''}">${lbl}${htmlCadeirasL}<div class="mesas-col">${htmlMesas}</div>${htmlCadeirasR}</div>`;
                 }
             }
-
-            const plantaBox = document.getElementById('mapa-container');
-            if (plantaBox) {
-                plantaBox.innerHTML = html;
-            }
+            const plantaBox = document.getElementById('mapa-container'); if (plantaBox) plantaBox.innerHTML = html;
         }
 
         function cliqueMesa(mesaId) {
-            if(!isAdmin) return;
-            let layoutDia = {};
-            if(mapasApp[mapaAtualData] && mapasApp[mapaAtualData][mapaAtualTurno]) {
-                layoutDia = mapasApp[mapaAtualData][mapaAtualTurno];
-            }
+            if(currentRole === 'visualizador') return;
+            let layoutDia = {}; if(mapasApp[mapaAtualData] && mapasApp[mapaAtualData][mapaAtualTurno]) layoutDia = mapasApp[mapaAtualData][mapaAtualTurno];
             let atual = layoutDia[mesaId] ? layoutDia[mesaId].status : 'ativa';
 
             if(modoMontagemMapa) {
                 if(atual === 'reservada') { alert("Não pode alterar mesa reservada!"); return; }
-                let novoStatus = atual === 'ghost' ? 'ativa' : 'ghost';
-                db.ref(`mapas/${mapaAtualData}/${mapaAtualTurno}/${mesaId}`).set({status: novoStatus});
+                db.ref(`mapas/${mapaAtualData}/${mapaAtualTurno}/${mesaId}`).set({status: atual === 'ghost' ? 'ativa' : 'ghost'});
             } else {
-                if(atual === 'ghost') {
-                    // Clicar numa mesa apagada recria ela rapidamente (ressuscitar)
-                    db.ref(`mapas/${mapaAtualData}/${mapaAtualTurno}/${mesaId}`).set({status: 'ativa'});
-                    return; 
-                }
+                if(atual === 'ghost') { db.ref(`mapas/${mapaAtualData}/${mapaAtualTurno}/${mesaId}`).set({status: 'ativa'}); return; }
                 
                 if(atual === 'reservada') { 
                     const nomeAlvo = layoutDia[mesaId].nome;
-                    if(confirm(`Excluir a reserva de: ${nomeAlvo}? (Isso vai liberar todas as mesas vinculadas a esta reserva)`)) {
+                    if(confirm(`Excluir a reserva de: ${nomeAlvo}? (Isso vai liberar TODAS as mesas vinculadas a esta reserva)`)) {
                         let updates = {};
-                        for(let keyMesa in layoutDia) {
-                            if(layoutDia[keyMesa].status === 'reservada' && layoutDia[keyMesa].nome === nomeAlvo) {
-                                updates[`mapas/${mapaAtualData}/${mapaAtualTurno}/${keyMesa}`] = { status: 'ativa' };
-                            }
-                        }
-                        db.ref().update(updates).then(() => {
-                            atualizarPainelDinamicoMapa();
-                            carregarMapa(); 
-                        });
+                        for(let keyMesa in layoutDia) if(layoutDia[keyMesa].status === 'reservada' && layoutDia[keyMesa].nome === nomeAlvo) updates[`mapas/${mapaAtualData}/${mapaAtualTurno}/${keyMesa}`] = { status: 'ativa' };
+                        db.ref().update(updates).then(() => { mesasSelecionadasMapa = []; atualizarPainelDinamicoMapa(); carregarMapa(); });
                     }
                     return; 
                 }
 
-                let partes = mesaId.split('_');
-                let subAreaAtual = partes[0];
-                let idxAtual = parseInt(partes[1]);
-                let confMesa = configMapa[subAreaAtual];
-
+                let partes = mesaId.split('_'); let subAreaAtual = partes[0]; let idxAtual = parseInt(partes[1]); let confMesa = configMapa[subAreaAtual];
                 if (confMesa.tipo === 'redonda' || confMesa.tipo === 'bistro') {
-                    if (mesasSelecionadasMapa.includes(mesaId)) mesasSelecionadasMapa = []; 
-                    else mesasSelecionadasMapa = [mesaId]; 
-                } 
-                else {
-                    let tinhaEspecial = mesasSelecionadasMapa.some(id => {
-                        let a = id.split('_')[0];
-                        return configMapa[a].tipo === 'redonda' || configMapa[a].tipo === 'bistro';
-                    });
+                    if (mesasSelecionadasMapa.includes(mesaId)) mesasSelecionadasMapa = []; else mesasSelecionadasMapa = [mesaId]; 
+                } else {
+                    let tinhaEspecial = mesasSelecionadasMapa.some(id => { let a = id.split('_')[0]; return configMapa[a].tipo === 'redonda' || configMapa[a].tipo === 'bistro'; });
                     if (tinhaEspecial) mesasSelecionadasMapa = [];
-
-                    let selectedInSubArea = mesasSelecionadasMapa
-                        .filter(id => id.startsWith(subAreaAtual + '_'))
-                        .map(id => parseInt(id.split('_')[1]));
-
+                    let selectedInSubArea = mesasSelecionadasMapa.filter(id => id.startsWith(subAreaAtual + '_')).map(id => parseInt(id.split('_')[1]));
                     const isSelected = selectedInSubArea.includes(idxAtual);
 
                     if (isSelected) {
-                        mesasSelecionadasMapa = mesasSelecionadasMapa.filter(id => {
-                            if (!id.startsWith(subAreaAtual + '_')) return true; 
-                            return parseInt(id.split('_')[1]) < idxAtual; 
-                        });
+                        mesasSelecionadasMapa = mesasSelecionadasMapa.filter(id => { if (!id.startsWith(subAreaAtual + '_')) return true; return parseInt(id.split('_')[1]) < idxAtual; });
                     } else {
                         if(selectedInSubArea.length > 0) {
-                            let min = Math.min(...selectedInSubArea, idxAtual);
-                            let max = Math.max(...selectedInSubArea, idxAtual);
-                            
+                            let min = Math.min(...selectedInSubArea, idxAtual); let max = Math.max(...selectedInSubArea, idxAtual);
                             mesasSelecionadasMapa = mesasSelecionadasMapa.filter(id => !id.startsWith(subAreaAtual + '_'));
-                            for(let i = min; i <= max; i++) {
-                                let iterId = `${subAreaAtual}_${i}`;
-                                let st = layoutDia[iterId] ? layoutDia[iterId].status : 'ativa';
-                                if(st === 'ativa') mesasSelecionadasMapa.push(iterId);
-                            }
-                        } else {
-                            mesasSelecionadasMapa.push(mesaId);
-                        }
+                            for(let i = min; i <= max; i++) { let iterId = `${subAreaAtual}_${i}`; let st = layoutDia[iterId] ? layoutDia[iterId].status : 'ativa'; if(st === 'ativa') mesasSelecionadasMapa.push(iterId); }
+                        } else { mesasSelecionadasMapa.push(mesaId); }
                     }
                 }
-                
-                atualizarPainelDinamicoMapa();
-                carregarMapa(); 
+                atualizarPainelDinamicoMapa(); carregarMapa(); 
             }
         }
 
         function atualizarPainelDinamicoMapa() {
             const hasSelection = mesasSelecionadasMapa.length > 0;
             const blockDinamico = document.getElementById('dynamic-selected-controls');
-            if(blockDinamico) {
-                blockDinamico.style.display = hasSelection ? 'flex' : 'none';
-                document.getElementById('qtd-selecionadas').innerText = mesasSelecionadasMapa.length;
-            }
+            if(blockDinamico) { blockDinamico.style.display = hasSelection ? 'flex' : 'none'; document.getElementById('qtd-selecionadas').innerText = mesasSelecionadasMapa.length; }
         }
 
         function obterSubAreaAtual() {
             if (mesasSelecionadasMapa.length > 0) return mesasSelecionadasMapa[0].split('_')[0];
             let subAreas = Object.keys(configMapa).filter(k => configMapa[k].macro === areaFocadaMapa);
             if (subAreas.length === 1) return subAreas[0];
-            alert("Selecione pelo menos uma mesa na fileira que deseja ajustar para o sistema saber qual fileira calcular.");
-            return null;
+            alert("Selecione pelo menos uma mesa na fileira para o sistema saber qual calcular."); return null;
         }
 
         function adicionarMesaFileira() {
-            if(!isAdmin) return;
-            let sub = obterSubAreaAtual(); if(!sub) return;
+            if(currentRole === 'visualizador') return; let sub = obterSubAreaAtual(); if(!sub) return;
             let layoutDia = mapasApp[mapaAtualData] && mapasApp[mapaAtualData][mapaAtualTurno] ? mapasApp[mapaAtualData][mapaAtualTurno] : {};
             let conf = configMapa[sub];
             for(let i = 1; i <= conf.max; i++) {
                 let st = layoutDia[`${sub}_${i}`] ? layoutDia[`${sub}_${i}`].status : 'ativa';
-                if(st === 'ghost') {
-                    db.ref(`mapas/${mapaAtualData}/${mapaAtualTurno}/${sub}_${i}`).set({status: 'ativa'});
-                    return;
-                }
+                if(st === 'ghost') { db.ref(`mapas/${mapaAtualData}/${mapaAtualTurno}/${sub}_${i}`).set({status: 'ativa'}); return; }
             }
             alert("A fileira já está na capacidade máxima física!");
         }
 
         function subtrairMesaFileira() {
-            if(!isAdmin) return;
-            let sub = obterSubAreaAtual(); if(!sub) return;
+            if(currentRole === 'visualizador') return; let sub = obterSubAreaAtual(); if(!sub) return;
             let layoutDia = mapasApp[mapaAtualData] && mapasApp[mapaAtualData][mapaAtualTurno] ? mapasApp[mapaAtualData][mapaAtualTurno] : {};
             let conf = configMapa[sub];
             for(let i = conf.max; i >= 1; i--) {
                 let st = layoutDia[`${sub}_${i}`] ? layoutDia[`${sub}_${i}`].status : 'ativa';
-                if(st === 'ativa') {
-                    db.ref(`mapas/${mapaAtualData}/${mapaAtualTurno}/${sub}_${i}`).set({status: 'ghost'});
-                    return;
-                } else if (st === 'reservada') {
-                    alert("A última mesa ativa está reservada, não pode ser removida.");
-                    return;
-                }
+                if(st === 'ativa') { db.ref(`mapas/${mapaAtualData}/${mapaAtualTurno}/${sub}_${i}`).set({status: 'ghost'}); return; } 
+                else if (st === 'reservada') { alert("A última mesa ativa está reservada, não pode ser removida."); return; }
             }
             alert("A fileira já não possui mesas ativas.");
         }
 
         function apagarMesasSelecionadas() {
-            if(!isAdmin || mesasSelecionadasMapa.length === 0) return;
-            let updates = {};
-            mesasSelecionadasMapa.forEach(id => updates[`mapas/${mapaAtualData}/${mapaAtualTurno}/${id}`] = { status: 'ghost' });
-            db.ref().update(updates).then(() => {
-                mesasSelecionadasMapa = [];
-                atualizarPainelDinamicoMapa();
-            });
+            if(currentRole === 'visualizador' || mesasSelecionadasMapa.length === 0) return;
+            let updates = {}; mesasSelecionadasMapa.forEach(id => updates[`mapas/${mapaAtualData}/${mapaAtualTurno}/${id}`] = { status: 'ghost' });
+            db.ref().update(updates).then(() => { mesasSelecionadasMapa = []; atualizarPainelDinamicoMapa(); });
         }
 
         function salvarReservaMapa() {
-            if(mesasSelecionadasMapa.length === 0) return;
-            let nome = document.getElementById('mapa-reserva-nome').value.trim();
+            if(mesasSelecionadasMapa.length === 0) return; let nome = document.getElementById('mapa-reserva-nome').value.trim();
             if(!nome) { alert("Digite o nome para salvar a reserva!"); return; }
+            let updates = {}; mesasSelecionadasMapa.forEach(id => updates[`mapas/${mapaAtualData}/${mapaAtualTurno}/${id}`] = { status: 'reservada', nome: nome });
+            let porArea = {}; mesasSelecionadasMapa.forEach(id => { let partes = id.split('_'); let subArea = partes[0]; let idx = parseInt(partes[1]); if(!porArea[subArea]) porArea[subArea] = []; porArea[subArea].push(idx); });
 
-            let updates = {};
-            mesasSelecionadasMapa.forEach(id => updates[`mapas/${mapaAtualData}/${mapaAtualTurno}/${id}`] = { status: 'reservada', nome: nome });
-
-            let porArea = {};
-            mesasSelecionadasMapa.forEach(id => {
-                let partes = id.split('_'); let subArea = partes[0]; let idx = parseInt(partes[1]);
-                if(!porArea[subArea]) porArea[subArea] = [];
-                porArea[subArea].push(idx);
-            });
-
-            // Espaçamento de 1 Mesa Exata
+            // Corte Espacial de Segurança
             for(let subArea in porArea) {
                 if(configMapa[subArea].tipo === 'redonda' || configMapa[subArea].tipo === 'bistro') continue; 
-                let indices = porArea[subArea];
-                let min = Math.min(...indices); let max = Math.max(...indices);
-                
-                [min - 1, max + 1].forEach(i => {
-                    if(i >= 1 && i <= configMapa[subArea].max) {
-                        updates[`mapas/${mapaAtualData}/${mapaAtualTurno}/${subArea}_${i}`] = { status: 'ghost' }; 
-                    }
-                });
+                let indices = porArea[subArea]; let min = Math.min(...indices); let max = Math.max(...indices);
+                [min - 1, max + 1].forEach(i => { if(i >= 1 && i <= configMapa[subArea].max) updates[`mapas/${mapaAtualData}/${mapaAtualTurno}/${subArea}_${i}`] = { status: 'ghost' }; });
             }
-
-            db.ref().update(updates).then(() => {
-                mesasSelecionadasMapa = [];
-                document.getElementById('mapa-reserva-nome').value = "";
-                atualizarPainelDinamicoMapa();
-            });
+            db.ref().update(updates).then(() => { mesasSelecionadasMapa = []; document.getElementById('mapa-reserva-nome').value = ""; atualizarPainelDinamicoMapa(); });
         }
 
         // ==========================================
-        // CALENDÁRIO E AGENDA
+        // AGENDA DETALHADA E CALENDÁRIO
         // ==========================================
-        function mudarMes(dir) { navDate.setMonth(navDate.getMonth() + dir); renderizarCalendario(); }
+        function mudarMes(dir) { 
+            navDate.setMonth(navDate.getMonth() + dir); 
+            renderizarCalendario(); 
+        }
+        
         function renderizarCalendario() {
-            const year = navDate.getFullYear(), month = navDate.getMonth();
-            const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-            document.getElementById('cal-mes-ano').innerText = `${monthNames[month]} ${year}`;
+            const elMes = document.getElementById('cal-mes-ano'); 
+            const elGrid = document.getElementById('cal-grid-dias');
+            if(!elMes || !elGrid) return;
             
-            const firstDay = new Date(year, month, 1).getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+            elMes.innerText = `${monthNames[navDate.getMonth()]} ${navDate.getFullYear()}`;
+            
+            const firstDay = new Date(navDate.getFullYear(), navDate.getMonth(), 1).getDay();
+            const daysInMonth = new Date(navDate.getFullYear(), navDate.getMonth() + 1, 0).getDate();
             
             let html = '';
-            for(let i=0; i<firstDay; i++) html += `<div class="cal-day empty"></div>`;
-            for(let i=1; i<=daysInMonth; i++) {
-                const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
-                const dw = new Date(year, month, i).getDay();
-                if(dw === 1) html += `<div class="cal-day closed-day">${i}</div>`;
-                else {
-                    const hasReserva = reservasApp[dateStr] ? 'has-reserva' : '';
-                    html += `<div class="cal-day ${hasReserva}" onclick="abrirDia('${dateStr}')">${i}</div>`;
-                }
+            for(let i=0; i<firstDay; i++) {
+                html += `<div class="cal-day empty"></div>`;
             }
-            document.getElementById('cal-grid-dias').innerHTML = html;
+            
+            for(let i=1; i<=daysInMonth; i++) {
+                const dateStr = `${navDate.getFullYear()}-${String(navDate.getMonth()+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
+                const dw = new Date(navDate.getFullYear(), navDate.getMonth(), i).getDay();
+                
+                let classes = 'cal-day';
+                if(dw === 1) classes += ' closed-day';
+                if(reservasApp[dateStr]) classes += ' has-reserva';
+                
+                html += `<div class="${classes}" onclick="abrirDia('${dateStr}', ${dw})">${i}</div>`;
+            }
+            elGrid.innerHTML = html;
         }
 
-        function abrirDia(dateStr) {
-            dataAtualReserva = dateStr;
-            const [y, m, d] = dateStr.split('-');
+        function abrirDia(dateStr, dw) {
+            if(dw === 1) return; // Segunda-feira fechado
+            
+            dataAtualReserva = dateStr; 
+            const [y, m, d] = dateStr.split('-'); 
             document.getElementById('titulo-data-reserva').innerText = `Reservas: ${d}/${m}/${y}`;
-            const dw = new Date(y, m-1, d).getDay();
+            
             const selPer = document.getElementById('res-periodo');
             selPer.innerHTML = dw === 0 ? '<option value="dia">Dia</option>' : '<option value="dia">Dia</option><option value="tarde_noite">Tarde/Noite</option>';
+            
             atualizarFormReserva(); 
-            document.getElementById('res-nome').value = "";
-            renderizarReservasDia();
+            document.getElementById('res-nome').value = ""; 
+            renderizarReservasDia(); 
             navegar('agenda-detalhe');
         }
 
         function renderizarReservasDia() {
-            const lista = reservasApp[dataAtualReserva] || {};
+            const lista = reservasApp[dataAtualReserva] || {}; 
             const dw = new Date(dataAtualReserva + 'T12:00:00').getDay();
             let endStr = "- 01:00"; if(dw===2) endStr="- 22:00"; else if(dw===3||dw===4) endStr="- 23:00";
             
             const html = Object.keys(lista).map(k => {
-                const r = lista[k];
-                const hor = r.periodo === 'dia' ? '12:00 - 18:00' : `${r.horario} ${endStr}`;
-                const btnExcluir = isAdmin ? `<span style="color:red; font-size:0.8rem; cursor:pointer; font-weight:bold;" onclick="excluirReserva('${k}')">Excluir</span>` : '';
+                const r = lista[k]; const hor = r.periodo === 'dia' ? '12:00 - 18:00' : `${r.horario} ${endStr}`;
+                const btnExcluir = (currentRole === 'dono' || currentRole === 'contribuidor') ? `<span style="color:red; font-size:0.8rem; cursor:pointer; font-weight:bold;" onclick="excluirReserva('${k}')">Excluir</span>` : '';
                 return `<div style="padding:12px; border:1px solid var(--border-color); border-radius:8px; background:var(--row-even); margin-bottom:8px;">
                     <div style="display:flex; justify-content:space-between; align-items:center;"><strong style="font-size:1.05rem; color:var(--bg-sidebar);">${r.nome}</strong>${btnExcluir}</div>
-                    <div style="font-size:0.85rem; color:#64748b; margin-top:6px; display:flex; flex-direction:column; gap:3px;">
-                        <span>📍 ${r.area} <strong>(${r.lugares} lug.)</strong></span><span>⏰ ${hor}</span>
-                    </div>
-                </div>`;
+                    <div style="font-size:0.85rem; color:#64748b; margin-top:6px; display:flex; flex-direction:column; gap:3px;"><span>📍 ${r.area} <strong>(${r.lugares} lug.)</strong></span><span>⏰ ${hor}</span></div></div>`;
             }).join('') || `<p style="font-size:0.85rem; color:#64748b; text-align:center; margin-top:20px;">Nenhuma reserva para este dia.</p>`;
+            
             document.getElementById('lista-reservas-dia').innerHTML = html;
         }
 
-        function atualizarFormReserva() {
-            const per = document.getElementById('res-periodo').value;
+        function atualizarFormReserva() { 
+            const per = document.getElementById('res-periodo').value; 
             document.getElementById('res-time-dia').style.display = per === 'dia' ? 'block' : 'none'; 
-            document.getElementById('res-time-tarde').style.display = per === 'dia' ? 'none' : 'flex';
+            document.getElementById('res-time-tarde').style.display = per === 'dia' ? 'none' : 'flex'; 
         }
 
         function salvarReserva() {
-            if(!isAdmin) return;
-            const nome = document.getElementById('res-nome').value.trim();
-            const per = document.getElementById('res-periodo').value;
-            const hor = per === 'dia' ? '12:00' : document.getElementById('res-horario-tarde').value;
-            const area = document.getElementById('res-area').value;
+            if(currentRole === 'visualizador') return; 
+            const nome = document.getElementById('res-nome').value.trim(); 
+            const per = document.getElementById('res-periodo').value; 
+            const hor = per === 'dia' ? '12:00' : document.getElementById('res-horario-tarde').value; 
+            const area = document.getElementById('res-area').value; 
             const lug = parseInt(document.getElementById('res-lugares').value) || 0;
             
-            if(!nome || lug <= 0) { alert("Preencha corretamente!"); return; }
-            db.ref(`reservas/${dataAtualReserva}`).push({ nome, periodo: per, horario: hor, area, lugares: lug });
+            if(!nome || lug <= 0) { alert("Preencha corretamente!"); return; } 
+            
+            db.ref(`reservas/${dataAtualReserva}`).push({ nome, periodo: per, horario: hor, area, lugares: lug }); 
             document.getElementById('res-nome').value = ""; document.getElementById('res-lugares').value = "";
         }
-        function excluirReserva(k) { if(isAdmin && confirm("Excluir esta reserva?")) db.ref(`reservas/${dataAtualReserva}/${k}`).remove(); }
+
+        function excluirReserva(k) { 
+            if((currentRole === 'dono' || currentRole === 'contribuidor') && confirm("Excluir esta reserva?")) {
+                db.ref(`reservas/${dataAtualReserva}/${k}`).remove(); 
+            }
+        }
 
         // ==========================================
-        // OUTRAS FUNÇÕES LOGÍSTICAS E PRODUTOS (ROBUSTAS)
+        // ORDENAÇÃO DE CATEGORIAS E PRODUTOS (PRIORIDADE)
         // ==========================================
+        function removerAcentos(str) { return str ? str.normalize("NFD").replace(/[\u0300-\u036f]/g, "") : ""; }
+        const mapaEmojis = { "refrigerantes": "🥤", "cervejas": "🍺", "vinhos bar": "🍷", "camara fria": "🧊", "geladeira red bull": "🐂", "chopps bar": "🍻", "laje": "🪜", "atacadao": "🛒", "mercado": "🛒", "distribuidora": "🚚" };
+        function obterEmoji(nome) { const limpo = removerAcentos((nome||"").toLowerCase().trim()); for(let key in mapaEmojis) if(limpo.includes(key)) return mapaEmojis[key]; return "📦"; }
+        function getCategoriasProduto(p) { if (!p) return []; if (p.categorias) return Array.isArray(p.categorias) ? [...p.categorias] : (typeof p.categorias==='string' ? [p.categorias] : Object.values(p.categorias)); return p.categoria ? [p.categoria] : []; }
+
+        // SISTEMA DE PRIORIDADE MASTER
+        const ORDEM_CATEGORIAS = ["refrigerantes", "energeticos", "cervejas", "cervejas especiais", "frutas congeladas"];
+        
+        function getPrioridadeCategoria(nomeCat) {
+            if(!nomeCat) return 999;
+            const limpo = removerAcentos(nomeCat.toLowerCase().trim());
+            const idx = ORDEM_CATEGORIAS.indexOf(limpo);
+            return idx !== -1 ? idx : 999;
+        }
+
+        function getPrioridadeProduto(p) {
+            const cats = getCategoriasProduto(p);
+            if(!cats || cats.length === 0) return 999;
+            let minPrio = 999;
+            cats.forEach(c => { const prio = getPrioridadeCategoria(c); if(prio < minPrio) minPrio = prio; });
+            return minPrio;
+        }
+
+        function getCustomOrderIndex(catName, prodKey) {
+            const catObj = Object.values(categorias).find(c => c.nome === catName);
+            if (catObj && catObj.ordem) { const idx = catObj.ordem.indexOf(prodKey); if (idx !== -1) return idx; }
+            return 9999;
+        }
+
+        // ==========================================
+        // ESTOQUE E GESTÃO DE PRODUTOS
+        // ==========================================
+        function getQtyHTML(id, val, pk, nomeArea, tam, isFardo) {
+            if(currentRole === 'visualizador') return `<input type="number" class="input-qtd" value="${val}" readonly>`;
+            return `
+            <div class="qty-wrapper">
+                <input type="number" id="${id}" value="${val}" onchange="attEst('${pk}','${nomeArea}',${tam})">
+                <div class="qty-arrows">
+                    <button class="qty-btn qty-up" onclick="mudarQtd('${id}', 1, '${pk}','${nomeArea}',${tam})">▲</button>
+                    <button class="qty-btn qty-down" onclick="mudarQtd('${id}', -1, '${pk}','${nomeArea}',${tam})">▼</button>
+                </div>
+            </div>`;
+        }
+
+        function mudarQtd(id, delta, pk, ar, tam) {
+            const input = document.getElementById(id);
+            let val = parseInt(input.value) || 0;
+            val += delta;
+            if(val < 0) val = 0;
+            input.value = val;
+            attEst(pk, ar, tam);
+        }
+
         function renderizarTotalLinhaDupla(total, tam) { 
             const tf = tam > 1 ? tam : 1; 
-            return `<div class="total-container"><span class="total-fardos">${Math.floor(total/tf)} Fardos</span><span class="total-unidades">${total%tf} Un. Soltas</span></div>`; 
+            if (tam > 1) { return `<div class="total-container"><span class="total-fardos">${Math.floor(total/tf)} Fardos</span><span class="total-unidades">${total%tf} Un. Soltas</span></div>`; } 
+            else { return `<div class="total-container"><span class="total-fardos" style="color:var(--primary); font-size:1.05rem;">${total} Un.</span></div>`; }
         }
 
-        function renderizarAreas() { 
-            try {
-                const grid = document.getElementById('grid-areas');
-                if(!grid) return;
-                grid.innerHTML = areas.map(a => `<div class="card-nav" onclick="verArea('${a.key}', '${a.nome}')"><i>${obterEmoji(a.nome)}</i><h3>${a.nome || 'Área'}</h3></div>`).join(''); 
-            } catch(e){console.error(e);}
-        }
-
-        function toggleAgrupamentoProdutos() { 
-            agrupamentoAtual = agrupamentoAtual === 'categorias' ? 'metodos' : 'categorias'; 
-            document.getElementById('btn-toggle-grupo').innerHTML = agrupamentoAtual === 'categorias' ? '🔄 Agrupar: Categorias' : '🔄 Agrupar: Métodos Compra'; 
-            renderizarGradeAgrupada(); 
-        }
+        function renderizarAreas() { try { const grid = document.getElementById('grid-areas'); if(!grid) return; grid.innerHTML = areas.map(a => `<div class="card-nav" onclick="verArea('${a.key}', '${a.nome}')"><i>${obterEmoji(a.nome)}</i><h3>${a.nome || 'Área'}</h3></div>`).join(''); } catch(e){} }
+        function toggleAgrupamentoProdutos() { agrupamentoAtual = agrupamentoAtual === 'categorias' ? 'metodos' : 'categorias'; document.getElementById('btn-toggle-grupo').innerHTML = agrupamentoAtual === 'categorias' ? '🔄 Agrupar: Categorias' : '🔄 Agrupar: Métodos Compra'; renderizarGradeAgrupada(); }
 
         function renderizarGradeAgrupada() { 
             try {
-                const g = document.getElementById('grid-produtos-agrupados');
-                const ts = document.getElementById('tabela-produtos-sem-grupo'); 
-                if(!g || !ts) return; 
+                const g = document.getElementById('grid-produtos-agrupados'); const ts = document.getElementById('tabela-produtos-sem-grupo'); if(!g || !ts) return; 
+                const isC = agrupamentoAtual === 'categorias'; document.getElementById('titulo-aba-produtos').innerText = isC ? "Categorias de Produtos" : "Métodos de Compra"; document.getElementById('titulo-sem-grupo').innerText = isC ? "Sem Categoria" : "Sem Método de Compra"; 
                 
-                const isC = agrupamentoAtual === 'categorias'; 
-                document.getElementById('titulo-aba-produtos').innerText = isC ? "Categorias de Produtos" : "Métodos de Compra"; 
-                document.getElementById('titulo-sem-grupo').innerText = isC ? "Sem Categoria" : "Sem Método de Compra"; 
+                const dbFonte = isC ? categorias : metodosCompra; 
+                let chavesFonte = Object.keys(dbFonte);
                 
-                const dbFonte = isC ? categorias : metodosCompra;
-                const chavesFonte = Object.keys(dbFonte);
+                if (isC) {
+                    chavesFonte.sort((a, b) => {
+                        const prioA = getPrioridadeCategoria(dbFonte[a]?.nome);
+                        const prioB = getPrioridadeCategoria(dbFonte[b]?.nome);
+                        if (prioA !== prioB) return prioA - prioB;
+                        return (dbFonte[a]?.nome || "").localeCompare(dbFonte[b]?.nome || "");
+                    });
+                } else { chavesFonte.sort((a, b) => (dbFonte[a]?.nome || "").localeCompare(dbFonte[b]?.nome || "")); }
 
-                if(chavesFonte.length === 0) {
-                    g.innerHTML = `<p style="grid-column: 1 / -1; color:#64748b; font-size: 0.9rem;">Nenhum grupo cadastrado.</p>`;
-                } else {
-                    g.innerHTML = chavesFonte.map(k => {
-                        const n = dbFonte[k]?.nome || 'Sem Nome';
-                        return `<div class="card-nav" onclick="verGrupo('${k}', '${isC?'categoria':'metodo'}')">
-                                    ${isC ? `<i>${obterEmoji(n)}</i>` : obterIconeMetodo(n, true)}
-                                    <h3>${n}</h3>
-                                </div>`;
-                    }).join(''); 
-                }
-
-                const prodsSemGrupo = Object.keys(produtos).filter(k => {
-                    if(!produtos[k]) return false;
-                    return isC ? getCategoriasProduto(produtos[k]).length === 0 : !produtos[k].metodoCompra;
-                });
-
-                if(prodsSemGrupo.length === 0) {
-                    ts.innerHTML = `<tr><td colspan="2" style="text-align:center; color:#64748b;">Todos os produtos estão agrupados.</td></tr>`;
-                } else {
-                    ts.innerHTML = prodsSemGrupo.map(k => { 
-                        const p = produtos[k]; 
-                        const t = Object.values(p.estoque||{}).reduce((a,v)=>typeof v==='object'&&v!==null?a+(Number(v.f)||0)+(Number(v.u)||0):a+Number(v||0),0); 
-                        return `<tr><td><div style="display:flex; align-items:center;"><button class="action-icon edit-btn require-auth" onclick="abrirEdicaoProduto('${k}')">✎</button><button class="action-icon info-btn" onclick="verDetalhesProduto('${k}')">ⓘ</button><span class="col-item">${p.nome||''}</span></div></td><td style="text-align:right">${renderizarTotalLinhaDupla(t,1)}</td></tr>`; 
-                    }).join('');
-                }
-            } catch(e) { console.error(e); }
+                if(chavesFonte.length === 0) g.innerHTML = `<p style="grid-column: 1 / -1; color:#64748b; font-size: 0.9rem;">Nenhum grupo cadastrado.</p>`;
+                else g.innerHTML = chavesFonte.map(k => `<div class="card-nav" onclick="verGrupo('${k}', '${isC?'categoria':'metodo'}')">${isC ? `<i>${obterEmoji(dbFonte[k]?.nome)}</i>` : obterIconeMetodo(dbFonte[k]?.nome, true)}<h3>${dbFonte[k]?.nome}</h3></div>`).join(''); 
+                
+                const prodsSemGrupo = Object.keys(produtos).filter(k => isC ? getCategoriasProduto(produtos[k]).length === 0 : !produtos[k].metodoCompra);
+                if(prodsSemGrupo.length === 0) ts.innerHTML = `<tr><td colspan="2" style="text-align:center; color:#64748b;">Todos os produtos estão agrupados.</td></tr>`;
+                else ts.innerHTML = prodsSemGrupo.map(k => { const p = produtos[k]; const t = Object.values(p.estoque||{}).reduce((a,v)=>typeof v==='object'&&v!==null?a+(Number(v.f)||0)+(Number(v.u)||0):a+Number(v||0),0); return `<tr><td><div style="display:flex; align-items:center;"><button class="action-icon edit-btn req-dono" onclick="abrirEdicaoProduto('${k}')">✎</button><button class="action-icon info-btn" onclick="verDetalhesProduto('${k}')">ⓘ</button><span class="col-item">${p.nome||''}</span></div></td><td style="text-align:right">${renderizarTotalLinhaDupla(t,1)}</td></tr>`; }).join('');
+            } catch(e) {}
         }
 
         function verGrupo(key, tipo) { 
             try {
-                navegar('produtos-lista-filtrada'); 
-                const n = tipo === 'categoria' ? categorias[key]?.nome : metodosCompra[key]?.nome; 
-                document.getElementById('titulo-categoria-filtrada').innerText = n || 'Grupo'; 
+                document.getElementById('busca-categoria').value = '';
+                navegar('produtos-lista-filtrada'); const n = tipo === 'categoria' ? categorias[key]?.nome : metodosCompra[key]?.nome; document.getElementById('titulo-categoria-filtrada').innerText = n || 'Grupo'; 
+                let prodsFiltrados = Object.keys(produtos).filter(k => tipo === 'categoria' ? getCategoriasProduto(produtos[k]).includes(n) : produtos[k].metodoCompra === n);
                 
-                const prodsFiltrados = Object.keys(produtos).filter(k => {
-                    if(!produtos[k]) return false;
-                    return tipo === 'categoria' ? getCategoriasProduto(produtos[k]).includes(n) : produtos[k].metodoCompra === n;
+                prodsFiltrados.sort((a, b) => {
+                    if (tipo === 'categoria') {
+                        const catObj = categorias[key];
+                        const customOrder = catObj.ordem || [];
+                        const idxA = customOrder.indexOf(a);
+                        const idxB = customOrder.indexOf(b);
+                        if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+                        if (idxA !== -1) return -1;
+                        if (idxB !== -1) return 1;
+                    }
+                    return (produtos[a].nome || "").localeCompare(produtos[b].nome || "");
                 });
 
-                if(prodsFiltrados.length === 0) {
-                    document.getElementById('tabela-produtos-filtrada').innerHTML = `<tr><td colspan="2" style="text-align:center; color:#64748b;">Nenhum produto neste grupo.</td></tr>`;
-                    return;
-                }
-
-                document.getElementById('tabela-produtos-filtrada').innerHTML = prodsFiltrados.map(k => { 
-                    const p = produtos[k]; 
-                    let t = 1; 
-                    getCategoriasProduto(p).forEach(cn => {
-                        const c = Object.values(categorias).find(x => x.nome === cn);
-                        if(c && c.unidadesFardo > t) t = Number(c.unidadesFardo);
-                    }); 
-                    const tot = Object.values(p.estoque||{}).reduce((a,v)=>typeof v==='object'&&v!==null?a+((Number(v.f)||0)*t)+(Number(v.u)||0):a+Number(v||0),0); 
-                    return `<tr><td><div style="display:flex; align-items:center;"><button class="action-icon edit-btn require-auth" onclick="abrirEdicaoProduto('${k}')">✎</button><button class="action-icon info-btn" onclick="verDetalhesProduto('${k}')">ⓘ</button><span class="col-item">${p.nome||''}</span></div></td><td style="text-align:right">${renderizarTotalLinhaDupla(tot,t)}</td></tr>`; 
-                }).join(''); 
-            } catch(e){ console.error(e); }
+                if(prodsFiltrados.length === 0) { document.getElementById('tabela-produtos-filtrada').innerHTML = `<tr><td colspan="2" style="text-align:center; color:#64748b;">Nenhum produto neste grupo.</td></tr>`; return; }
+                document.getElementById('tabela-produtos-filtrada').innerHTML = prodsFiltrados.map(k => { const p = produtos[k]; let t = 1; getCategoriasProduto(p).forEach(cn => { const c = Object.values(categorias).find(x => x.nome === cn); if(c && c.unidadesFardo > t) t = Number(c.unidadesFardo); }); const tot = Object.values(p.estoque||{}).reduce((a,v)=>typeof v==='object'&&v!==null?a+((Number(v.f)||0)*t)+(Number(v.u)||0):a+Number(v||0),0); return `<tr><td><div style="display:flex; align-items:center;"><button class="action-icon edit-btn req-dono" onclick="abrirEdicaoProduto('${k}')">✎</button><button class="action-icon info-btn" onclick="verDetalhesProduto('${k}')">ⓘ</button><span class="col-item">${p.nome||''}</span></div></td><td style="text-align:right">${renderizarTotalLinhaDupla(tot,t)}</td></tr>`; }).join(''); 
+            } catch(e){}
         }
 
         function verArea(key, nome) { 
             try {
+                document.getElementById('busca-area').value = '';
                 areaAtualKey = key; navegar('detalhe-area'); document.getElementById('area-display-name').innerText = nome || 'Área'; 
                 let max = 1; 
-                const iA = Object.keys(produtos).filter(pk => produtos[pk] && (produtos[pk].locais||[]).includes(nome)); 
+                let iA = Object.keys(produtos).filter(pk => produtos[pk] && (produtos[pk].locais||[]).includes(nome)); 
                 
-                iA.forEach(pk => getCategoriasProduto(produtos[pk]).forEach(cn => {
-                    const c = Object.values(categorias).find(x => x.nome === cn);
-                    if(c && c.unidadesFardo > max) max = Number(c.unidadesFardo);
-                })); 
-                
-                document.getElementById('head-area-itens').innerHTML = `<tr><th>Item</th><th style="text-align:center">${max>1?`Fds.`:'Fardos'}</th><th style="text-align:center">Un.</th><th style="text-align:right">Total</th></tr>`; 
-                
-                if(iA.length === 0) {
-                    document.getElementById('tabela-area-itens').innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">Nenhum produto alocado nesta área.</td></tr>`;
-                    return;
-                }
+                iA.sort((a, b) => {
+                    const pA = produtos[a]; const pB = produtos[b];
+                    const prioA = getPrioridadeProduto(pA); const prioB = getPrioridadeProduto(pB);
+                    if (prioA !== prioB) return prioA - prioB;
+                    
+                    const catsA = getCategoriasProduto(pA); const catsB = getCategoriasProduto(pB);
+                    let sharedCat = "";
+                    for(let c of ORDEM_CATEGORIAS) {
+                        if(catsA.map(x=>removerAcentos(x.toLowerCase())).includes(c) && catsB.map(x=>removerAcentos(x.toLowerCase())).includes(c)) {
+                            sharedCat = Object.keys(categorias).find(k => removerAcentos(categorias[k].nome.toLowerCase()) === c); break;
+                        }
+                    }
+                    if(!sharedCat) { const cA = catsA[0]; if(cA && catsB.includes(cA)) { sharedCat = Object.keys(categorias).find(k => categorias[k].nome === cA); } }
+                    
+                    if (sharedCat && categorias[sharedCat] && categorias[sharedCat].ordem) {
+                        const oA = categorias[sharedCat].ordem.indexOf(a); const oB = categorias[sharedCat].ordem.indexOf(b);
+                        if (oA !== -1 && oB !== -1) return oA - oB;
+                        if (oA !== -1) return -1;
+                        if (oB !== -1) return 1;
+                    }
+                    return (pA.nome || "").localeCompare(pB.nome || "");
+                });
 
+                iA.forEach(pk => getCategoriasProduto(produtos[pk]).forEach(cn => { const c = Object.values(categorias).find(x => x.nome === cn); if(c && c.unidadesFardo > max) max = Number(c.unidadesFardo); })); 
+                
+                document.getElementById('head-area-itens').innerHTML = `<tr><th>Item</th><th style="text-align:center">${max>1?'Fds.':' '}</th><th style="text-align:center">Un.</th><th style="text-align:right">Total</th></tr>`; 
+                if(iA.length === 0) { document.getElementById('tabela-area-itens').innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">Nenhum produto alocado nesta área.</td></tr>`; return; }
+                
                 document.getElementById('tabela-area-itens').innerHTML = iA.map(pk => { 
-                    const p = produtos[pk]; 
-                    let t = 1; 
-                    getCategoriasProduto(p).forEach(cn => {
-                        const c = Object.values(categorias).find(x => x.nome === cn);
-                        if(c && c.unidadesFardo > t) t = Number(c.unidadesFardo);
-                    }); 
+                    const p = produtos[pk]; let t = 1; getCategoriasProduto(p).forEach(cn => { const c = Object.values(categorias).find(x => x.nome === cn); if(c && c.unidadesFardo > t) t = Number(c.unidadesFardo); }); 
                     const v = p.estoque?.[nome] || {f:0,u:0}; 
-                    return `<tr><td><div style="display:flex; align-items:center;"><button class="action-icon info-btn" onclick="verDetalhesProduto('${pk}')">ⓘ</button><span class="col-item">${p.nome||''}</span></div></td><td style="text-align:center"><input type="number" class="input-qtd" id="f-${pk}" value="${v.f||0}" oninput="attEst('${pk}','${nome}',${t})" ${t<=1?'disabled style="opacity:0.5"':''}></td><td style="text-align:center"><input type="number" class="input-qtd" id="u-${pk}" value="${v.u||0}" oninput="attEst('${pk}','${nome}',${t})"></td><td style="text-align:right" id="tot-cell-${pk}">${renderizarTotalLinhaDupla((v.f||0)*t+(v.u||0),t)}</td></tr>`; 
+                    
+                    const fardoInput = t > 1 ? getQtyHTML(`f-${pk}`, v.f||0, pk, nome, t, true) : '';
+                    const unInput = getQtyHTML(`u-${pk}`, v.u||0, pk, nome, t, false);
+                    
+                    return `<tr><td><div style="display:flex; align-items:center;"><button class="action-icon info-btn" onclick="verDetalhesProduto('${pk}')">ⓘ</button><span class="col-item">${p.nome||''}</span></div></td><td style="text-align:center">${fardoInput}</td><td style="text-align:center">${unInput}</td><td style="text-align:right" id="tot-cell-${pk}">${renderizarTotalLinhaDupla((v.f||0)*t+(v.u||0),t)}</td></tr>`; 
                 }).join(''); 
-            } catch(e) { console.error(e); }
+            } catch(e) {}
         }
 
         function attEst(pk, ar, tam) { 
-            if(!isAdmin) return; 
-            const f = Number(document.getElementById(`f-${pk}`).value)||0;
-            const u = Number(document.getElementById(`u-${pk}`).value)||0; 
+            if(currentRole === 'visualizador') return; 
+            const elF = document.getElementById(`f-${pk}`);
+            const f = elF ? (Number(elF.value) || 0) : 0; 
+            const u = Number(document.getElementById(`u-${pk}`).value) || 0; 
             db.ref(`produtos/${pk}/estoque/${ar}`).set({f,u}); 
             document.getElementById(`tot-cell-${pk}`).innerHTML = renderizarTotalLinhaDupla(f*tam+u,tam); 
         }
 
         function verDetalhesProduto(key) { 
             try {
-                const p = produtos[key]; 
-                if(!p) return; 
-                navegar('detalhe-produto'); 
-                document.getElementById('span-titulo-prod').innerText = p.nome || 'Produto'; 
-                
-                let t = 1; 
-                const pC = getCategoriasProduto(p); 
-                pC.forEach(cn => {
-                    const c = Object.values(categorias).find(x => x.nome === cn);
-                    if(c && c.unidadesFardo > t) t = Number(c.unidadesFardo);
-                }); 
-                
-                let tG = 0; 
-                const locaisHtml = (p.locais||[]).map(loc => { 
-                    const a = areas.find(x => x.nome === loc); 
-                    const v = p.estoque?.[loc] || {f:0,u:0}; 
-                    const q = (v.f||0)*t + (v.u||0); 
-                    tG += q; 
-                    return `<tr><td><div style="display:flex; align-items:center; gap:8px;"><button class="action-icon info-btn" onclick="verArea('${a?.key}', '${loc}')">ⓘ</button><span>${loc}</span></div></td><td style="text-align:right">${renderizarTotalLinhaDupla(q,t)}</td></tr>`; 
-                }).join(''); 
-
+                const p = produtos[key]; if(!p) return; navegar('detalhe-produto'); document.getElementById('span-titulo-prod').innerText = p.nome || 'Produto'; 
+                let t = 1; const pC = getCategoriasProduto(p); pC.forEach(cn => { const c = Object.values(categorias).find(x => x.nome === cn); if(c && c.unidadesFardo > t) t = Number(c.unidadesFardo); }); 
+                let tG = 0; const locaisHtml = (p.locais||[]).map(loc => { const a = areas.find(x => x.nome === loc); const v = p.estoque?.[loc] || {f:0,u:0}; const q = (v.f||0)*t + (v.u||0); tG += q; return `<tr><td><div style="display:flex; align-items:center; gap:8px;"><button class="action-icon info-btn" onclick="verArea('${a?.key}', '${loc}')">ⓘ</button><span>${loc}</span></div></td><td style="text-align:right">${renderizarTotalLinhaDupla(q,t)}</td></tr>`; }).join(''); 
                 document.getElementById('tabela-locais-produto').innerHTML = locaisHtml || `<tr><td colspan="2" style="text-align:center; color:#64748b;">Não alocado em nenhuma área.</td></tr>`; 
                 
-                document.getElementById('info-extra-prod').innerHTML = `
-                    <div style="padding:12px; background:var(--row-even); border-radius:8px; border:1px solid var(--border-color); display:flex; flex-direction:column; gap:8px; margin-top:10px;">
-                        <div><strong style="color:var(--primary);">Categorias:</strong> <span style="color:#64748b;">${pC.length>0?pC.join(', '):'Nenhuma'}</span></div>
-                        <div><strong style="color:var(--primary);">Método:</strong> <span style="color:#64748b;">${p.metodoCompra||"Não atribuído"}</span></div>
-                        <div><strong style="color:var(--primary);">Estoque Mín.:</strong> <span style="color:#64748b;">${p.estoqueMinimo||0} ${t>1?'Fardos':'Unidades'}</span></div>
-                        <div><strong style="color:var(--primary);">Fardos Fechados:</strong> <span style="color:#64748b;">${Math.floor(tG/t)} Fardos (Geral)</span></div>
-                    </div>`; 
-            } catch(e) { console.error(e); }
+                const boxFardosGeral = t > 1 ? `<div><strong style="color:var(--primary);">Fardos Fechados:</strong> <span style="color:#64748b;">${Math.floor(tG/t)} Fardos (Geral)</span></div>` : '';
+                document.getElementById('info-extra-prod').innerHTML = `<div style="padding:12px; background:var(--row-even); border-radius:8px; border:1px solid var(--border-color); display:flex; flex-direction:column; gap:8px; margin-top:10px;"><div><strong style="color:var(--primary);">Categorias:</strong> <span style="color:#64748b;">${pC.length>0?pC.join(', '):'Nenhuma'}</span></div><div><strong style="color:var(--primary);">Método:</strong> <span style="color:#64748b;">${p.metodoCompra||"Não atribuído"}</span></div><div><strong style="color:var(--primary);">Estoque Mín.:</strong> <span style="color:#64748b;">${p.estoqueMinimo||0} ${t>1?'Fardos':'Unidades'}</span></div>${boxFardosGeral}</div>`; 
+            } catch(e) {}
         }
 
+        // ==========================================
+        // MÉTODOS DE COMPRA E CONFIGURAÇÕES ADMIN
+        // ==========================================
         function obterIconeMetodo(nome, isCard = false) { 
-            if (!nome) return isCard ? `<i>📦</i>` : `📦`; 
-            const limpo = removerAcentos(nome.toLowerCase().trim()); 
-            let img = null; 
-            if(limpo.includes("rr") || limpo.includes("polpa")) img = "rrpolpas.svg"; 
-            else if(limpo.includes("heineken")) img = "heinekendistri.svg"; 
-            else if(limpo.includes("coca")) img = "cocacoladistri.svg"; 
-            else if(limpo.includes("atento")) img = "atento.svg"; 
-            
-            if (img) { 
-                if (isCard) return `<img src="${img}" alt="${nome}" style="width:100px; height:100px; object-fit:contain; margin-bottom:10px; display:block; margin-left:auto; margin-right:auto;">`; 
-                return `<img src="${img}" alt="${nome}" style="width:28px; height:28px; object-fit:contain; margin-right:6px; vertical-align:middle; display:inline-block; border-radius:3px;">`; 
-            } 
+            if (!nome) return isCard ? `<i>📦</i>` : `📦`; const limpo = removerAcentos(nome.toLowerCase().trim()); let img = null; 
+            if(limpo.includes("rr") || limpo.includes("polpa")) img = "rrpolpas.svg"; else if(limpo.includes("heineken")) img = "heinekendistri.svg"; else if(limpo.includes("coca")) img = "cocacoladistri.svg"; else if(limpo.includes("atento")) img = "atento.svg"; 
+            if (img) { if (isCard) return `<img src="${img}" alt="${nome}" style="width:100px; height:100px; object-fit:contain; margin-bottom:10px; display:block; margin-left:auto; margin-right:auto;">`; return `<img src="${img}" alt="${nome}" style="width:28px; height:28px; object-fit:contain; margin-right:6px; vertical-align:middle; display:inline-block; border-radius:3px;">`; } 
             return isCard ? `<i style="font-size: 3rem;">${obterEmoji(nome)}</i>` : `${obterEmoji(nome)}`; 
         }
 
         function renderizarMetodosConfig() { 
-            try {
-                document.getElementById('lista-metodos-config').innerHTML = Object.keys(metodosCompra).map(k => `
-                    <div class="preset-config-item" style="padding:10px 0; border-bottom:1px solid #e2e8f0; margin-bottom:8px;">
-                        <div style="display:flex; align-items:center;">
-                            <button class="action-icon edit-btn" onclick="editarMetodo('${k}')">✎</button>
-                            <button class="action-icon add-btn" onclick="abrirAtribuirMetodo('${k}')">➕</button>
-                            <strong style="font-size:1.05rem; margin-left:10px; display:flex; align-items:center;"><span>${metodosCompra[k].nome}</span></strong>
-                            <span style="margin-left:auto; color:red; cursor:pointer;" onclick="prepararExclusaoMet('${k}')">Excluir</span>
-                        </div>
-                    </div>`).join(''); 
-            } catch(e) { console.error(e); }
+            try { document.getElementById('lista-metodos-config').innerHTML = Object.keys(metodosCompra).map(k => `<div class="preset-config-item" style="padding:15px 10px; border-bottom:1px solid #e2e8f0; margin-bottom:12px;"><div style="display:flex; align-items:center;"><button class="action-icon edit-btn" onclick="editarMetodo('${k}')">✎</button><button class="action-icon add-btn" onclick="abrirAtribuirMetodo('${k}')">➕</button><strong style="font-size:1.1rem; margin-left:12px;">${metodosCompra[k].nome}</strong><span style="margin-left:auto; color:red; cursor:pointer; font-weight:bold; font-size:0.85rem;" onclick="prepararExclusaoMet('${k}')">Excluir</span></div></div>`).join(''); } catch(e) {}
         }
 
         function renderizarPedidosMetodos() { 
             try {
-                const grid = document.getElementById('grid-pedidos-metodos');
-                if(!grid) return;
-                const chaves = Object.keys(metodosCompra);
-                if(chaves.length === 0) {
-                    grid.innerHTML = `<p style="grid-column: 1 / -1; color:#64748b;">Nenhum método cadastrado.</p>`;
-                    return;
-                }
-                grid.innerHTML = chaves.map(k => `
-                    <div class="card-nav" onclick="verPedidoPorMetodo('${k}')">
-                        ${obterIconeMetodo(metodosCompra[k].nome, true)}<h3 style="margin-top:5px;">${metodosCompra[k].nome}</h3>
-                    </div>`).join(''); 
-            } catch(e) { console.error(e); }
+                const grid = document.getElementById('grid-pedidos-metodos'); if(!grid) return; const chaves = Object.keys(metodosCompra);
+                if(chaves.length === 0) { grid.innerHTML = `<p style="grid-column: 1 / -1; color:#64748b;">Nenhum método cadastrado.</p>`; return; }
+                grid.innerHTML = chaves.map(k => `<div class="card-nav" onclick="verPedidoPorMetodo('${k}')">${obterIconeMetodo(metodosCompra[k].nome, true)}<h3 style="margin-top:5px;">${metodosCompra[k].nome}</h3></div>`).join(''); 
+            } catch(e) {}
         }
 
         function verPedidoPorMetodo(key) { 
             try {
-                navegar('pedidos-lista'); 
-                const met = metodosCompra[key]?.nome || 'Desconhecido'; 
-                document.getElementById('titulo-pedido-metodo').innerText = `Pedidos: ${met}`; 
-                
+                navegar('pedidos-lista'); const met = metodosCompra[key]?.nome || 'Desconhecido'; document.getElementById('titulo-pedido-metodo').innerText = `Pedidos: ${met}`; 
                 const prodsFiltrados = Object.keys(produtos).filter(k => produtos[k] && produtos[k].metodoCompra === met).sort((a,b) => produtos[a].nome.localeCompare(produtos[b].nome));
-                
-                if(prodsFiltrados.length === 0) {
-                    document.getElementById('tabela-pedidos-filtrada').innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">Nenhum produto usa este método.</td></tr>`;
-                    return;
-                }
-
+                if(prodsFiltrados.length === 0) { document.getElementById('tabela-pedidos-filtrada').innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">Nenhum produto usa este método.</td></tr>`; return; }
                 document.getElementById('tabela-pedidos-filtrada').innerHTML = prodsFiltrados.map(k => { 
-                    const p = produtos[k]; 
-                    let t = 1; 
-                    getCategoriasProduto(p).forEach(cn => {
-                        const c = Object.values(categorias).find(x => x.nome === cn);
-                        if(c && c.unidadesFardo > t) t = Number(c.unidadesFardo);
-                    }); 
-                    const fAt = Object.values(p.estoque||{}).reduce((ac,v) => typeof v==='object'&&v!==null?ac+((Number(v.f)||0)*t)+(Number(v.u)||0):ac+Number(v||0),0)/t; 
-                    const m = Number(p.estoqueMinimo||0); 
-                    const sg = Math.ceil(Math.max(0, m - fAt)); 
-                    const lb = t > 1 ? 'Fds.' : 'Un.'; 
+                    const p = produtos[k]; let t = 1; getCategoriasProduto(p).forEach(cn => { const c = Object.values(categorias).find(x => x.nome === cn); if(c && c.unidadesFardo > t) t = Number(c.unidadesFardo); }); 
+                    const fAt = Object.values(p.estoque||{}).reduce((ac,v) => typeof v==='object'&&v!==null?ac+((Number(v.f)||0)*t)+(Number(v.u)||0):ac+Number(v||0),0)/t; const m = Number(p.estoqueMinimo||0); const sg = Math.ceil(Math.max(0, m - fAt)); const lb = t > 1 ? 'Fds.' : 'Un.'; 
                     return `<tr><td class="col-item">${p.nome}</td><td style="text-align:center;">${fAt%1===0?fAt:fAt.toFixed(1)} <br><small style="color:#64748b">${lb}</small></td><td style="text-align:center;">${m} <br><small style="color:#64748b">${lb}</small></td><td style="text-align:center; font-weight:800; font-size:1.1rem; color:${sg>0?'var(--primary)':'#10b981'}">${sg} <br><small style="font-weight:normal; font-size:0.75rem">${lb}</small></td></tr>`; 
                 }).join(''); 
-            } catch(e) { console.error(e); }
+            } catch(e) {}
         }
 
-        // CRUD METODOS E CONFIGURAÇÕES
-        function salvarMetodo() { 
-            try {
-                const id=document.getElementById('edit-met-id').value, n=document.getElementById('met-nome').value; 
-                if(n){ 
-                    if(id){ 
-                        const old=metodosCompra[id].nome; 
-                        db.ref('metodos/'+id).update({nome:n}).then(()=>{
-                            if(old!==n) Object.keys(produtos).forEach(pk=>{ if(produtos[pk]&&produtos[pk].metodoCompra===old) db.ref('produtos/'+pk).update({metodoCompra:n}); });
-                        }); 
-                    } else {
-                        db.ref('metodos').push({nome:n}); 
-                    }
-                    resetarFormMetodo(); 
-                } 
-            } catch(e){console.error(e);}
-        }
-        function editarMetodo(k) { document.getElementById('edit-met-id').value=k; document.getElementById('met-nome').value=metodosCompra[k].nome; document.getElementById('btn-salvar-met').innerText="Atualizar"; const btn = document.getElementById('btn-cancelar-met'); if(btn) btn.style.display="inline-block"; }
-        function resetarFormMetodo() { document.getElementById('edit-met-id').value=""; document.getElementById('met-nome').value=""; document.getElementById('btn-salvar-met').innerText="Salvar"; const btn = document.getElementById('btn-cancelar-met'); if(btn) btn.style.display="none"; }
-        function renderizarPresetsMetodos() { 
-            try {
-                const vN=document.getElementById('prod-metodo-selecionado').value, vE=document.getElementById('edit-prod-metodo-selecionado').value; 
-                document.getElementById('metodos-container').innerHTML=Object.keys(metodosCompra).map(k=>`<div class="chip ${vN===metodosCompra[k].nome?'active-chip':''}" onclick="selecionarMetodo('${k}','novo')">${obterIconeMetodo(metodosCompra[k].nome)} ${metodosCompra[k].nome}</div>`).join(''); 
-                document.getElementById('edit-metodos-container').innerHTML=Object.keys(metodosCompra).map(k=>`<div class="chip ${vE===metodosCompra[k].nome?'active-chip':''}" onclick="selecionarMetodo('${k}','edit')">${obterIconeMetodo(metodosCompra[k].nome)} ${metodosCompra[k].nome}</div>`).join(''); 
-            } catch(e) { console.error(e); }
-        }
+        function salvarMetodo() { const id=document.getElementById('edit-met-id').value, n=document.getElementById('met-nome').value; if(n){ if(id){ const old=metodosCompra[id].nome; db.ref('metodos/'+id).update({nome:n}).then(()=>{if(old!==n)Object.keys(produtos).forEach(pk=>{if(produtos[pk]&&produtos[pk].metodoCompra===old)db.ref('produtos/'+pk).update({metodoCompra:n});});}); }else db.ref('metodos').push({nome:n}); resetarFormMetodo(); } }
+        function editarMetodo(k) { document.getElementById('edit-met-id').value=k; document.getElementById('met-nome').value=metodosCompra[k].nome; document.getElementById('btn-salvar-met').innerText="Atualizar"; }
+        function resetarFormMetodo() { document.getElementById('edit-met-id').value=""; document.getElementById('met-nome').value=""; document.getElementById('btn-salvar-met').innerText="Salvar"; }
+        function renderizarPresetsMetodos() { const vN=document.getElementById('prod-metodo-selecionado').value, vE=document.getElementById('edit-prod-metodo-selecionado').value; document.getElementById('metodos-container').innerHTML=Object.keys(metodosCompra).map(k=>`<div class="chip ${vN===metodosCompra[k].nome?'active-chip':''}" onclick="selecionarMetodo('${k}','novo')">${obterIconeMetodo(metodosCompra[k].nome)} ${metodosCompra[k].nome}</div>`).join(''); document.getElementById('edit-metodos-container').innerHTML=Object.keys(metodosCompra).map(k=>`<div class="chip ${vE===metodosCompra[k].nome?'active-chip':''}" onclick="selecionarMetodo('${k}','edit')">${obterIconeMetodo(metodosCompra[k].nome)} ${metodosCompra[k].nome}</div>`).join(''); }
         function selecionarMetodo(k, ctx) { document.getElementById(ctx==='novo'?'prod-metodo-selecionado':'edit-prod-metodo-selecionado').value=metodosCompra[k].nome; renderizarPresetsMetodos(); }
         
-        function salvarCategoria() { 
-            try {
-                const id=document.getElementById('edit-cat-id').value, n=document.getElementById('cat-nome').value, u=document.getElementById('cat-uso-fardo').checked, t=u?Number(document.getElementById('cat-qtd-fardo').value):1, sel=Array.from(document.querySelectorAll('#cat-checks-areas input:checked')).map(i=>i.value); 
-                if(n&&sel.length){ 
-                    const d={nome:n,areas:sel,unidadesFardo:t}; 
-                    if(id){ 
-                        const old=categorias[id].nome; 
-                        db.ref('categorias/'+id).update(d).then(()=>{
-                            if(old!==n) Object.keys(produtos).forEach(pk=>{ if(!produtos[pk])return;let pc=getCategoriasProduto(produtos[pk]);if(pc.includes(old))db.ref('produtos/'+pk).update({categorias:pc.map(c=>c===old?n:c),categoria:null}); });
-                        }); 
-                    } else {
-                        db.ref('categorias').push(d); 
-                    }
-                    resetarFormCategoria(); 
-                } 
-            } catch(e){console.error(e);}
-        }
-
+        function salvarCategoria() { const id=document.getElementById('edit-cat-id').value, n=document.getElementById('cat-nome').value, u=document.getElementById('cat-uso-fardo').checked, t=u?Number(document.getElementById('cat-qtd-fardo').value):1, sel=Array.from(document.querySelectorAll('#cat-checks-areas input:checked')).map(i=>i.value); if(n&&sel.length){ const d={nome:n,areas:sel,unidadesFardo:t}; if(id){ const old=categorias[id].nome; db.ref('categorias/'+id).update(d).then(()=>{if(old!==n)Object.keys(produtos).forEach(pk=>{if(!produtos[pk])return;let pc=getCategoriasProduto(produtos[pk]);if(pc.includes(old))db.ref('produtos/'+pk).update({categorias:pc.map(c=>c===old?n:c),categoria:null});});}); }else db.ref('categorias').push(d); resetarFormCategoria(); } }
+        
         function renderizarPresets() { 
-            try { 
-                document.getElementById('presets-container').innerHTML=Object.keys(categorias).map(k=>`<div class="chip ${catsNovo.includes(categorias[k].nome)?'active-chip':''}" onclick="togglePreset('${k}','novo')">${obterEmoji(categorias[k].nome)} ${categorias[k].nome}</div>`).join(''); 
-                document.getElementById('edit-presets-container').innerHTML=Object.keys(categorias).map(k=>`<div class="chip ${catsEdit.includes(categorias[k].nome)?'active-chip':''}" onclick="togglePreset('${k}','edit')">${obterEmoji(categorias[k].nome)} ${categorias[k].nome}</div>`).join(''); 
-                document.getElementById('lista-categorias-config').innerHTML=Object.keys(categorias).map(k=>{ const c=categorias[k]; return `<div class="preset-config-item" style="padding:12px; border:1px solid #ccc; border-radius:8px; margin-bottom:8px;"><div style="display:flex; align-items:center;"><button class="action-icon edit-btn" onclick="editarCategoria('${k}')">✎</button><button class="action-icon add-btn" onclick="abrirAtribuirCategoria('${k}')">➕</button><strong style="font-size:1.05rem; margin-left:5px;">${obterEmoji(c.nome)} ${c.nome}</strong><span style="margin-left:auto; color:red; cursor:pointer;" onclick="prepararExclusaoCat('${k}')">Excluir</span></div><div style="margin-top:8px; font-size:0.85rem; color:#64748b;">Áreas: ${(c.areas||[]).join(', ')} <br> Fardo: ${c.unidadesFardo>1?c.unidadesFardo+' un.':'Não'}</div></div>`; }).join(''); 
-            } catch(e) { console.error(e); } 
-        }
-
-        function abrirAtribuirCategoria(k) { 
-            try {
+            document.getElementById('presets-container').innerHTML=Object.keys(categorias).map(k=>`<div class="chip ${catsNovo.includes(categorias[k].nome)?'active-chip':''}" onclick="togglePreset('${k}','novo')">${obterEmoji(categorias[k].nome)} ${categorias[k].nome}</div>`).join(''); 
+            document.getElementById('edit-presets-container').innerHTML=Object.keys(categorias).map(k=>`<div class="chip ${catsEdit.includes(categorias[k].nome)?'active-chip':''}" onclick="togglePreset('${k}','edit')">${obterEmoji(categorias[k].nome)} ${categorias[k].nome}</div>`).join(''); 
+            document.getElementById('lista-categorias-config').innerHTML=Object.keys(categorias).map(k=>{ 
                 const c=categorias[k]; 
-                document.getElementById('atribuir-cat-id').value=k; document.getElementById('titulo-atribuir-cat').innerText=`Atribuir: ${c.nome}`; 
-                document.getElementById('lista-produtos-atribuir').innerHTML=Object.keys(produtos).filter(pk=>produtos[pk]&&produtos[pk].nome).sort((a,b)=>{const hA=getCategoriasProduto(produtos[a]).includes(c.nome)?1:0; const hB=getCategoriasProduto(produtos[b]).includes(c.nome)?1:0; return hA!==hB?hB-hA:produtos[a].nome.localeCompare(produtos[b].nome);}).map(pk=>{ const p=produtos[pk], has=getCategoriasProduto(p).includes(c.nome), out=getCategoriasProduto(p).filter(x=>x!==c.nome).length; return `<label class="check-item" style="padding:15px 10px; border:1px solid ${has?'var(--primary)':'var(--border-color)'}; border-radius:10px; background:${has?'#fff5f5':'#fff'}; display:flex; align-items:center; cursor:pointer;"><input type="checkbox" value="${pk}" ${has?'checked':''} style="width:22px; height:22px; margin-right:12px;"><strong style="font-size:1.05rem;">${p.nome}</strong><span style="font-size:0.65rem; background:${out>0||has?'#e2e8f0':'#fee2e2'}; color:${out>0||has?'#64748b':'#b91c1c'}; padding:4px 8px; border-radius:12px; margin-left:auto;">${out>0?`+${out} cat`:(has?'OK':'Vazio')}</span></label>`; }).join(''); 
-                navegar('atribuir-categoria'); 
-            } catch(e) { console.error(e); }
+                return `<div class="preset-config-item" style="padding:12px; border:1px solid #ccc; border-radius:8px; margin-bottom:8px;"><div style="display:flex; align-items:center;"><button class="action-icon edit-btn" onclick="editarCategoria('${k}')">✎</button><button class="action-icon add-btn" onclick="abrirAtribuirCategoria('${k}')">➕</button><button class="action-icon info-btn" onclick="abrirConfigCategoria('${k}')">ⓘ</button><strong style="font-size:1.05rem; margin-left:5px;">${obterEmoji(c.nome)} ${c.nome}</strong><span style="margin-left:auto; color:red; cursor:pointer;" onclick="prepararExclusaoCat('${k}')">Excluir</span></div><div style="margin-top:8px; font-size:0.85rem; color:#64748b;">Áreas: ${(c.areas||[]).join(', ')} <br> Fardo: ${c.unidadesFardo>1?c.unidadesFardo+' un.':'Não'}</div></div>`; 
+            }).join(''); 
         }
 
-        function salvarAtribuicaoCategoria() { 
-            try {
-                const n=categorias[document.getElementById('atribuir-cat-id').value].nome, u={}; 
-                document.querySelectorAll('#lista-produtos-atribuir input:checked, #lista-produtos-atribuir input:not(:checked)').forEach(cb=>{ const p=produtos[cb.value]; if(!p)return; let pc=getCategoriasProduto(p), ch=false; if(cb.checked&&!pc.includes(n)){pc.push(n);ch=true;}else if(!cb.checked&&pc.includes(n)){pc=pc.filter(x=>x!==n);ch=true;} if(ch){u[`produtos/${cb.value}/categorias`]=pc.length?pc:null;u[`produtos/${cb.value}/categoria`]=null;} }); 
-                if(Object.keys(u).length) db.ref().update(u).then(()=>navegar('configuracoes')); else navegar('configuracoes'); 
-            } catch(e){console.error(e);}
+        function abrirConfigCategoria(k) {
+            categoriaFocadaOrdenacao = k;
+            const c = categorias[k];
+            document.getElementById('titulo-config-cat').innerText = `⚙️ ${c.nome}`;
+            document.getElementById('info-tecnica-cat').innerHTML = `<p><strong>Unidades por Fardo:</strong> ${c.unidadesFardo}</p><p><strong>Áreas Armazenadas:</strong> ${(c.areas||[]).join(', ') || 'Nenhuma'}</p>`;
+            renderizarOrdenacaoCategoria();
+            navegar('detalhe-categoria-admin');
         }
 
-        function abrirAtribuirMetodo(k) { 
-            try {
-                const m=metodosCompra[k]; document.getElementById('atribuir-met-id').value=k; document.getElementById('titulo-atribuir-met').innerText=`Atribuir: ${m.nome}`; document.getElementById('lista-produtos-atribuir-met').innerHTML=Object.keys(produtos).filter(pk=>produtos[pk]&&produtos[pk].nome).sort((a,b)=>{const hA=produtos[a].metodoCompra===m.nome?1:0; const hB=produtos[b].metodoCompra===m.nome?1:0; return hA!==hB?hB-hA:produtos[a].nome.localeCompare(produtos[b].nome);}).map(pk=>{ const p=produtos[pk], has=p.metodoCompra===m.nome, out=p.metodoCompra&&p.metodoCompra!==m.nome; return `<label class="check-item" style="padding:15px 10px; border:1px solid ${has?'var(--primary)':'var(--border-color)'}; border-radius:10px; background:${has?'#fff5f5':'#fff'}; display:flex; align-items:center; cursor:pointer;"><input type="checkbox" value="${pk}" ${has?'checked':''} style="width:22px; height:22px; margin-right:12px;"><strong style="font-size:1.05rem;">${p.nome}</strong><span style="font-size:0.65rem; background:${out?'#e2e8f0':(has?'#e2e8f0':'#fee2e2')}; color:${out?'#64748b':(has?'#64748b':'#b91c1c')}; padding:4px 8px; border-radius:12px; margin-left:auto;">${out?p.metodoCompra:(has?'OK':'Sem método')}</span></label>`; }).join(''); navegar('atribuir-metodo'); 
-            } catch(e) { console.error(e); }
+        function renderizarOrdenacaoCategoria() {
+            const k = categoriaFocadaOrdenacao;
+            const c = categorias[k];
+            if(!c) return;
+
+            let prodsInCat = Object.keys(produtos).filter(pk => getCategoriasProduto(produtos[pk]).includes(c.nome));
+            const customOrder = c.ordem || [];
+            
+            prodsInCat.sort((a, b) => {
+                const idxA = customOrder.indexOf(a); const idxB = customOrder.indexOf(b);
+                if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+                if (idxA !== -1) return -1;
+                if (idxB !== -1) return 1;
+                return (produtos[a].nome || "").localeCompare(produtos[b].nome || "");
+            });
+
+            document.getElementById('lista-ordenacao-cat').innerHTML = prodsInCat.map((pk, index) => {
+                const p = produtos[pk];
+                return `<div style="display:flex; align-items:center; background:white; padding:10px; border-radius:8px; border:1px solid #ccc;">
+                    <div class="sort-wrapper">
+                        <button class="sort-btn qty-up" onclick="moverProdutoOrdem('${k}', '${pk}', -1)" ${index === 0 ? 'disabled style="opacity:0.3"' : ''}>▲</button>
+                        <button class="sort-btn qty-down" onclick="moverProdutoOrdem('${k}', '${pk}', 1)" ${index === prodsInCat.length - 1 ? 'disabled style="opacity:0.3"' : ''}>▼</button>
+                    </div>
+                    <strong style="font-size:0.95rem; color:var(--text-main);">${p.nome}</strong>
+                </div>`;
+            }).join('') || '<p style="font-size:0.85rem; color:#64748b;">Nenhum produto nesta categoria.</p>';
         }
 
-        function salvarAtribuicaoMetodo() { 
-            try {
-                const n=metodosCompra[document.getElementById('atribuir-met-id').value].nome, u={}; document.querySelectorAll('#lista-produtos-atribuir-met input').forEach(cb=>{ const p=produtos[cb.value]; if(!p)return; let nm=p.metodoCompra, ch=false; if(cb.checked&&nm!==n){nm=n;ch=true;}else if(!cb.checked&&nm===n){nm=null;ch=true;} if(ch)u[`produtos/${cb.value}/metodoCompra`]=nm; }); if(Object.keys(u).length)db.ref().update(u).then(()=>navegar('configuracoes')); else navegar('configuracoes'); 
-            } catch(e){console.error(e);}
+        function moverProdutoOrdem(catKey, prodKey, direction) {
+            const c = categorias[catKey];
+            let prodsInCat = Object.keys(produtos).filter(pk => getCategoriasProduto(produtos[pk]).includes(c.nome));
+            const customOrder = c.ordem || [];
+            
+            prodsInCat.sort((a, b) => {
+                const idxA = customOrder.indexOf(a); const idxB = customOrder.indexOf(b);
+                if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+                if (idxA !== -1) return -1;
+                if (idxB !== -1) return 1;
+                return (produtos[a].nome || "").localeCompare(produtos[b].nome || "");
+            });
+
+            const index = prodsInCat.indexOf(prodKey);
+            if(index === -1) return;
+            
+            const newIndex = index + direction;
+            if(newIndex < 0 || newIndex >= prodsInCat.length) return;
+
+            const temp = prodsInCat[index];
+            prodsInCat[index] = prodsInCat[newIndex];
+            prodsInCat[newIndex] = temp;
+
+            db.ref(`categorias/${catKey}/ordem`).set(prodsInCat);
         }
 
+        function abrirAtribuirCategoria(k) { const c=categorias[k]; document.getElementById('atribuir-cat-id').value=k; document.getElementById('titulo-atribuir-cat').innerText=`Atribuir: ${c.nome}`; document.getElementById('lista-produtos-atribuir').innerHTML=Object.keys(produtos).filter(pk=>produtos[pk]&&produtos[pk].nome).sort((a,b)=>{const hA=getCategoriasProduto(produtos[a]).includes(c.nome)?1:0; const hB=getCategoriasProduto(produtos[b]).includes(c.nome)?1:0; return hA!==hB?hB-hA:produtos[a].nome.localeCompare(produtos[b].nome);}).map(pk=>{ const p=produtos[pk], has=getCategoriasProduto(p).includes(c.nome), out=getCategoriasProduto(p).filter(x=>x!==c.nome).length; return `<label class="check-item" style="padding:15px 10px; border:1px solid ${has?'var(--primary)':'var(--border-color)'}; border-radius:10px; background:${has?'#fff5f5':'#fff'}; display:flex; align-items:center; cursor:pointer;"><input type="checkbox" value="${pk}" ${has?'checked':''} style="width:22px; height:22px; margin-right:12px;"><strong style="font-size:1.05rem;">${p.nome}</strong><span style="font-size:0.65rem; background:${out>0||has?'#e2e8f0':'#fee2e2'}; color:${out>0||has?'#64748b':'#b91c1c'}; padding:4px 8px; border-radius:12px; margin-left:auto;">${out>0?`+${out} cat`:(has?'OK':'Vazio')}</span></label>`; }).join(''); navegar('atribuir-categoria'); }
+        function salvarAtribuicaoCategoria() { const n=categorias[document.getElementById('atribuir-cat-id').value].nome, u={}; document.querySelectorAll('#lista-produtos-atribuir input:checked, #lista-produtos-atribuir input:not(:checked)').forEach(cb=>{ const p=produtos[cb.value]; if(!p)return; let pc=getCategoriasProduto(p), ch=false; if(cb.checked&&!pc.includes(n)){pc.push(n);ch=true;}else if(!cb.checked&&pc.includes(n)){pc=pc.filter(x=>x!==n);ch=true;} if(ch){u[`produtos/${cb.value}/categorias`]=pc.length?pc:null;u[`produtos/${cb.value}/categoria`]=null;} }); if(Object.keys(u).length) db.ref().update(u).then(()=>navegar('configuracoes')); else navegar('configuracoes'); }
+        function abrirAtribuirMetodo(k) { const m=metodosCompra[k]; document.getElementById('atribuir-met-id').value=k; document.getElementById('titulo-atribuir-met').innerText=`Atribuir: ${m.nome}`; document.getElementById('lista-produtos-atribuir-met').innerHTML=Object.keys(produtos).filter(pk=>produtos[pk]&&produtos[pk].nome).sort((a,b)=>{const hA=produtos[a].metodoCompra===m.nome?1:0; const hB=produtos[b].metodoCompra===m.nome?1:0; return hA!==hB?hB-hA:produtos[a].nome.localeCompare(produtos[b].nome);}).map(pk=>{ const p=produtos[pk], has=p.metodoCompra===m.nome, out=p.metodoCompra&&p.metodoCompra!==m.nome; return `<label class="check-item" style="padding:15px 10px; border:1px solid ${has?'var(--primary)':'var(--border-color)'}; border-radius:10px; background:${has?'#fff5f5':'#fff'}; display:flex; align-items:center; cursor:pointer;"><input type="checkbox" value="${pk}" ${has?'checked':''} style="width:22px; height:22px; margin-right:12px;"><strong style="font-size:1.05rem;">${p.nome}</strong><span style="font-size:0.65rem; background:${out?'#e2e8f0':(has?'#e2e8f0':'#fee2e2')}; color:${out?'#64748b':(has?'#64748b':'#b91c1c')}; padding:4px 8px; border-radius:12px; margin-left:auto;">${out?p.metodoCompra:(has?'OK':'Sem método')}</span></label>`; }).join(''); navegar('atribuir-metodo'); }
+        function salvarAtribuicaoMetodo() { const n=metodosCompra[document.getElementById('atribuir-met-id').value].nome, u={}; document.querySelectorAll('#lista-produtos-atribuir-met input').forEach(cb=>{ const p=produtos[cb.value]; if(!p)return; let nm=p.metodoCompra, ch=false; if(cb.checked&&nm!==n){nm=n;ch=true;}else if(!cb.checked&&nm===n){nm=null;ch=true;} if(ch)u[`produtos/${cb.value}/metodoCompra`]=nm; }); if(Object.keys(u).length)db.ref().update(u).then(()=>navegar('configuracoes')); else navegar('configuracoes'); }
         function togglePreset(k, ctx) { const n=categorias[k].nome, t=ctx==='novo'?'checks-areas':'edit-checks-areas', a=ctx==='novo'?catsNovo:catsEdit, idx=a.indexOf(n); if(idx>-1)a.splice(idx,1); else{a.push(n);document.querySelectorAll(`#${t} input`).forEach(cb=>{if(categorias[k].areas?.includes(cb.value))cb.checked=true;});} atualizarLabelEstoqueMinimo(ctx, a); renderizarPresets(); }
-        function editarCategoria(k) { const c=categorias[k]; document.getElementById('edit-cat-id').value=k; document.getElementById('cat-nome').value=c.nome; document.getElementById('cat-uso-fardo').checked=c.unidadesFardo>1; document.getElementById('cat-qtd-fardo').value=c.unidadesFardo; toggleFardoInput(); document.querySelectorAll('#cat-checks-areas input').forEach(cb=>cb.checked=c.areas?.includes(cb.value)); document.getElementById('btn-salvar-cat').innerText="Atualizar"; const btn = document.getElementById('btn-cancelar-cat'); if(btn) btn.style.display="block"; window.scrollTo({top:0}); }
-        function resetarFormCategoria() { document.getElementById('edit-cat-id').value=""; document.getElementById('cat-nome').value=""; document.getElementById('cat-uso-fardo').checked=false; document.getElementById('cat-qtd-fardo').value=""; toggleFardoInput(); document.querySelectorAll('#cat-checks-areas input').forEach(cb=>cb.checked=false); document.getElementById('btn-salvar-cat').innerText="Criar"; const btn = document.getElementById('btn-cancelar-cat'); if(btn) btn.style.display="none"; }
+        function editarCategoria(k) { const c=categorias[k]; document.getElementById('edit-cat-id').value=k; document.getElementById('cat-nome').value=c.nome; document.getElementById('cat-uso-fardo').checked=c.unidadesFardo>1; document.getElementById('cat-qtd-fardo').value=c.unidadesFardo; toggleFardoInput(); document.querySelectorAll('#cat-checks-areas input').forEach(cb=>cb.checked=c.areas?.includes(cb.value)); document.getElementById('btn-salvar-cat').innerText="Atualizar"; window.scrollTo({top:0}); }
+        function resetarFormCategoria() { document.getElementById('edit-cat-id').value=""; document.getElementById('cat-nome').value=""; document.getElementById('cat-uso-fardo').checked=false; document.getElementById('cat-qtd-fardo').value=""; toggleFardoInput(); document.querySelectorAll('#cat-checks-areas input').forEach(cb=>cb.checked=false); document.getElementById('btn-salvar-cat').innerText="Criar"; }
         function toggleFardoInput() { document.getElementById('div-unidades-fardo').style.display = document.getElementById('cat-uso-fardo').checked ? 'block' : 'none'; }
         function renderizarChecksConfig() { document.getElementById('cat-checks-areas').innerHTML=areas.map(a=>`<label class="check-item"><input type="checkbox" value="${a.nome}"> <span>${a.nome}</span></label>`).join(''); }
         function atualizarLabelEstoqueMinimo(ctx, selectedCats) { let maxFardo=1; selectedCats.forEach(cn=>{ const c = Object.values(categorias).find(x=>x.nome===cn); if(c && c.unidadesFardo>maxFardo) maxFardo=Number(c.unidadesFardo); }); document.getElementById(ctx==='novo'?'lbl-estoque-minimo-novo':'lbl-estoque-minimo-edit').innerText=maxFardo>1?"(Fardos)":"(Un.)"; }
         
-        function abrirCadastro(id) { 
-            if(id==='novo-produto'){ 
-                document.getElementById('checks-areas').innerHTML=areas.map(a=>`<label class="check-item"><input type="checkbox" value="${a.nome}"> <span>${a.nome}</span></label>`).join(''); 
-                document.getElementById('prod-nome').value=""; 
-                document.getElementById('prod-metodo-selecionado').value=""; 
-                document.getElementById('prod-estoque-minimo').value="0"; 
-                catsNovo=[]; 
-                atualizarLabelEstoqueMinimo('novo',catsNovo); 
-                renderizarPresets(); 
-                renderizarPresetsMetodos(); 
-            } 
-            navegar(id); 
+        // ==========================================
+        // CADASTRO ÁREAS E PRODUTOS (ABRIR/SALVAR/EXCLUIR)
+        // ==========================================
+        function abrirCadastro(id) { navegar(id); }
+        function abrirCadastroProduto() { 
+            const checksHTML = areas.length ? areas.map(a=>`<label class="check-item"><input type="checkbox" value="${a.nome}"> <span>${a.nome}</span></label>`).join('') : '<span style="color:#64748b; font-size:0.85rem;">Nenhuma área cadastrada. Cadastre uma área primeiro.</span>';
+            document.getElementById('checks-areas').innerHTML=checksHTML; 
+            document.getElementById('prod-nome').value=""; 
+            document.getElementById('prod-metodo-selecionado').value=""; 
+            document.getElementById('prod-estoque-minimo').value="0"; 
+            catsNovo=[]; 
+            atualizarLabelEstoqueMinimo('novo',catsNovo); 
+            renderizarPresets(); 
+            renderizarPresetsMetodos(); 
+            navegar('novo-produto'); 
         }
-
         function salvarArea() { const n=document.getElementById('area-nome').value; if(n){db.ref('areas').push(n); document.getElementById('area-nome').value=""; navegar('areas-lista');} }
         function salvarProduto() { const n=document.getElementById('prod-nome').value, met=document.getElementById('prod-metodo-selecionado').value, min=Number(document.getElementById('prod-estoque-minimo').value)||0; if(!met){alert("Selecione um Método.");return;} const s=Array.from(document.querySelectorAll('#checks-areas input:checked')).map(i=>i.value); if(n&&s.length){const e={}; s.forEach(x=>e[x]={f:0,u:0}); db.ref('produtos').push({nome:n, categorias:catsNovo.length?catsNovo:null, metodoCompra:met, estoqueMinimo:min, locais:s, estoque:e}); document.getElementById('prod-nome').value=""; document.getElementById('prod-metodo-selecionado').value=""; document.getElementById('prod-estoque-minimo').value="0"; navegar('produtos-categorias');}else alert("Assinale área vinculada."); }
-        function abrirEdicaoProduto(k) { const p=produtos[k]; document.getElementById('edit-prod-id').value=k; document.getElementById('edit-prod-nome').value=p.nome; document.getElementById('edit-prod-metodo-selecionado').value=p.metodoCompra||""; document.getElementById('edit-prod-estoque-minimo').value=p.estoqueMinimo||0; catsEdit=getCategoriasProduto(p); atualizarLabelEstoqueMinimo('edit',catsEdit); renderizarPresets(); renderizarPresetsMetodos(); document.getElementById('edit-checks-areas').innerHTML=areas.map(a=>`<label class="check-item"><input type="checkbox" value="${a.nome}" ${(p.locais||[]).includes(a.nome)?'checked':''}> <span>${a.nome}</span></label>`).join(''); navegar('editar-produto'); }
+        function abrirEdicaoProduto(k) { 
+            const p=produtos[k]; 
+            document.getElementById('edit-prod-id').value=k; 
+            document.getElementById('edit-prod-nome').value=p.nome; 
+            document.getElementById('edit-prod-metodo-selecionado').value=p.metodoCompra||""; 
+            document.getElementById('edit-prod-estoque-minimo').value=p.estoqueMinimo||0; 
+            catsEdit=getCategoriasProduto(p); 
+            atualizarLabelEstoqueMinimo('edit',catsEdit); 
+            renderizarPresets(); 
+            renderizarPresetsMetodos(); 
+            const checksHTML = areas.length ? areas.map(a=>`<label class="check-item"><input type="checkbox" value="${a.nome}" ${(p.locais||[]).includes(a.nome)?'checked':''}> <span>${a.nome}</span></label>`).join('') : '<span style="color:#64748b; font-size:0.85rem;">Nenhuma área cadastrada. Cadastre uma área primeiro.</span>';
+            document.getElementById('edit-checks-areas').innerHTML=checksHTML; 
+            navegar('editar-produto'); 
+        }
         function salvarEdicaoProduto() { const id=document.getElementById('edit-prod-id').value, n=document.getElementById('edit-prod-nome').value, met=document.getElementById('edit-prod-metodo-selecionado').value, min=Number(document.getElementById('edit-prod-estoque-minimo').value)||0; if(!met){alert("Selecione um Método.");return;} const l=Array.from(document.querySelectorAll('#edit-checks-areas input:checked')).map(i=>i.value); db.ref('produtos/'+id).update({nome:n, categorias:catsEdit.length?catsEdit:null, categoria:null, metodoCompra:met, estoqueMinimo:min, locais:l.length?l:null}); navegar('produtos-categorias'); }
         function habilitarEdicaoArea() { document.getElementById('area-edit-box').style.display='block'; }
-        function salvarNovoNomeArea() { const nv=document.getElementById('edit-area-input').value, ant=document.getElementById('area-display-name').innerText; if(nv&&areaAtualKey&&nv!==ant){ db.ref('areas/'+areaAtualKey).set(nv).then(()=>{ Object.keys(produtos).forEach(pk=>{if(!produtos[pk])return; let p=produtos[pk], u=false, l=p.locais||[], e=p.estoque||{}; if(l.includes(ant)){l=l.map(x=>x===ant?nv:x);u=true;} if(e[ant]!==undefined){e[nv]=e[ant];delete e[ant];u=true;} if(u)db.ref('produtos/'+pk).update({locais:l, estoque:e}); }); document.getElementById('area-edit-box').style.display='none'; document.getElementById('edit-area-input').value=""; }); } }
+        function salvarNovoNomeArea() { const nv=document.getElementById('edit-area-input').value, ant=document.getElementById('area-display-name').innerText; if(nv&&areaAtualKey&&nv!==ant){ db.ref('areas/'+areaAtualKey).set(nv).then(()=>{ Object.keys(produtos).forEach(pk=>{if(!produtos[pk])return; let p=produtos[pk], u=false, l=p.locais||[], e=p.estoque||{}; if(l.includes(ant)){l=l.map(x=>x===ant?nv:x);u=true;} if(e[ant]!==undefined){e[nv]=e[ant];delete e[ant];u=true;} if(u)db.ref('produtos/'+pk).update({locais:l, estoque:e}); }); document.getElementById('area-edit-box').style.display='none'; document.getElementById('edit-area-input').value=""; navegar('areas-lista'); }); } }
         
         function prepararExclusaoArea() { document.getElementById('modalMsg').innerHTML=`Excluir área <strong>${document.getElementById('area-display-name').innerText}</strong>?`; document.getElementById('modalDelete').style.display='flex'; document.getElementById('confirmDeleteBtn').onclick=()=>{db.ref('areas/'+areaAtualKey).remove();fecharModal();navegar('areas-lista');}; }
         function prepararExclusaoProd() { document.getElementById('modalMsg').innerHTML=`Excluir <strong>${document.getElementById('edit-prod-nome').value}</strong>?`; document.getElementById('modalDelete').style.display='flex'; document.getElementById('confirmDeleteBtn').onclick=()=>{db.ref('produtos/'+document.getElementById('edit-prod-id').value).remove();fecharModal();navegar('produtos-categorias');}; }
