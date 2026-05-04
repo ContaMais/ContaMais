@@ -81,9 +81,12 @@
         .qty-btn-down { background: #ef4444; color: white; flex: 1; border: none; border-top: 1px solid rgba(0,0,0,0.1); cursor: pointer; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; padding: 0; margin: 0; }
         .qty-btn-down:active { background: #dc2626; }
 
-        /* ORDENAÇÃO DE LISTA DE ITENS NA ADMINISTRAÇÃO */
-        .sort-wrapper { display: flex; flex-direction: column; width: 34px; height: 46px; border-radius: 6px; overflow: hidden; margin-right: 12px; flex-shrink: 0; }
-        .sort-btn { flex: 1; border: none; cursor: pointer; color: white; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; padding:0; margin:0;}
+        /* ORDENAÇÃO DE LISTA DE ITENS NA ADMINISTRAÇÃO COLORIDO */
+        .sort-wrapper { display: flex; flex-direction: column; width: 34px; height: 46px; border-radius: 6px; overflow: hidden; margin-right: 12px; flex-shrink: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+        .sort-btn-up { background: #10b981; color: white; flex: 1; border: none; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; padding:0; margin:0;}
+        .sort-btn-up:active { background: #059669; }
+        .sort-btn-down { background: #ef4444; color: white; flex: 1; border: none; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; padding:0; margin:0; border-top: 1px solid rgba(0,0,0,0.1);}
+        .sort-btn-down:active { background: #dc2626; }
 
         /* TABELAS */
         .table-container { background: white; border-radius: 10px; overflow-x: auto; border: 1px solid var(--border-color); width: 100%; }
@@ -105,10 +108,13 @@
         .check-item { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
         input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary); }
 
-        /* SUBGRUPOS TABS */
+        /* SUBGRUPOS TABS E CHIPS */
         .subgrupos-tabs-container { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 12px; padding-bottom: 5px; }
         .sub-tab { padding: 6px 14px; background: #e2e8f0; color: #475569; border-radius: 20px; font-size: 0.85rem; font-weight: 700; cursor: pointer; white-space: nowrap; border: 1px solid transparent; transition: 0.2s; }
         .sub-tab.active { background: var(--primary); color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
+        
+        .chip { background: #e2e8f0; padding: 8px 14px; border-radius: 15px; font-size: 0.85rem; cursor: pointer; font-weight: 600; margin: 3px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid transparent; transition: 0.2s; }
+        .active-chip { background: var(--primary) !important; color: white !important; border-color: var(--bg-sidebar-active) !important; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
         /* AGENDA */
         .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; color: var(--bg-sidebar); }
@@ -165,9 +171,6 @@
         .fab-options.active { opacity: 1; pointer-events: all; transform: translateY(0); }
         .fab-item { background: white; border: 1px solid var(--primary); padding: 10px 16px; border-radius: 20px; cursor: pointer; font-weight: 700; font-size: 0.9rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); color: var(--text-main); }
 
-        .chip { background: #e2e8f0; padding: 8px 14px; border-radius: 15px; font-size: 0.85rem; cursor: pointer; font-weight: 600; margin: 3px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid transparent; }
-        .active-chip { background: var(--primary) !important; color: white !important; }
-
         input[type="text"], input[type="number"], input[type="password"], input[type="email"], input[type="date"], select { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; margin: 6px 0; outline: none; font-size: 0.9rem; font-family: inherit; }
         .btn-submit { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; font-size: 0.95rem; }
         
@@ -177,12 +180,17 @@
         /* ================== RESPONSIVIDADE MOBILE ================== */
         @media (max-width: 1024px) {
             body:has(#mapa-salao.active) main { padding: 65px 5px 5px 5px; } 
+            
             #mapa-salao.active { height: calc(100vh - 70px); }
+
             #mapa-salao .header-com-acao { margin-bottom: 5px; display: none; } 
             #mapa-salao > p { display: none; } 
+
             .mapa-layout-flex { flex-direction: column; gap: 5px; margin-top: 0; }
+            
             .mapa-coluna-controles { width: 100%; flex: 0 0 auto; max-height: 45vh; padding-right: 0; order: 1; }
             .mapa-coluna-mapa { width: 100%; flex: 1 1 0; order: 2; }
+            
             .grid-home, .grid-areas-layout { grid-template-columns: repeat(2, 1fr); }
         }
 
@@ -197,11 +205,13 @@
             .nav-btn.active { border-bottom: 3px solid var(--primary); background: var(--bg-sidebar-active); }
             .nav-btn span { display: block !important; font-size: 0.60rem; font-weight: normal; text-align: center; }
             
-            /* Botão Novo (+) na Direita */
-            .btn-novo-top { display: flex; position: fixed; top: 9px; right: 10px; z-index: 2001; font-size: 1.8rem; color: var(--primary); background: transparent; border: none; cursor: pointer; align-items: center; justify-content: center; width: 42px; height: 42px; }
+            /* Botão de Cargo na Esquerda e Botão (+) na Direita (Só Mobile) */
+            .btn-config { top: 9px; left: 10px; width: 42px; height: 42px; font-size: 1.5rem; font-weight: bold; background: white; color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.2); border-radius: 50%; }
             
             .fab-main { display: none !important; }
+            .btn-novo-top { display: flex; position: fixed; top: 9px; right: 10px; z-index: 2001; font-size: 1.8rem; color: white; background: var(--primary); border: none; cursor: pointer; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
             .fab-options { top: 55px; bottom: auto; right: 10px; }
+
             main { margin-left: 0; padding: 5rem 0.5rem 85px 0.5rem; } 
             h1 { font-size: 1.2rem; }
             th, td { padding: 0.6rem 0.3rem; font-size: 0.75rem; white-space: nowrap; }
@@ -220,7 +230,7 @@
     <!-- BOTÃO TOPO DIREITA (+) APENAS NO MOBILE PARA DONO -->
     <button id="btn-novo-top" class="btn-novo-top req-dono" onclick="event.stopPropagation(); toggleFab()">+</button>
 
-    <!-- MODAL DE AUTENTICAÇÃO (LOGIN/CADASTRO COM CAMPO NOME) -->
+    <!-- MODAL DE AUTENTICAÇÃO -->
     <div id="modalAuth" class="modal-overlay">
         <div class="modal-box">
             <h3 id="auth-title" style="margin-bottom: 10px; color: var(--primary);">👤 Entrar</h3>
@@ -429,10 +439,8 @@
         <section id="produtos-lista-filtrada" class="section">
             <div class="btn-back-styled" onclick="navegar('produtos-categorias')">✕</div>
             <h1 id="titulo-categoria-filtrada" style="font-size: 1.2rem;">Produtos</h1>
-            
             <input type="text" id="busca-categoria" class="search-bar" placeholder="🔍 Pesquisar item..." onkeyup="aplicarFiltrosProdutos()">
             <div id="filtro-subgrupos-wrapper" class="subgrupos-tabs-container" style="display:none;"></div>
-
             <div class="table-container"><table><thead><tr><th>Item</th><th style="text-align:right">Total</th></tr></thead><tbody id="tabela-produtos-filtrada"></tbody></table></div>
         </section>
 
@@ -638,6 +646,7 @@
         let prodSubNovo = "";
         let prodSubEdit = "";
         let activeSubgroupFilter = "Todos";
+        let activeAdminSubgroupFilter = "Todos"; // Para a seção admin
 
         // ==========================================
         // SISTEMA DE AUTENTICAÇÃO E CARGOS (RBAC)
@@ -856,6 +865,19 @@
             aplicarFiltrosProdutos();
         }
 
+        function filtrarOrdenacaoSubgrupo(sub) {
+            activeAdminSubgroupFilter = sub;
+            const container = document.getElementById('info-tecnica-cat');
+            if(container) {
+                container.querySelectorAll('.chip').forEach(btn => btn.classList.remove('active-chip'));
+                const btns = container.querySelectorAll('.chip');
+                btns.forEach(b => {
+                    if(b.getAttribute('data-sub') === sub) b.classList.add('active-chip');
+                });
+            }
+            renderizarOrdenacaoCategoria();
+        }
+
         // ==========================================
         // INICIALIZAÇÃO E LISTENERS
         // ==========================================
@@ -1010,7 +1032,6 @@
                     const conf = configMapa[subArea]; if (conf.macro !== macroNome) continue;
 
                     let lbl = ''; 
-                    // FILTRO DE ZOOM DO MAPA: Oculta as palavras se estiver com zoom na área
                     if (!areaFocadaMapa) {
                         if(subArea === 'Corrimão') lbl = `<div class="label-vertical" style="top:30px; left:-30px;">CORRIMÃO</div>`; 
                         if(subArea === 'Mesas Redondas') lbl = `<div class="label-vertical" style="top:25px; left:-35px;">REDONDAS</div>`; 
@@ -1389,7 +1410,7 @@
                 } else {
                     filtroWrapper.style.display = 'none';
                 }
-                activeSubgroupFilter = "Todos"; // reset filter
+                activeSubgroupFilter = "Todos";
 
                 if(prodsFiltrados.length === 0) { document.getElementById('tabela-produtos-filtrada').innerHTML = `<tr><td colspan="2" style="text-align:center; color:#64748b;">Nenhum produto neste grupo.</td></tr>`; return; }
                 
@@ -1402,7 +1423,7 @@
                     return `<tr data-subgrupo="${p.subgrupo || ''}"><td><div style="display:flex; align-items:center;"><button class="action-icon edit-btn req-dono" onclick="abrirEdicaoProduto('${k}')">✎</button><button class="action-icon info-btn" onclick="verDetalhesProduto('${k}')">ⓘ</button><span class="col-item">${p.nome||''}</span></div></td><td style="text-align:right">${renderizarTotalLinhaDupla(tot,t)}</td></tr>`; 
                 }).join(''); 
                 
-                aplicarFiltrosProdutos(); // apply initial visibility
+                aplicarFiltrosProdutos(); 
             } catch(e){}
         }
 
@@ -1585,7 +1606,19 @@
             categoriaFocadaOrdenacao = k;
             const c = categorias[k];
             document.getElementById('titulo-config-cat').innerText = `⚙️ ${c.nome}`;
-            document.getElementById('info-tecnica-cat').innerHTML = `<p><strong>Unidades por Fardo:</strong> ${c.unidadesFardo}</p><p><strong>Áreas Armazenadas:</strong> ${(c.areas||[]).join(', ') || 'Nenhuma'}</p>`;
+            
+            let htmlInfo = `<p><strong>Unidades por Fardo:</strong> ${c.unidadesFardo}</p><p><strong>Áreas Armazenadas:</strong> ${(c.areas||[]).join(', ') || 'Nenhuma'}</p>`;
+            
+            if (c.subgrupos && c.subgrupos.length > 0) {
+                htmlInfo += `<p style="margin-top:10px; margin-bottom: 5px;"><strong>Especificações (Subgrupos):</strong></p>
+                <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                    <button class="chip active-chip" data-sub="Todos" onclick="filtrarOrdenacaoSubgrupo('Todos')">Todos</button>
+                    ${c.subgrupos.map(sub => `<button class="chip" data-sub="${sub}" onclick="filtrarOrdenacaoSubgrupo('${sub}')" style="display:inline-flex; align-items:center; gap:5px;">${sub} <span style="background:var(--primary); color:white; border-radius:50%; width:18px; height:18px; display:inline-flex; align-items:center; justify-content:center; font-size:0.7rem; font-style:italic;">i</span></button>`).join('')}
+                </div>`;
+            }
+            
+            document.getElementById('info-tecnica-cat').innerHTML = htmlInfo;
+            activeAdminSubgroupFilter = "Todos";
             renderizarOrdenacaoCategoria();
             navegar('detalhe-categoria-admin');
         }
@@ -1595,10 +1628,10 @@
             const c = categorias[k];
             if(!c) return;
 
-            let prodsInCat = Object.keys(produtos).filter(pk => getCategoriasProduto(produtos[pk]).includes(c.nome));
+            let allProdsInCat = Object.keys(produtos).filter(pk => getCategoriasProduto(produtos[pk]).includes(c.nome));
             const customOrder = c.ordem || [];
             
-            prodsInCat.sort((a, b) => {
+            allProdsInCat.sort((a, b) => {
                 const idxA = customOrder.indexOf(a); const idxB = customOrder.indexOf(b);
                 if (idxA !== -1 && idxB !== -1) return idxA - idxB;
                 if (idxA !== -1) return -1;
@@ -1606,24 +1639,35 @@
                 return (produtos[a].nome || "").localeCompare(produtos[b].nome || "");
             });
 
-            document.getElementById('lista-ordenacao-cat').innerHTML = prodsInCat.map((pk, index) => {
+            let visibleProds = allProdsInCat.filter(pk => {
+                if (activeAdminSubgroupFilter !== 'Todos') {
+                    return produtos[pk].subgrupo === activeAdminSubgroupFilter;
+                }
+                return true;
+            });
+
+            document.getElementById('lista-ordenacao-cat').innerHTML = visibleProds.map((pk, index) => {
                 const p = produtos[pk];
                 return `<div style="display:flex; align-items:center; background:white; padding:10px; border-radius:8px; border:1px solid #ccc;">
                     <div class="sort-wrapper">
-                        <button class="sort-btn qty-up" onclick="moverProdutoOrdem('${k}', '${pk}', -1)" ${index === 0 ? 'disabled style="opacity:0.3"' : ''}>▲</button>
-                        <button class="sort-btn qty-down" onclick="moverProdutoOrdem('${k}', '${pk}', 1)" ${index === prodsInCat.length - 1 ? 'disabled style="opacity:0.3"' : ''}>▼</button>
+                        <button class="sort-btn-up" onclick="moverProdutoOrdem('${k}', '${pk}', -1)" ${index === 0 ? 'disabled style="opacity:0.3"' : ''}>▲</button>
+                        <button class="sort-btn-down" onclick="moverProdutoOrdem('${k}', '${pk}', 1)" ${index === visibleProds.length - 1 ? 'disabled style="opacity:0.3"' : ''}>▼</button>
                     </div>
-                    <strong style="font-size:0.95rem; color:var(--text-main);">${p.nome}</strong>
+                    <div>
+                        <strong style="font-size:0.95rem; color:var(--text-main);">${p.nome}</strong>
+                        ${p.subgrupo ? `<br><span style="font-size:0.75rem; color:var(--primary);">${p.subgrupo}</span>` : ''}
+                    </div>
                 </div>`;
-            }).join('') || '<p style="font-size:0.85rem; color:#64748b;">Nenhum produto nesta categoria.</p>';
+            }).join('') || '<p style="font-size:0.85rem; color:#64748b;">Nenhum produto listado.</p>';
         }
 
         function moverProdutoOrdem(catKey, prodKey, direction) {
             const c = categorias[catKey];
-            let prodsInCat = Object.keys(produtos).filter(pk => getCategoriasProduto(produtos[pk]).includes(c.nome));
+            
+            let allProdsInCat = Object.keys(produtos).filter(pk => getCategoriasProduto(produtos[pk]).includes(c.nome));
             const customOrder = c.ordem || [];
             
-            prodsInCat.sort((a, b) => {
+            allProdsInCat.sort((a, b) => {
                 const idxA = customOrder.indexOf(a); const idxB = customOrder.indexOf(b);
                 if (idxA !== -1 && idxB !== -1) return idxA - idxB;
                 if (idxA !== -1) return -1;
@@ -1631,17 +1675,31 @@
                 return (produtos[a].nome || "").localeCompare(produtos[b].nome || "");
             });
 
-            const index = prodsInCat.indexOf(prodKey);
-            if(index === -1) return;
+            let visibleProds = allProdsInCat.filter(pk => {
+                if (activeAdminSubgroupFilter !== 'Todos') {
+                    return produtos[pk].subgrupo === activeAdminSubgroupFilter;
+                }
+                return true;
+            });
+
+            const visibleIndex = visibleProds.indexOf(prodKey);
+            if(visibleIndex === -1) return;
             
-            const newIndex = index + direction;
-            if(newIndex < 0 || newIndex >= prodsInCat.length) return;
+            const newVisibleIndex = visibleIndex + direction;
+            if(newVisibleIndex < 0 || newVisibleIndex >= visibleProds.length) return;
 
-            const temp = prodsInCat[index];
-            prodsInCat[index] = prodsInCat[newIndex];
-            prodsInCat[newIndex] = temp;
+            const targetProdKey = visibleProds[newVisibleIndex];
+            
+            const idx1 = allProdsInCat.indexOf(prodKey);
+            const idx2 = allProdsInCat.indexOf(targetProdKey);
 
-            db.ref(`categorias/${catKey}/ordem`).set(prodsInCat);
+            const temp = allProdsInCat[idx1];
+            allProdsInCat[idx1] = allProdsInCat[idx2];
+            allProdsInCat[idx2] = temp;
+
+            db.ref(`categorias/${catKey}/ordem`).set(allProdsInCat).then(() => {
+                renderizarOrdenacaoCategoria(); 
+            });
         }
 
         // ==========================================
@@ -1690,7 +1748,7 @@
             } 
             
             atualizarLabelEstoqueMinimo(ctx, a); 
-            renderPresets(); 
+            renderizarPresets(); 
             renderSubgrupos(ctx);
         }
 
