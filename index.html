@@ -25,8 +25,8 @@
         body.role-visualizador .req-dono, 
         body.role-visualizador .req-contrib { display: none !important; }
         
-        body.role-visualizador .input-qtd { pointer-events: none; border-color: transparent; background: transparent; color: var(--text-main); padding: 0; width: auto; text-align: center; font-size: 1rem; -moz-appearance: textfield; }
-        body.role-visualizador .input-qtd::-webkit-outer-spin-button, body.role-visualizador .input-qtd::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        body.role-visualizador .input-qtd, body.role-visualizador .qty-input, body.role-visualizador .qty-btn-up, body.role-visualizador .qty-btn-down { pointer-events: none; border-color: transparent; background: transparent; color: var(--text-main); text-align: center; }
+        body.role-visualizador .qty-ctrls { display: none; }
 
         body.role-contribuidor .req-dono { display: none !important; }
 
@@ -68,26 +68,30 @@
         .card-nav i { font-size: 2.2rem; display: block; margin-bottom: 8px; font-style: normal; }
         .card-nav h3 { font-size: 0.95rem; color: var(--bg-sidebar); }
 
-        /* CALENDÁRIO E TABELAS FLUIDAS */
-        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .cal-btn { background: var(--bg-sidebar); color: white; border: none; border-radius: 8px; padding: 8px 15px; cursor: pointer; font-weight: bold; }
-        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
-        .cal-day-name { font-weight: bold; text-align: center; padding: 10px 0; color: var(--bg-sidebar); text-transform: uppercase; font-size: 0.9rem; }
+        /* PESQUISA E NOVOS BOTÕES DE QTD DIVIDIDOS */
+        .search-bar { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.95rem; outline: none; transition: 0.2s; box-sizing: border-box; }
+        .search-bar:focus { border-color: var(--primary); }
         
-        /* CORREÇÃO DO CONTRASTE DOS DIAS NA AGENDA */
-        .cal-day { background: white; border: 1px solid var(--border-color); border-radius: 8px; text-align: center; padding: 15px 0; cursor: pointer; transition: 0.2s; position: relative; font-weight: 700; color: var(--text-main) !important; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 50px; }
-        .cal-day:hover:not(.closed-day) { border-color: var(--primary); color: var(--primary) !important; background: #fff5f5; }
-        .cal-day.empty { background: transparent; border: none; pointer-events: none; }
-        .cal-day.has-reserva::after { content: ''; display: block; margin-top: 4px; width: 6px; height: 6px; background: var(--primary); border-radius: 50%; }
-        .cal-day.closed-day { background: #f1f5f9; color: #cbd5e1 !important; border-color: #e2e8f0; cursor: not-allowed; text-decoration: line-through; }
+        .qty-box { display: inline-flex; align-items: stretch; border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; height: 38px; width: 85px; background: white; margin: 0 auto; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .qty-input { flex: 1; width: 100%; min-width: 0; border: none; text-align: center; font-weight: 800; font-size: 1.05rem; -moz-appearance: textfield; outline: none; padding: 0; color: var(--text-main); }
+        .qty-input::-webkit-outer-spin-button, .qty-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .qty-ctrls { display: flex; flex-direction: column; width: 28px; flex-shrink: 0; border-left: 1px solid var(--border-color); }
+        .qty-btn-up { background: #10b981; color: white; flex: 1; border: none; cursor: pointer; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; padding: 0; margin: 0; }
+        .qty-btn-up:active { background: #059669; }
+        .qty-btn-down { background: #ef4444; color: white; flex: 1; border: none; border-top: 1px solid rgba(0,0,0,0.1); cursor: pointer; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; padding: 0; margin: 0; }
+        .qty-btn-down:active { background: #dc2626; }
 
+        /* ORDENAÇÃO DE LISTA DE ITENS NA ADMINISTRAÇÃO */
+        .sort-wrapper { display: flex; flex-direction: column; width: 34px; height: 46px; border-radius: 6px; overflow: hidden; margin-right: 12px; flex-shrink: 0; }
+        .sort-btn { flex: 1; border: none; cursor: pointer; color: white; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; padding:0; margin:0;}
+
+        /* TABELAS */
         .table-container { background: white; border-radius: 10px; overflow-x: auto; border: 1px solid var(--border-color); width: 100%; }
         table { width: 100%; border-collapse: collapse; }
         th { background: #fffaf7; padding: 0.8rem 0.5rem; text-align: left; border-bottom: 2px solid var(--border-color); font-size: 0.75rem; color: #64748b; font-weight: 700; white-space: nowrap; text-transform: uppercase; }
         td { padding: 0.8rem 0.5rem; border-bottom: 1px solid var(--border-color); vertical-align: middle; font-size: 0.85rem; }
         tbody tr:nth-child(even) { background-color: var(--row-even); }
         .col-item { font-weight: 600; min-width: 120px; }
-        .input-qtd { width: 60px; padding: 8px 4px; border: 1px solid var(--border-color); border-radius: 6px; text-align: center; font-size: 0.9rem; font-weight: 700; transition: 0.2s; }
         .total-container { display: flex; flex-direction: column; line-height: 1.2; text-align: right; }
         .total-fardos { font-weight: 800; color: var(--primary); font-size: 0.95rem; white-space: nowrap; }
         .total-unidades { font-weight: 600; color: #64748b; font-size: 0.75rem; white-space: nowrap; }
@@ -101,8 +105,23 @@
         .check-item { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
         input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary); }
 
-        /* ================== CSS MAPA DE SALÃO E LAYOUT BLINDADO ================== */
-        
+        /* SUBGRUPOS TABS */
+        .subgrupos-tabs-container { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 12px; padding-bottom: 5px; }
+        .sub-tab { padding: 6px 14px; background: #e2e8f0; color: #475569; border-radius: 20px; font-size: 0.85rem; font-weight: 700; cursor: pointer; white-space: nowrap; border: 1px solid transparent; transition: 0.2s; }
+        .sub-tab.active { background: var(--primary); color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
+
+        /* AGENDA */
+        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; color: var(--bg-sidebar); }
+        .cal-btn { background: var(--bg-sidebar); color: white; border: none; border-radius: 8px; padding: 8px 15px; cursor: pointer; font-weight: bold; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+        .cal-day-name { font-weight: bold; text-align: center; padding: 10px 0; color: var(--primary); font-size: 0.85rem; text-transform: uppercase;}
+        .cal-day { background: white; border: 1px solid var(--border-color); border-radius: 8px; text-align: center; padding: 15px 0; cursor: pointer; transition: 0.2s; position: relative; font-weight: 700; color: var(--text-main) !important; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 50px; }
+        .cal-day:hover:not(.closed-day) { border-color: var(--primary); color: var(--primary) !important; background: #fff5f5; }
+        .cal-day.empty { background: transparent; border: none; pointer-events: none; }
+        .cal-day.closed-day { background: #f1f5f9; color: #cbd5e1 !important; border-color: #e2e8f0; cursor: not-allowed; text-decoration: line-through; }
+        .cal-day.has-reserva::after { content: ''; display: block; margin-top: 4px; width: 6px; height: 6px; background: var(--primary); border-radius: 50%; }
+
+        /* MAPA */
         body:has(#mapa-salao.active) main { padding-bottom: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         #mapa-salao.active { height: 100%; display: flex; flex-direction: column; overflow: hidden; }
 
@@ -111,7 +130,7 @@
         .mapa-coluna-mapa { flex: 1 1 0; display: flex; flex-direction: column; min-width: 0; order: 1; }
         .mapa-coluna-controles { flex: 0 0 350px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; padding-right: 5px; order: 2; }
 
-        .mapa-viewport { flex-grow: 1; position: relative; width: 100%; background: white; border-radius: 12px; border: 2px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; }
+        .mapa-viewport { flex-grow: 1; position: relative; width: 100%; background: white; border-radius: 12px; border: 2px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; transition: height 0.3s ease; }
         .planta-baixa { position: absolute; top: 0; left: 0; width: 750px; height: 950px; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); transform-origin: 0 0; }
 
         .bloco-macro { position: absolute; background: #f8fafc; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; border-radius: 8px; cursor: pointer; transition: 0.3s; z-index: 10; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
@@ -139,7 +158,7 @@
         .status-reservada { background: var(--primary); border: 2px solid #7f1d1d; color: white; cursor: not-allowed; }
         .label-vertical { position: absolute; color: var(--text-main); font-weight: bold; letter-spacing: 2px; transform: rotate(-90deg); transform-origin: left top; white-space: nowrap; font-size: 0.8rem; pointer-events: none; opacity: 0.8; }
 
-        /* FAB (+) E INPUTS */
+        /* FAB E MODAIS */
         .fab-container { position: fixed; bottom: 30px; right: 30px; z-index: 1500; display: flex; flex-direction: column-reverse; align-items: flex-end; gap: 15px; }
         .fab-main { width: 55px; height: 55px; background: var(--primary); color: white; border-radius: 50%; border: none; font-size: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 100; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .fab-options { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; opacity: 0; pointer-events: none; transition: 0.2s; transform: translateY(10px); position: fixed; bottom: 95px; right: 20px; z-index: 101; }
@@ -155,20 +174,15 @@
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(40, 6, 6, 0.7); z-index: 3000; align-items: center; justify-content: center; }
         .modal-box { background: var(--bg-body); padding: 1.5rem; border-radius: 12px; max-width: 320px; width: 90%; text-align: center; border: 2px solid var(--primary); }
 
-        /* ================== RESPONSIVIDADE MOBILE (Empilhamento Otimizado) ================== */
+        /* ================== RESPONSIVIDADE MOBILE ================== */
         @media (max-width: 1024px) {
             body:has(#mapa-salao.active) main { padding: 65px 5px 5px 5px; } 
-            
             #mapa-salao.active { height: calc(100vh - 70px); }
-
             #mapa-salao .header-com-acao { margin-bottom: 5px; display: none; } 
             #mapa-salao > p { display: none; } 
-
             .mapa-layout-flex { flex-direction: column; gap: 5px; margin-top: 0; }
-            
             .mapa-coluna-controles { width: 100%; flex: 0 0 auto; max-height: 45vh; padding-right: 0; order: 1; }
             .mapa-coluna-mapa { width: 100%; flex: 1 1 0; order: 2; }
-            
             .grid-home, .grid-areas-layout { grid-template-columns: repeat(2, 1fr); }
         }
 
@@ -183,13 +197,11 @@
             .nav-btn.active { border-bottom: 3px solid var(--primary); background: var(--bg-sidebar-active); }
             .nav-btn span { display: block !important; font-size: 0.60rem; font-weight: normal; text-align: center; }
             
-            /* Botão de Cargo na Esquerda e Botão (+) na Direita (Só Mobile) */
-            .btn-config { top: 9px; left: 10px; width: 42px; height: 42px; font-size: 1.5rem; font-weight: bold; background: transparent; color: white; box-shadow: none; border-radius: 0; text-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+            /* Botão Novo (+) na Direita */
+            .btn-novo-top { display: flex; position: fixed; top: 9px; right: 10px; z-index: 2001; font-size: 1.8rem; color: var(--primary); background: transparent; border: none; cursor: pointer; align-items: center; justify-content: center; width: 42px; height: 42px; }
             
             .fab-main { display: none !important; }
-            .btn-novo-top { display: flex; position: fixed; top: 9px; right: 10px; z-index: 2001; font-size: 1.8rem; color: var(--primary); background: transparent; border: none; cursor: pointer; align-items: center; justify-content: center; width: 42px; height: 42px; }
             .fab-options { top: 55px; bottom: auto; right: 10px; }
-
             main { margin-left: 0; padding: 5rem 0.5rem 85px 0.5rem; } 
             h1 { font-size: 1.2rem; }
             th, td { padding: 0.6rem 0.3rem; font-size: 0.75rem; white-space: nowrap; }
@@ -283,7 +295,7 @@
         <section id="reservas-hub" class="section">
             <h1>Gestão de Reservas</h1>
             <div class="grid-home">
-                <div class="card-nav" onclick="navegar('agenda-view'); renderizarCalendario();"><i>📅</i><h3>Agenda</h3></div>
+                <div class="card-nav" onclick="irParaAgenda()"><i>📅</i><h3>Agenda</h3></div>
                 <div class="card-nav" onclick="navegar('mapa-setup')"><i>🗺️</i><h3>Mapa de Salão</h3></div>
             </div>
         </section>
@@ -320,14 +332,11 @@
             <p style="font-size:0.85rem; color:#64748b; margin-bottom: 10px;">Selecione os blocos para dar zoom nas áreas. O sistema fará o corte espacial de 1 mesa automaticamente nas reservas.</p>
 
             <div class="mapa-layout-flex">
-                
                 <div class="mapa-coluna-controles">
-                    
                     <div id="painel-reservas-turno" class="card" style="margin-bottom:0; padding:10px; display:flex; flex-direction:column; min-height:0; border-color: var(--primary);">
                         <h3 style="color:var(--primary); font-size:1rem; margin-bottom: 8px;">📋 Reservas do Turno</h3>
                         <div id="lista-reservas-turno-mapa" style="display:flex; flex-direction:column; gap:6px; overflow-y:auto; flex-grow:1;"></div>
                     </div>
-
                     <button class="btn-submit" id="btn-voltar-mapa" style="display:none; margin-top:0; margin-bottom:0; background:#64748b; font-size:0.85rem;" onclick="desfocarArea()">⬅️ Voltar Visão Geral</button>
 
                     <div id="painel-controles-mapa" class="card req-contrib" style="display:none; margin-bottom:0; padding:10px; border-color: var(--primary);">
@@ -347,13 +356,11 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="mapa-coluna-mapa">
                     <div id="mapa-viewport" class="mapa-viewport">
                         <div id="mapa-container" class="planta-baixa"></div>
                     </div>
                 </div>
-
             </div>
         </section>
 
@@ -378,7 +385,7 @@
         </section>
 
         <section id="agenda-detalhe" class="section">
-            <div class="btn-back-styled" onclick="navegar('agenda-view'); renderizarCalendario();"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
+            <div class="btn-back-styled" onclick="irParaAgenda()"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
             <h1 id="titulo-data-reserva" style="font-size: 1.3rem;">Reservas</h1>
             <div class="card"><div id="lista-reservas-dia"></div></div>
             <div class="card req-contrib">
@@ -390,7 +397,6 @@
                     <option value="Varanda">Varanda</option><option value="Salão 1 - Frente">Salão 1 - Frente</option><option value="Salão 1 - Corredor">Salão 1 - Corredor</option><option value="Salão 2 - Parede">Salão 2 - Parede</option><option value="Salão 2 - Meio">Salão 2 - Meio</option><option value="Salão 2 - Corrimão">Salão 2 - Corrimão</option><option value="Salão 2 - Mesas Redondas">Salão 2 - Mesas Redondas</option><option value="Salão 2 - Bistrôs">Salão 2 - Bistrôs</option><option value="Salão 2 - Brinquedão">Salão 2 - Brinquedão</option><option value="Laje">Laje</option>
                 </select>
                 
-                <!-- CAPACIDADE DA ÁREA AVISO (NOVO) -->
                 <div id="res-capacidade-aviso" style="font-size: 0.85rem; color: var(--primary); margin: 5px 0 10px 0; font-weight: bold;"></div>
                 
                 <input type="number" id="res-lugares" placeholder="Lugares (Qtd de pessoas)">
@@ -423,7 +429,10 @@
         <section id="produtos-lista-filtrada" class="section">
             <div class="btn-back-styled" onclick="navegar('produtos-categorias')">✕</div>
             <h1 id="titulo-categoria-filtrada" style="font-size: 1.2rem;">Produtos</h1>
-            <input type="text" id="busca-categoria" class="search-bar" placeholder="🔍 Pesquisar item..." onkeyup="filtrarTabela('busca-categoria', 'tabela-produtos-filtrada')">
+            
+            <input type="text" id="busca-categoria" class="search-bar" placeholder="🔍 Pesquisar item..." onkeyup="aplicarFiltrosProdutos()">
+            <div id="filtro-subgrupos-wrapper" class="subgrupos-tabs-container" style="display:none;"></div>
+
             <div class="table-container"><table><thead><tr><th>Item</th><th style="text-align:right">Total</th></tr></thead><tbody id="tabela-produtos-filtrada"></tbody></table></div>
         </section>
 
@@ -440,7 +449,7 @@
                 </div>
                 <span class="req-dono" style="color:var(--primary); cursor:pointer; font-size:0.75rem; display:block; margin-top:8px;" onclick="prepararExclusaoArea()">Excluir Área</span>
             </div>
-            <input type="text" id="busca-area" class="search-bar" placeholder="🔍 Pesquisar item..." onkeyup="filtrarTabela('busca-area', 'tabela-area-itens')">
+            <input type="text" id="busca-area" class="search-bar" placeholder="🔍 Pesquisar item nesta área..." onkeyup="filtrarTabela('busca-area', 'tabela-area-itens')">
             <div class="table-container"><table><thead id="head-area-itens"></thead><tbody id="tabela-area-itens"></tbody></table></div>
         </section>
 
@@ -475,11 +484,36 @@
             </div>
 
             <div class="card" style="margin-top:1.5rem;">
-                <h3>1. Categorias de Produtos</h3><input type="hidden" id="edit-cat-id"><input type="text" id="cat-nome" placeholder="Nome da Categoria">
+                <h3>1. Categorias de Produtos</h3>
+                <input type="hidden" id="edit-cat-id"><input type="text" id="cat-nome" placeholder="Nome da Categoria">
+                
                 <div id="cat-checks-areas" class="cat-grid-checks"></div>
-                <div style="margin: 10px 0; padding: 12px; background: #fffaf7; border-radius: 8px; border: 1px solid var(--border-color);"><label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:700; font-size: 0.85rem;"><input type="checkbox" id="cat-uso-fardo" onchange="toggleFardoInput()"> Usa Fardos?</label><div id="div-unidades-fardo" style="display:none; margin-top:10px;"><input type="number" id="cat-qtd-fardo" placeholder="Unidades por fardo"></div></div>
+                
+                <div style="margin: 10px 0; padding: 12px; background: #fffaf7; border-radius: 8px; border: 1px solid var(--border-color);">
+                    <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:700; font-size: 0.85rem;">
+                        <input type="checkbox" id="cat-uso-fardo" onchange="toggleFardoInput()"> Usa Fardos?
+                    </label>
+                    <div id="div-unidades-fardo" style="display:none; margin-top:10px;">
+                        <input type="number" id="cat-qtd-fardo" placeholder="Unidades por fardo">
+                    </div>
+                </div>
+
+                <div style="margin: 10px 0; padding: 12px; background: #f0fdf4; border-radius: 8px; border: 1px solid #bbf7d0;">
+                    <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:700; font-size: 0.85rem;">
+                        <input type="checkbox" id="cat-has-sub" onchange="toggleSubgrupoInput()"> Especificação de categoria?
+                    </label>
+                    <div id="div-subgrupos" style="display:none; margin-top:10px;">
+                        <div style="display:flex; gap:5px; margin-bottom:10px;">
+                            <input type="text" id="cat-new-sub" placeholder="Ex: Cachaça, Vodka..." style="margin:0; flex:1; padding:8px;">
+                            <button class="btn-submit" onclick="addCatSub()" style="margin:0; width:auto; padding:8px 15px; background: #10b981;">Adicionar</button>
+                        </div>
+                        <div id="list-cat-subs" style="display:flex; flex-wrap:wrap; gap:5px;"></div>
+                    </div>
+                </div>
+
                 <button class="btn-submit" id="btn-salvar-cat" onclick="salvarCategoria()">Salvar Categoria</button>
             </div>
+            
             <div class="card"><h3>Categorias Existentes</h3><div id="lista-categorias-config" style="margin-top:10px;"></div></div>
             
             <div class="card" style="margin-top: 1.5rem;">
@@ -516,13 +550,22 @@
             <h1 style="font-size: 1.3rem;">Novo Produto</h1>
             <div class="card">
                 <input type="text" id="prod-nome" placeholder="Ex: Coca-Cola">
+                
                 <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">1. Assinale a Categoria <span style="font-size:0.75rem; font-weight:normal; color:var(--primary);">*(Apenas uma)*</span>:</p>
                 <div id="presets-container" style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"></div>
+                
+                <div id="wrap-subgrupo-novo" style="display:none; margin-bottom:10px; padding:10px; border:1px dashed var(--primary); border-radius:8px; background: #fff5f5;">
+                    <p style="font-size:0.9rem; margin: 0 0 8px 0; font-weight:700; color:var(--primary);">A qual Especificação pertence? <span style="font-size:0.75rem; font-weight:normal;">*(Apenas um)*</span></p>
+                    <div id="prod-subgrupo-container" style="display:flex; flex-wrap:wrap; gap:5px;"></div>
+                </div>
+
                 <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">2. Selecione o Método de Compra <span style="font-size:0.75rem; font-weight:normal; color:var(--primary);">*(Apenas um)*</span>:</p>
                 <div id="metodos-container" style="display:flex; flex-wrap:wrap; gap:5px;"></div>
                 <input type="hidden" id="prod-metodo-selecionado">
+                
                 <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">3. Estoque Mínimo <span id="lbl-estoque-minimo-novo" style="font-size:0.75rem; font-weight:normal; color:var(--primary);">(Un.)</span>:</p>
                 <input type="number" id="prod-estoque-minimo" value="0">
+                
                 <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">4. Onde este produto fica armazenado?</p>
                 <div id="checks-areas" class="areas-check-list"></div>
                 <button class="btn-submit" onclick="salvarProduto()">CADASTRAR</button>
@@ -533,13 +576,22 @@
             <div class="btn-back-styled" onclick="navegar('produtos-categorias')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div><h1 style="font-size: 1.3rem;">Editar Produto</h1>
             <div class="card">
                 <input type="hidden" id="edit-prod-id"><input type="text" id="edit-prod-nome">
+                
                 <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">1. Assinale a Categoria <span style="font-size:0.75rem; font-weight:normal; color:var(--primary);">*(Apenas uma)*</span>:</p>
                 <div id="edit-presets-container" style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"></div>
+                
+                <div id="wrap-subgrupo-edit" style="display:none; margin-bottom:10px; padding:10px; border:1px dashed var(--primary); border-radius:8px; background: #fff5f5;">
+                    <p style="font-size:0.9rem; margin: 0 0 8px 0; font-weight:700; color:var(--primary);">A qual Especificação pertence? <span style="font-size:0.75rem; font-weight:normal;">*(Apenas um)*</span></p>
+                    <div id="edit-prod-subgrupo-container" style="display:flex; flex-wrap:wrap; gap:5px;"></div>
+                </div>
+
                 <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">2. Selecione o Método de Compra <span style="font-size:0.75rem; font-weight:normal; color:var(--primary);">*(Apenas um)*</span>:</p>
                 <div id="edit-metodos-container" style="display:flex; flex-wrap:wrap; gap:5px;"></div>
                 <input type="hidden" id="edit-prod-metodo-selecionado">
+                
                 <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">3. Estoque Mínimo <span id="lbl-estoque-minimo-edit" style="font-size:0.75rem; font-weight:normal; color:var(--primary);">(Un.)</span>:</p>
                 <input type="number" id="edit-prod-estoque-minimo">
+                
                 <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">4. Onde este produto fica armazenado?</p>
                 <div id="edit-checks-areas" class="areas-check-list"></div>
                 <button class="btn-submit" onclick="salvarEdicaoProduto()">SALVAR</button>
@@ -580,7 +632,12 @@
         let mapasApp = {}; let modoMontagemMapa = false; let mesasSelecionadasMapa = []; let areaFocadaMapa = null; let mapaAtualData = ""; let mapaAtualTurno = "";
         let navDate = new Date();
         let dataAtualReserva = "";
+        
         let categoriaFocadaOrdenacao = "";
+        let currentCatSubgrupos = [];
+        let prodSubNovo = "";
+        let prodSubEdit = "";
+        let activeSubgroupFilter = "Todos";
 
         // ==========================================
         // SISTEMA DE AUTENTICAÇÃO E CARGOS (RBAC)
@@ -659,16 +716,12 @@
         function aplicarPermissoes() {
             document.body.className = 'role-' + currentRole;
             const btnLogin = document.getElementById('btn-login-sidebar');
-            const infoUser = document.getElementById('user-info-sidebar');
             const btnRole = document.getElementById('btn-top-role');
             
             if(currentUser) {
                 btnLogin.innerHTML = '🚪 <span>Sair da Conta</span>';
-                infoUser.style.display = 'block';
-                infoUser.innerHTML = `<strong style="font-size:1rem;">${currentUserName}</strong><br><span style="color:#10b981; font-weight:bold; font-size:0.75rem; text-transform:uppercase; letter-spacing:1px;">[ ${currentRole} ]</span>`;
             } else {
                 btnLogin.innerHTML = '👤 <span>Entrar / Cadastrar</span>';
-                infoUser.style.display = 'none';
             }
             
             if (currentRole === 'dono') btnRole.innerHTML = '⚙️';
@@ -722,7 +775,7 @@
         }
 
         // ==========================================
-        // NAVEGAÇÃO E FAB CLICK OUTSIDE E PESQUISA
+        // NAVEGAÇÃO E FAB CLICK OUTSIDE
         // ==========================================
         function navegar(id, btn) { 
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); 
@@ -731,6 +784,10 @@
             if(btn) { document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); } 
             window.scrollTo(0, 0); 
             if(id === 'mapa-salao') ajustarEscalaMapa();
+            
+            if(id === 'agenda-view') {
+                setTimeout(() => { renderizarCalendario(); }, 100);
+            }
         }
 
         function irParaAgenda() {
@@ -752,11 +809,16 @@
                 const isClickInsideMain = fabMain && fabMain.contains(event.target);
                 const isClickInsideTop = btnNovoTop && btnNovoTop.contains(event.target);
                 const isClickInsideOptions = fabOptions.contains(event.target);
-                if (!isClickInsideMain && !isClickInsideTop && !isClickInsideOptions) fabOptions.classList.remove('active');
+
+                if (!isClickInsideMain && !isClickInsideTop && !isClickInsideOptions) {
+                    fabOptions.classList.remove('active');
+                }
             }
         });
 
-        // BARRA DE PESQUISA
+        // ==========================================
+        // PESQUISA E FILTROS DINÂMICOS
+        // ==========================================
         function filtrarTabela(inputId, tabelaId) {
             const termo = document.getElementById(inputId).value.toLowerCase();
             const linhas = document.querySelectorAll(`#${tabelaId} tr`);
@@ -767,6 +829,31 @@
                     linha.style.display = txt.includes(termo) ? '' : 'none';
                 }
             });
+        }
+
+        function aplicarFiltrosProdutos() {
+            const termo = document.getElementById('busca-categoria').value.toLowerCase();
+            const linhas = document.querySelectorAll(`#tabela-produtos-filtrada tr`);
+            
+            linhas.forEach(linha => {
+                const item = linha.querySelector('.col-item');
+                if (!item) return;
+                
+                const txt = item.innerText.toLowerCase();
+                const rowSub = linha.getAttribute('data-subgrupo') || "";
+                
+                const passText = txt.includes(termo);
+                const passSub = (activeSubgroupFilter === 'Todos' || rowSub === activeSubgroupFilter);
+                
+                linha.style.display = (passText && passSub) ? '' : 'none';
+            });
+        }
+
+        function setSubgroupFilter(sub, btn) {
+            activeSubgroupFilter = sub;
+            btn.parentElement.querySelectorAll('.sub-tab').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            aplicarFiltrosProdutos();
         }
 
         // ==========================================
@@ -1212,13 +1299,13 @@
         // ESTOQUE E GESTÃO DE PRODUTOS
         // ==========================================
         function getQtyHTML(id, val, pk, nomeArea, tam) {
-            if(currentRole === 'visualizador') return `<input type="number" class="input-qtd" value="${val}" readonly>`;
+            if(currentRole === 'visualizador') return `<input type="number" class="qty-input" value="${val}" readonly style="width:40px; background:transparent; border:none; text-align:center;">`;
             return `
-            <div class="qty-wrapper">
-                <input type="number" id="${id}" value="${val}" onchange="attEst('${pk}','${nomeArea}',${tam})">
-                <div class="qty-arrows">
-                    <button class="qty-btn qty-up" onclick="mudarQtd('${id}', 1, '${pk}','${nomeArea}',${tam})">▲</button>
-                    <button class="qty-btn qty-down" onclick="mudarQtd('${id}', -1, '${pk}','${nomeArea}',${tam})">▼</button>
+            <div class="qty-box">
+                <input type="number" class="qty-input" id="${id}" value="${val}" onchange="attEst('${pk}','${nomeArea}',${tam})">
+                <div class="qty-ctrls">
+                    <button class="qty-btn-up" onclick="mudarQtd('${id}', 1, '${pk}','${nomeArea}',${tam})">▲</button>
+                    <button class="qty-btn-down" onclick="mudarQtd('${id}', -1, '${pk}','${nomeArea}',${tam})">▼</button>
                 </div>
             </div>`;
         }
@@ -1271,7 +1358,10 @@
         function verGrupo(key, tipo) { 
             try {
                 document.getElementById('busca-categoria').value = '';
-                navegar('produtos-lista-filtrada'); const n = tipo === 'categoria' ? categorias[key]?.nome : metodosCompra[key]?.nome; document.getElementById('titulo-categoria-filtrada').innerText = n || 'Grupo'; 
+                navegar('produtos-lista-filtrada'); 
+                const n = tipo === 'categoria' ? categorias[key]?.nome : metodosCompra[key]?.nome; 
+                document.getElementById('titulo-categoria-filtrada').innerText = n || 'Grupo'; 
+                
                 let prodsFiltrados = Object.keys(produtos).filter(k => tipo === 'categoria' ? getCategoriasProduto(produtos[k]).includes(n) : produtos[k].metodoCompra === n);
                 
                 prodsFiltrados.sort((a, b) => {
@@ -1287,8 +1377,32 @@
                     return (produtos[a].nome || "").localeCompare(produtos[b].nome || "");
                 });
 
+                // ABAS DE SUBGRUPOS (ESPECIFICAÇÕES)
+                const filtroWrapper = document.getElementById('filtro-subgrupos-wrapper');
+                if (tipo === 'categoria' && categorias[key] && categorias[key].subgrupos && categorias[key].subgrupos.length > 0) {
+                    filtroWrapper.style.display = 'flex';
+                    let htmlTabs = `<div class="sub-tab active" onclick="setSubgroupFilter('Todos', this)">Todos</div>`;
+                    categorias[key].subgrupos.forEach(sub => {
+                        htmlTabs += `<div class="sub-tab" onclick="setSubgroupFilter('${sub}', this)">${sub}</div>`;
+                    });
+                    filtroWrapper.innerHTML = htmlTabs;
+                } else {
+                    filtroWrapper.style.display = 'none';
+                }
+                activeSubgroupFilter = "Todos"; // reset filter
+
                 if(prodsFiltrados.length === 0) { document.getElementById('tabela-produtos-filtrada').innerHTML = `<tr><td colspan="2" style="text-align:center; color:#64748b;">Nenhum produto neste grupo.</td></tr>`; return; }
-                document.getElementById('tabela-produtos-filtrada').innerHTML = prodsFiltrados.map(k => { const p = produtos[k]; let t = 1; getCategoriasProduto(p).forEach(cn => { const c = Object.values(categorias).find(x => x.nome === cn); if(c && c.unidadesFardo > t) t = Number(c.unidadesFardo); }); const tot = Object.values(p.estoque||{}).reduce((a,v)=>typeof v==='object'&&v!==null?a+((Number(v.f)||0)*t)+(Number(v.u)||0):a+Number(v||0),0); return `<tr><td><div style="display:flex; align-items:center;"><button class="action-icon edit-btn req-dono" onclick="abrirEdicaoProduto('${k}')">✎</button><button class="action-icon info-btn" onclick="verDetalhesProduto('${k}')">ⓘ</button><span class="col-item">${p.nome||''}</span></div></td><td style="text-align:right">${renderizarTotalLinhaDupla(tot,t)}</td></tr>`; }).join(''); 
+                
+                document.getElementById('tabela-produtos-filtrada').innerHTML = prodsFiltrados.map(k => { 
+                    const p = produtos[k]; 
+                    let t = 1; 
+                    getCategoriasProduto(p).forEach(cn => { const c = Object.values(categorias).find(x => x.nome === cn); if(c && c.unidadesFardo > t) t = Number(c.unidadesFardo); }); 
+                    const tot = Object.values(p.estoque||{}).reduce((a,v)=>typeof v==='object'&&v!==null?a+((Number(v.f)||0)*t)+(Number(v.u)||0):a+Number(v||0),0); 
+                    
+                    return `<tr data-subgrupo="${p.subgrupo || ''}"><td><div style="display:flex; align-items:center;"><button class="action-icon edit-btn req-dono" onclick="abrirEdicaoProduto('${k}')">✎</button><button class="action-icon info-btn" onclick="verDetalhesProduto('${k}')">ⓘ</button><span class="col-item">${p.nome||''}</span></div></td><td style="text-align:right">${renderizarTotalLinhaDupla(tot,t)}</td></tr>`; 
+                }).join(''); 
+                
+                aplicarFiltrosProdutos(); // apply initial visibility
             } catch(e){}
         }
 
@@ -1356,7 +1470,7 @@
                 document.getElementById('tabela-locais-produto').innerHTML = locaisHtml || `<tr><td colspan="2" style="text-align:center; color:#64748b;">Não alocado em nenhuma área.</td></tr>`; 
                 
                 const boxFardosGeral = t > 1 ? `<div><strong style="color:var(--primary);">Fardos Fechados:</strong> <span style="color:#64748b;">${Math.floor(tG/t)} Fardos (Geral)</span></div>` : '';
-                document.getElementById('info-extra-prod').innerHTML = `<div style="padding:12px; background:var(--row-even); border-radius:8px; border:1px solid var(--border-color); display:flex; flex-direction:column; gap:8px; margin-top:10px;"><div><strong style="color:var(--primary);">Categorias:</strong> <span style="color:#64748b;">${pC.length>0?pC.join(', '):'Nenhuma'}</span></div><div><strong style="color:var(--primary);">Método:</strong> <span style="color:#64748b;">${p.metodoCompra||"Não atribuído"}</span></div><div><strong style="color:var(--primary);">Estoque Mín.:</strong> <span style="color:#64748b;">${p.estoqueMinimo||0} ${t>1?'Fardos':'Unidades'}</span></div>${boxFardosGeral}</div>`; 
+                document.getElementById('info-extra-prod').innerHTML = `<div style="padding:12px; background:var(--row-even); border-radius:8px; border:1px solid var(--border-color); display:flex; flex-direction:column; gap:8px; margin-top:10px;"><div><strong style="color:var(--primary);">Categorias:</strong> <span style="color:#64748b;">${pC.length>0?pC.join(', '):'Nenhuma'}</span></div><div><strong style="color:var(--primary);">Método:</strong> <span style="color:#64748b;">${p.metodoCompra||"Não atribuído"}</span></div><div><strong style="color:var(--primary);">Especificação (Subgrupo):</strong> <span style="color:#64748b;">${p.subgrupo||"Nenhum"}</span></div><div><strong style="color:var(--primary);">Estoque Mín.:</strong> <span style="color:#64748b;">${p.estoqueMinimo||0} ${t>1?'Fardos':'Unidades'}</span></div>${boxFardosGeral}</div>`; 
             } catch(e) {}
         }
 
@@ -1401,14 +1515,69 @@
         function renderizarPresetsMetodos() { const vN=document.getElementById('prod-metodo-selecionado').value, vE=document.getElementById('edit-prod-metodo-selecionado').value; document.getElementById('metodos-container').innerHTML=Object.keys(metodosCompra).map(k=>`<div class="chip ${vN===metodosCompra[k].nome?'active-chip':''}" onclick="selecionarMetodo('${k}','novo')">${obterIconeMetodo(metodosCompra[k].nome)} ${metodosCompra[k].nome}</div>`).join(''); document.getElementById('edit-metodos-container').innerHTML=Object.keys(metodosCompra).map(k=>`<div class="chip ${vE===metodosCompra[k].nome?'active-chip':''}" onclick="selecionarMetodo('${k}','edit')">${obterIconeMetodo(metodosCompra[k].nome)} ${metodosCompra[k].nome}</div>`).join(''); }
         function selecionarMetodo(k, ctx) { document.getElementById(ctx==='novo'?'prod-metodo-selecionado':'edit-prod-metodo-selecionado').value=metodosCompra[k].nome; renderizarPresetsMetodos(); }
         
-        function salvarCategoria() { const id=document.getElementById('edit-cat-id').value, n=document.getElementById('cat-nome').value, u=document.getElementById('cat-uso-fardo').checked, t=u?Number(document.getElementById('cat-qtd-fardo').value):1, sel=Array.from(document.querySelectorAll('#cat-checks-areas input:checked')).map(i=>i.value); if(n&&sel.length){ const d={nome:n,areas:sel,unidadesFardo:t}; if(id){ const old=categorias[id].nome; db.ref('categorias/'+id).update(d).then(()=>{if(old!==n)Object.keys(produtos).forEach(pk=>{if(!produtos[pk])return;let pc=getCategoriasProduto(produtos[pk]);if(pc.includes(old))db.ref('produtos/'+pk).update({categorias:pc.map(c=>c===old?n:c),categoria:null});});}); }else db.ref('categorias').push(d); resetarFormCategoria(); } }
+        // ==========================================
+        // SISTEMA DE CATEGORIAS E SUBGRUPOS (ESPECIFICAÇÕES)
+        // ==========================================
+        function toggleSubgrupoInput() {
+            document.getElementById('div-subgrupos').style.display = document.getElementById('cat-has-sub').checked ? 'block' : 'none';
+        }
+
+        function addCatSub() {
+            const v = document.getElementById('cat-new-sub').value.trim();
+            if(v && !currentCatSubgrupos.includes(v)) { 
+                currentCatSubgrupos.push(v); 
+                renderCatSubs(); 
+            }
+            document.getElementById('cat-new-sub').value = "";
+        }
+
+        function removeCatSub(s) { 
+            currentCatSubgrupos = currentCatSubgrupos.filter(x => x !== s); 
+            renderCatSubs(); 
+        }
+
+        function renderCatSubs() {
+            document.getElementById('list-cat-subs').innerHTML = currentCatSubgrupos.map(s => `<div class="chip" style="background:#e2e8f0;">${s} <span style="color:red; margin-left:5px; font-weight:bold; font-size:1rem;" onclick="removeCatSub('${s}')">×</span></div>`).join('');
+        }
+
+        function salvarCategoria() { 
+            const id=document.getElementById('edit-cat-id').value;
+            const n=document.getElementById('cat-nome').value;
+            const u=document.getElementById('cat-uso-fardo').checked;
+            const t=u?Number(document.getElementById('cat-qtd-fardo').value):1;
+            const sel=Array.from(document.querySelectorAll('#cat-checks-areas input:checked')).map(i=>i.value);
+            const hasSub=document.getElementById('cat-has-sub').checked;
+            
+            if(n && sel.length){ 
+                const d = { nome:n, areas:sel, unidadesFardo:t, subgrupos: hasSub ? currentCatSubgrupos : [] }; 
+                if(id) { 
+                    const old=categorias[id].nome; 
+                    db.ref('categorias/'+id).update(d).then(()=>{
+                        if(old!==n) {
+                            Object.keys(produtos).forEach(pk=>{
+                                if(!produtos[pk]) return;
+                                let pc=getCategoriasProduto(produtos[pk]);
+                                if(pc.includes(old)) db.ref('produtos/'+pk).update({categorias:pc.map(c=>c===old?n:c),categoria:null});
+                            });
+                        }
+                    }); 
+                } else {
+                    db.ref('categorias').push(d); 
+                }
+                resetarFormCategoria(); 
+            } else {
+                alert("Preencha o nome e selecione pelo menos uma área.");
+            }
+        }
         
         function renderizarPresets() { 
             document.getElementById('presets-container').innerHTML=Object.keys(categorias).map(k=>`<div class="chip ${catsNovo.includes(categorias[k].nome)?'active-chip':''}" onclick="togglePreset('${k}','novo')">${obterEmoji(categorias[k].nome)} ${categorias[k].nome}</div>`).join(''); 
             document.getElementById('edit-presets-container').innerHTML=Object.keys(categorias).map(k=>`<div class="chip ${catsEdit.includes(categorias[k].nome)?'active-chip':''}" onclick="togglePreset('${k}','edit')">${obterEmoji(categorias[k].nome)} ${categorias[k].nome}</div>`).join(''); 
+            
             document.getElementById('lista-categorias-config').innerHTML=Object.keys(categorias).map(k=>{ 
                 const c=categorias[k]; 
-                return `<div class="preset-config-item" style="padding:12px; border:1px solid #ccc; border-radius:8px; margin-bottom:8px;"><div style="display:flex; align-items:center;"><button class="action-icon edit-btn" onclick="editarCategoria('${k}')">✎</button><button class="action-icon add-btn" onclick="abrirAtribuirCategoria('${k}')">➕</button><button class="action-icon info-btn" onclick="abrirConfigCategoria('${k}')">ⓘ</button><strong style="font-size:1.05rem; margin-left:5px;">${obterEmoji(c.nome)} ${c.nome}</strong><span style="margin-left:auto; color:red; cursor:pointer;" onclick="prepararExclusaoCat('${k}')">Excluir</span></div><div style="margin-top:8px; font-size:0.85rem; color:#64748b;">Áreas: ${(c.areas||[]).join(', ')} <br> Fardo: ${c.unidadesFardo>1?c.unidadesFardo+' un.':'Não'}</div></div>`; 
+                const hasSubs = c.subgrupos && c.subgrupos.length > 0;
+                return `<div class="preset-config-item" style="padding:12px; border:1px solid #ccc; border-radius:8px; margin-bottom:8px;"><div style="display:flex; align-items:center;"><button class="action-icon edit-btn" onclick="editarCategoria('${k}')">✎</button><button class="action-icon add-btn" onclick="abrirAtribuirCategoria('${k}')">➕</button><button class="action-icon info-btn" onclick="abrirConfigCategoria('${k}')">ⓘ</button><strong style="font-size:1.05rem; margin-left:5px;">${obterEmoji(c.nome)} ${c.nome}</strong><span style="margin-left:auto; color:red; cursor:pointer;" onclick="prepararExclusaoCat('${k}')">Excluir</span></div><div style="margin-top:8px; font-size:0.85rem; color:#64748b;">Áreas: ${(c.areas||[]).join(', ')} <br> Fardo: ${c.unidadesFardo>1?c.unidadesFardo+' un.':'Não'}<br>Especificações: ${hasSubs?c.subgrupos.join(', '):'Nenhuma'}</div></div>`; 
             }).join(''); 
         }
 
@@ -1482,9 +1651,83 @@
         function salvarAtribuicaoCategoria() { const n=categorias[document.getElementById('atribuir-cat-id').value].nome, u={}; document.querySelectorAll('#lista-produtos-atribuir input:checked, #lista-produtos-atribuir input:not(:checked)').forEach(cb=>{ const p=produtos[cb.value]; if(!p)return; let pc=getCategoriasProduto(p), ch=false; if(cb.checked&&!pc.includes(n)){pc.push(n);ch=true;}else if(!cb.checked&&pc.includes(n)){pc=pc.filter(x=>x!==n);ch=true;} if(ch){u[`produtos/${cb.value}/categorias`]=pc.length?pc:null;u[`produtos/${cb.value}/categoria`]=null;} }); if(Object.keys(u).length) db.ref().update(u).then(()=>navegar('configuracoes')); else navegar('configuracoes'); }
         function abrirAtribuirMetodo(k) { const m=metodosCompra[k]; document.getElementById('atribuir-met-id').value=k; document.getElementById('titulo-atribuir-met').innerText=`Atribuir: ${m.nome}`; document.getElementById('lista-produtos-atribuir-met').innerHTML=Object.keys(produtos).filter(pk=>produtos[pk]&&produtos[pk].nome).sort((a,b)=>{const hA=produtos[a].metodoCompra===m.nome?1:0; const hB=produtos[b].metodoCompra===m.nome?1:0; return hA!==hB?hB-hA:produtos[a].nome.localeCompare(produtos[b].nome);}).map(pk=>{ const p=produtos[pk], has=p.metodoCompra===m.nome, out=p.metodoCompra&&p.metodoCompra!==m.nome; return `<label class="check-item" style="padding:15px 10px; border:1px solid ${has?'var(--primary)':'var(--border-color)'}; border-radius:10px; background:${has?'#fff5f5':'#fff'}; display:flex; align-items:center; cursor:pointer;"><input type="checkbox" value="${pk}" ${has?'checked':''} style="width:22px; height:22px; margin-right:12px;"><strong style="font-size:1.05rem;">${p.nome}</strong><span style="font-size:0.65rem; background:${out?'#e2e8f0':(has?'#e2e8f0':'#fee2e2')}; color:${out?'#64748b':(has?'#64748b':'#b91c1c')}; padding:4px 8px; border-radius:12px; margin-left:auto;">${out?p.metodoCompra:(has?'OK':'Sem método')}</span></label>`; }).join(''); navegar('atribuir-metodo'); }
         function salvarAtribuicaoMetodo() { const n=metodosCompra[document.getElementById('atribuir-met-id').value].nome, u={}; document.querySelectorAll('#lista-produtos-atribuir-met input').forEach(cb=>{ const p=produtos[cb.value]; if(!p)return; let nm=p.metodoCompra, ch=false; if(cb.checked&&nm!==n){nm=n;ch=true;}else if(!cb.checked&&nm===n){nm=null;ch=true;} if(ch)u[`produtos/${cb.value}/metodoCompra`]=nm; }); if(Object.keys(u).length)db.ref().update(u).then(()=>navegar('configuracoes')); else navegar('configuracoes'); }
-        function togglePreset(k, ctx) { const n=categorias[k].nome, t=ctx==='novo'?'checks-areas':'edit-checks-areas', a=ctx==='novo'?catsNovo:catsEdit; document.querySelectorAll('#'+t+' input').forEach(cb=>cb.checked=false); if(a.includes(n)) { a.length=0; } else { a.length=0; a.push(n); document.querySelectorAll('#'+t+' input').forEach(cb=>{if(categorias[k].areas?.includes(cb.value))cb.checked=true;}); } atualizarLabelEstoqueMinimo(ctx, a); renderizarPresets(); }
-        function editarCategoria(k) { const c=categorias[k]; document.getElementById('edit-cat-id').value=k; document.getElementById('cat-nome').value=c.nome; document.getElementById('cat-uso-fardo').checked=c.unidadesFardo>1; document.getElementById('cat-qtd-fardo').value=c.unidadesFardo; toggleFardoInput(); document.querySelectorAll('#cat-checks-areas input').forEach(cb=>cb.checked=c.areas?.includes(cb.value)); document.getElementById('btn-salvar-cat').innerText="Atualizar"; window.scrollTo({top:0}); }
-        function resetarFormCategoria() { document.getElementById('edit-cat-id').value=""; document.getElementById('cat-nome').value=""; document.getElementById('cat-uso-fardo').checked=false; document.getElementById('cat-qtd-fardo').value=""; toggleFardoInput(); document.querySelectorAll('#cat-checks-areas input').forEach(cb=>cb.checked=false); document.getElementById('btn-salvar-cat').innerText="Criar"; }
+        
+        function selecionarSubgrupoProduto(s, ctx) {
+            if(ctx === 'novo') prodSubNovo = s;
+            else prodSubEdit = s;
+            renderSubgrupos(ctx);
+        }
+
+        function renderSubgrupos(ctx) {
+            const catName = ctx === 'novo' ? catsNovo[0] : catsEdit[0];
+            const cObj = Object.values(categorias).find(x => x.nome === catName);
+            const wrapId = ctx === 'novo' ? 'wrap-subgrupo-novo' : 'wrap-subgrupo-edit';
+            const contId = ctx === 'novo' ? 'prod-subgrupo-container' : 'edit-prod-subgrupo-container';
+            const currentSub = ctx === 'novo' ? prodSubNovo : prodSubEdit;
+
+            if(cObj && cObj.subgrupos && cObj.subgrupos.length > 0) {
+                document.getElementById(wrapId).style.display = 'block';
+                document.getElementById(contId).innerHTML = cObj.subgrupos.map(s => 
+                    `<div class="chip ${currentSub === s ? 'active-chip' : ''}" onclick="selecionarSubgrupoProduto('${s}', '${ctx}')">${s}</div>`
+                ).join('');
+            } else {
+                document.getElementById(wrapId).style.display = 'none';
+                if(ctx === 'novo') prodSubNovo = ""; else prodSubEdit = "";
+            }
+        }
+
+        function togglePreset(k, ctx) { 
+            const n=categorias[k].nome;
+            const t=ctx==='novo'?'checks-areas':'edit-checks-areas';
+            const a=ctx==='novo'?catsNovo:catsEdit;
+            
+            document.querySelectorAll('#'+t+' input').forEach(cb=>cb.checked=false); 
+            if(a.includes(n)) { 
+                a.length=0; 
+            } else { 
+                a.length=0; a.push(n); 
+                document.querySelectorAll('#'+t+' input').forEach(cb=>{if(categorias[k].areas?.includes(cb.value))cb.checked=true;}); 
+            } 
+            
+            atualizarLabelEstoqueMinimo(ctx, a); 
+            renderPresets(); 
+            renderSubgrupos(ctx);
+        }
+
+        function editarCategoria(k) { 
+            const c=categorias[k]; 
+            document.getElementById('edit-cat-id').value=k; 
+            document.getElementById('cat-nome').value=c.nome; 
+            document.getElementById('cat-uso-fardo').checked=c.unidadesFardo>1; 
+            document.getElementById('cat-qtd-fardo').value=c.unidadesFardo; 
+            toggleFardoInput(); 
+            
+            currentCatSubgrupos = c.subgrupos || [];
+            document.getElementById('cat-has-sub').checked = currentCatSubgrupos.length > 0;
+            toggleSubgrupoInput();
+            renderCatSubs();
+
+            document.querySelectorAll('#cat-checks-areas input').forEach(cb=>cb.checked=c.areas?.includes(cb.value)); 
+            document.getElementById('btn-salvar-cat').innerText="Atualizar"; 
+            window.scrollTo({top:0}); 
+        }
+
+        function resetarFormCategoria() { 
+            document.getElementById('edit-cat-id').value=""; 
+            document.getElementById('cat-nome').value=""; 
+            document.getElementById('cat-uso-fardo').checked=false; 
+            document.getElementById('cat-qtd-fardo').value=""; 
+            toggleFardoInput(); 
+            
+            currentCatSubgrupos = [];
+            document.getElementById('cat-has-sub').checked = false;
+            toggleSubgrupoInput();
+            renderCatSubs();
+
+            document.querySelectorAll('#cat-checks-areas input').forEach(cb=>cb.checked=false); 
+            document.getElementById('btn-salvar-cat').innerText="Criar"; 
+        }
+
         function toggleFardoInput() { document.getElementById('div-unidades-fardo').style.display = document.getElementById('cat-uso-fardo').checked ? 'block' : 'none'; }
         function renderizarChecksConfig() { document.getElementById('cat-checks-areas').innerHTML=areas.map(a=>`<label class="check-item"><input type="checkbox" value="${a.nome}"> <span>${a.nome}</span></label>`).join(''); }
         function atualizarLabelEstoqueMinimo(ctx, selectedCats) { let maxFardo=1; selectedCats.forEach(cn=>{ const c = Object.values(categorias).find(x=>x.nome===cn); if(c && c.unidadesFardo>maxFardo) maxFardo=Number(c.unidadesFardo); }); document.getElementById(ctx==='novo'?'lbl-estoque-minimo-novo':'lbl-estoque-minimo-edit').innerText=maxFardo>1?"(Fardos)":"(Un.)"; }
@@ -1500,13 +1743,42 @@
             document.getElementById('prod-metodo-selecionado').value=""; 
             document.getElementById('prod-estoque-minimo').value="0"; 
             catsNovo=[]; 
+            prodSubNovo="";
             atualizarLabelEstoqueMinimo('novo',catsNovo); 
             renderizarPresets(); 
             renderizarPresetsMetodos(); 
+            renderSubgrupos('novo');
             navegar('novo-produto'); 
         }
+
         function salvarArea() { const n=document.getElementById('area-nome').value; if(n){db.ref('areas').push(n); document.getElementById('area-nome').value=""; navegar('areas-lista');} }
-        function salvarProduto() { const n=document.getElementById('prod-nome').value, met=document.getElementById('prod-metodo-selecionado').value, min=Number(document.getElementById('prod-estoque-minimo').value)||0; if(!met){alert("Selecione um Método.");return;} const s=Array.from(document.querySelectorAll('#checks-areas input:checked')).map(i=>i.value); if(n&&s.length){const e={}; s.forEach(x=>e[x]={f:0,u:0}); db.ref('produtos').push({nome:n, categorias:catsNovo.length?catsNovo:null, metodoCompra:met, estoqueMinimo:min, locais:s, estoque:e}); document.getElementById('prod-nome').value=""; document.getElementById('prod-metodo-selecionado').value=""; document.getElementById('prod-estoque-minimo').value="0"; navegar('produtos-categorias');}else alert("Assinale área vinculada."); }
+        
+        function salvarProduto() { 
+            const n=document.getElementById('prod-nome').value; 
+            const met=document.getElementById('prod-metodo-selecionado').value; 
+            const min=Number(document.getElementById('prod-estoque-minimo').value)||0; 
+            
+            if(!met){alert("Selecione um Método.");return;} 
+            const s=Array.from(document.querySelectorAll('#checks-areas input:checked')).map(i=>i.value); 
+            
+            if(n && s.length){
+                const e={}; s.forEach(x=>e[x]={f:0,u:0}); 
+                db.ref('produtos').push({
+                    nome:n, 
+                    categorias:catsNovo.length?catsNovo:null, 
+                    subgrupo: prodSubNovo || null,
+                    metodoCompra:met, 
+                    estoqueMinimo:min, 
+                    locais:s, 
+                    estoque:e
+                }); 
+                document.getElementById('prod-nome').value=""; 
+                document.getElementById('prod-metodo-selecionado').value=""; 
+                document.getElementById('prod-estoque-minimo').value="0"; 
+                navegar('produtos-categorias');
+            } else alert("Assinale área vinculada."); 
+        }
+
         function abrirEdicaoProduto(k) { 
             const p=produtos[k]; 
             document.getElementById('edit-prod-id').value=k; 
@@ -1514,14 +1786,38 @@
             document.getElementById('edit-prod-metodo-selecionado').value=p.metodoCompra||""; 
             document.getElementById('edit-prod-estoque-minimo').value=p.estoqueMinimo||0; 
             catsEdit=getCategoriasProduto(p); 
+            prodSubEdit = p.subgrupo || "";
             atualizarLabelEstoqueMinimo('edit',catsEdit); 
             renderizarPresets(); 
             renderizarPresetsMetodos(); 
+            renderSubgrupos('edit');
+            
             const checksHTML = areas.length ? areas.map(a=>`<label class="check-item"><input type="checkbox" value="${a.nome}" ${(p.locais||[]).includes(a.nome)?'checked':''}> <span>${a.nome}</span></label>`).join('') : '<span style="color:#64748b; font-size:0.85rem;">Nenhuma área cadastrada. Cadastre uma área primeiro.</span>';
             document.getElementById('edit-checks-areas').innerHTML=checksHTML; 
             navegar('editar-produto'); 
         }
-        function salvarEdicaoProduto() { const id=document.getElementById('edit-prod-id').value, n=document.getElementById('edit-prod-nome').value, met=document.getElementById('edit-prod-metodo-selecionado').value, min=Number(document.getElementById('edit-prod-estoque-minimo').value)||0; if(!met){alert("Selecione um Método.");return;} const l=Array.from(document.querySelectorAll('#edit-checks-areas input:checked')).map(i=>i.value); db.ref('produtos/'+id).update({nome:n, categorias:catsEdit.length?catsEdit:null, categoria:null, metodoCompra:met, estoqueMinimo:min, locais:l.length?l:null}); navegar('produtos-categorias'); }
+
+        function salvarEdicaoProduto() { 
+            const id=document.getElementById('edit-prod-id').value;
+            const n=document.getElementById('edit-prod-nome').value;
+            const met=document.getElementById('edit-prod-metodo-selecionado').value;
+            const min=Number(document.getElementById('edit-prod-estoque-minimo').value)||0; 
+            
+            if(!met){alert("Selecione um Método.");return;} 
+            const l=Array.from(document.querySelectorAll('#edit-checks-areas input:checked')).map(i=>i.value); 
+            
+            db.ref('produtos/'+id).update({
+                nome:n, 
+                categorias:catsEdit.length?catsEdit:null, 
+                categoria:null, 
+                subgrupo: prodSubEdit || null,
+                metodoCompra:met, 
+                estoqueMinimo:min, 
+                locais:l.length?l:null
+            }); 
+            navegar('produtos-categorias'); 
+        }
+
         function habilitarEdicaoArea() { document.getElementById('area-edit-box').style.display='block'; }
         function salvarNovoNomeArea() { const nv=document.getElementById('edit-area-input').value, ant=document.getElementById('area-display-name').innerText; if(nv&&areaAtualKey&&nv!==ant){ db.ref('areas/'+areaAtualKey).set(nv).then(()=>{ Object.keys(produtos).forEach(pk=>{if(!produtos[pk])return; let p=produtos[pk], u=false, l=p.locais||[], e=p.estoque||{}; if(l.includes(ant)){l=l.map(x=>x===ant?nv:x);u=true;} if(e[ant]!==undefined){e[nv]=e[ant];delete e[ant];u=true;} if(u)db.ref('produtos/'+pk).update({locais:l, estoque:e}); }); document.getElementById('area-edit-box').style.display='none'; document.getElementById('edit-area-input').value=""; navegar('areas-lista'); }); } }
         
