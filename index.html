@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ContaMais - Gestão Logística</title>
+    <!-- Favicon do site -->
+    <link rel="icon" type="image/png" href="logoproj.png">
     <style>
         :root {
             --primary: #b72929;        
@@ -25,7 +27,7 @@
         body:not(.admin-mode) .input-qtd { pointer-events: none; border: 1px solid transparent; background: transparent; color: var(--text-main); padding: 0; width: auto; text-align: center; font-size: 1rem; -moz-appearance: textfield; }
         body:not(.admin-mode) .input-qtd::-webkit-outer-spin-button, body:not(.admin-mode) .input-qtd::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
-        /* MENU LATERAL E TOPBAR (COM LOGOS CORRIGIDAS) */
+        /* MENU LATERAL E TOPBAR */
         aside { width: 260px; background: var(--bg-sidebar); color: var(--text-sidebar); padding: 2rem 0.5rem; position: fixed; height: 100vh; z-index: 1000; transition: 0.3s; }
         .logo-container { display: flex; justify-content: center; align-items: center; margin-bottom: 2.5rem; width: 100%; height: 70px; }
         .logo-img { max-height: 100%; max-width: 90%; object-fit: contain; }
@@ -55,6 +57,7 @@
         
         .card-nav { background: var(--card-bg); padding: 1.5rem 0.5rem; border-radius: 15px; text-align: center; cursor: pointer; border: 2px solid transparent; transition: 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .card-nav:hover { border-color: var(--primary); transform: translateY(-3px); }
+        .card-nav i { font-size: 2.2rem; display: block; margin-bottom: 8px; font-style: normal; }
         .card-nav h3 { font-size: 0.95rem; color: var(--bg-sidebar); }
 
         /* CALENDÁRIO E TABELAS FLUIDAS */
@@ -88,23 +91,19 @@
         .check-item { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
         input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary); }
 
-        /* ================== CSS MAPA DE SALÃO (BLINDADO ZERO SCROLL) ================== */
+        /* ================== CSS MAPA DE SALÃO E LAYOUT BLINDADO ================== */
         
-        /* O Segredo do Zero Scroll no Mobile */
         body:has(#mapa-salao.active) main { padding-bottom: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         #mapa-salao.active { height: 100%; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* Divisão do Layout (Mapa de um lado, Controles do outro) */
         .mapa-layout-flex { display: flex; flex-direction: row; gap: 15px; flex-grow: 1; min-height: 0; margin-top: 5px; overflow: hidden; }
         
         .mapa-coluna-mapa { flex: 1 1 0; display: flex; flex-direction: column; min-width: 0; order: 1; }
         .mapa-coluna-controles { flex: 0 0 350px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; padding-right: 5px; order: 2; }
 
-        /* Viewport e Planta (A Janela Limitadora) */
         .mapa-viewport { flex-grow: 1; position: relative; width: 100%; background: white; border-radius: 12px; border: 2px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; }
         .planta-baixa { position: absolute; top: 0; left: 0; width: 750px; height: 950px; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); transform-origin: 0 0; }
 
-        /* Blocos Macro e Micro */
         .bloco-macro { position: absolute; background: #f8fafc; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; border-radius: 8px; cursor: pointer; transition: 0.3s; z-index: 10; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
         .bloco-macro:hover { background: #f1f5f9; border-color: #cbd5e1; transform: scale(1.01); }
         .bloco-macro.unfocused { opacity: 0.15; pointer-events: auto; background: #e2e8f0; border-color: #cbd5e1; }
@@ -148,43 +147,26 @@
 
         /* ================== RESPONSIVIDADE MOBILE (Empilhamento Otimizado) ================== */
         @media (max-width: 1024px) {
-            body:has(#mapa-salao.active) main { padding: 65px 5px 5px 5px; } /* Desconta o topo e as bordas */
+            body:has(#mapa-salao.active) main { padding: 65px 5px 5px 5px; } 
             
-            #mapa-salao.active { 
-                height: calc(100vh - 70px); 
-            }
+            #mapa-salao.active { height: calc(100vh - 70px); }
 
-            /* Oculta textos e headers inúteis para poupar espaço no celular */
-            #mapa-salao .header-com-acao { margin-bottom: 5px; display: none; } /* Ocultamos o título para dar + espaço */
+            #mapa-salao .header-com-acao { margin-bottom: 5px; display: none; } 
             #mapa-salao > p { display: none; } 
 
-            .mapa-layout-flex { 
-                flex-direction: column; 
-                gap: 5px; 
-                margin-top: 0;
-            }
+            .mapa-layout-flex { flex-direction: column; gap: 5px; margin-top: 0; }
             
             /* No Mobile, os Controles/Reservas vão pra CIMA (order: 1) e o Mapa vai pra BAIXO (order: 2) */
-            .mapa-coluna-controles { 
-                width: 100%; 
-                flex: 0 0 auto; 
-                max-height: 45vh; /* Ocupa até quase metade da tela, com scroll próprio */
-                padding-right: 0;
-                order: 1; 
-            }
-
-            .mapa-coluna-mapa { 
-                width: 100%; 
-                flex: 1 1 0; 
-                order: 2; 
-            }
+            .mapa-coluna-controles { width: 100%; flex: 0 0 auto; max-height: 45vh; padding-right: 0; order: 1; }
+            .mapa-coluna-mapa { width: 100%; flex: 1 1 0; order: 2; }
             
             .grid-home, .grid-areas-layout { grid-template-columns: repeat(2, 1fr); }
         }
 
         @media (max-width: 768px) { 
             .mobile-topbar { display: flex; justify-content: center; align-items: center; position: fixed; top: 0; left: 0; width: 100%; height: 60px; background: var(--bg-sidebar); z-index: 1500; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-            .mobile-topbar img { height: 45px; width: auto; max-width: 200px; object-fit: contain; } 
+            /* LOGO MAIOR NA BARRA SUPERIOR */
+            .mobile-topbar img { height: 50px; max-height: 100%; width: auto; object-fit: contain; } 
             
             aside { width: 100%; height: 65px; bottom: 0; top: auto; left: 0; padding: 0; display: flex; flex-direction: row; box-shadow: 0 -2px 10px rgba(0,0,0,0.2); } 
             aside nav { flex-direction: row; justify-content: space-around; height: 100%; align-items: center; }
@@ -206,10 +188,12 @@
 </head>
 <body class="logged-out">
 
+    <!-- TOPO MOBILE COM ARQUIVO SVG/IMG NATIVO (LOGO AUMENTADA) -->
     <div class="mobile-topbar"><img src="contamais.svg" alt="ContaMais Logo"></div>
 
     <button class="btn-config" onclick="abrirConfig()">⚙️</button>
 
+    <!-- MODAIS DE SISTEMA -->
     <div id="modalSenha" class="modal-overlay">
         <div class="modal-box">
             <h3 style="margin-bottom: 10px; color: var(--primary);">🔒 Acesso Restrito</h3>
@@ -232,6 +216,7 @@
         </div>
     </div>
 
+    <!-- MENU LATERAL REESTRUTURADO (3 GUIAS PRINCIPAIS) -->
     <aside>
         <div class="logo-container"><img src="contamais.svg" alt="ContaMais Logo" class="logo-img"></div>
         <nav id="menu-navegacao">
@@ -243,6 +228,7 @@
     </aside>
 
     <main>
+        <!-- FAB (+) -->
         <div class="fab-container require-auth">
             <button class="fab-main" onclick="toggleFab()">+</button>
             <div id="fabOptions" class="fab-options">
@@ -251,6 +237,7 @@
             </div>
         </div>
 
+        <!-- 1. GUIA: INÍCIO -->
         <section id="inicio" class="section active">
             <h1>Início</h1>
             <p style="color:#64748b; margin-bottom:20px;">Bem-vindo ao ContaMais. Selecione um dos módulos abaixo ou no menu lateral.</p>
@@ -260,6 +247,7 @@
             </div>
         </section>
 
+        <!-- 2. GUIA: HUB DE PRODUTOS -->
         <section id="produtos-hub" class="section">
             <h1>Produtos e Logística</h1>
             <div class="grid-home">
@@ -269,6 +257,7 @@
             </div>
         </section>
 
+        <!-- 3. GUIA: HUB DE RESERVAS -->
         <section id="reservas-hub" class="section">
             <h1>Gestão de Reservas</h1>
             <div class="grid-home">
@@ -277,6 +266,9 @@
             </div>
         </section>
 
+        <!-- ==============================================
+             SUB-TELAS DO MAPA DE SALÃO
+        =================================================== -->
         <section id="mapa-setup" class="section">
             <div class="btn-back-styled" onclick="navegar('reservas-hub')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
             <h1>Acessar Mapa de Salão</h1>
@@ -294,36 +286,34 @@
 
         <section id="mapa-salao" class="section">
             <div class="header-com-acao">
-                <div>
-                    <h1 style="margin:0;">Mapa do Salão 2</h1>
-                    <h3 id="mapa-header-info" style="color:var(--primary); font-size: 1rem; margin-top: 5px;">Data - Turno</h3>
-                </div>
-                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-                    <button class="btn-back-styled" style="margin:0; width:auto; padding:0 15px; border-radius:8px;" onclick="navegar('mapa-setup')">Mudar Data</button>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <button class="btn-back-styled" style="margin:0; width:40px; height:40px; border-radius:10px;" onclick="navegar('mapa-setup')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></button>
+                    <div>
+                        <h1 style="margin:0;">Mapa do Salão 2</h1>
+                        <h3 id="mapa-header-info" style="color:var(--primary); font-size: 0.95rem; margin-top: 3px;">Data - Turno</h3>
+                    </div>
                 </div>
             </div>
             
-            <p style="font-size:0.85rem; color:#64748b; margin-bottom: 15px;">Selecione os blocos para dar zoom nas áreas. O sistema fará o corte espacial automaticamente.</p>
+            <p style="font-size:0.85rem; color:#64748b; margin-bottom: 10px;">Selecione os blocos para dar zoom nas áreas. O sistema fará o corte espacial de 1 mesa automaticamente nas reservas.</p>
 
             <div class="mapa-layout-flex">
                 
-                <div class="mapa-coluna-mapa">
-                    <div id="mapa-viewport" class="mapa-viewport">
-                        <div id="mapa-container" class="planta-baixa">
-                            </div>
-                    </div>
-                </div>
-
+                <!-- COLUNA DA DIREITA NO PC (Mas no Celular fica no Topo: order 1) -->
                 <div class="mapa-coluna-controles">
                     
+                    <!-- Painel 1: Lista de Reservas -->
                     <div id="painel-reservas-turno" class="card" style="margin-bottom:0; padding:10px; display:flex; flex-direction:column; min-height:0; border-color: var(--primary);">
                         <h3 style="color:var(--primary); font-size:1rem; margin-bottom: 8px;">📋 Reservas do Turno</h3>
                         <div id="lista-reservas-turno-mapa" style="display:flex; flex-direction:column; gap:6px; overflow-y:auto; flex-grow:1;">
-                            </div>
+                            <!-- Injetado dinamicamente -->
+                        </div>
                     </div>
 
+                    <!-- Botão Voltar (Aparece com Zoom) -->
                     <button class="btn-submit" id="btn-voltar-mapa" style="display:none; margin-top:0; margin-bottom:0; background:#64748b; font-size:0.85rem;" onclick="desfocarArea()">⬅️ Voltar Visão Geral</button>
 
+                    <!-- Painel 2: Controles Ativos (Aparecem no Zoom) -->
                     <div id="painel-controles-mapa" class="card require-auth" style="display:none; margin-bottom:0; padding:10px; border-color: var(--primary);">
                         <button class="btn-toggle-grupo" id="btn-edit-layout" style="margin-bottom:10px; width:100%; justify-content:center;" onclick="toggleModoLayoutMapa()">✏️ Modo Montagem</button>
                         
@@ -342,9 +332,21 @@
                     </div>
                 </div>
 
+                <!-- COLUNA DA ESQUERDA NO PC (Mas no Celular vai pro Fundo: order 2) -->
+                <div class="mapa-coluna-mapa">
+                    <div id="mapa-viewport" class="mapa-viewport">
+                        <div id="mapa-container" class="planta-baixa">
+                            <!-- PLANTA INJETADA AQUI E ESCALADA COM MATEMÁTICA -->
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </section>
 
+        <!-- ==============================================
+             SUB-TELAS DA AGENDA
+        =================================================== -->
         <section id="agenda-view" class="section">
             <div class="btn-back-styled" onclick="navegar('reservas-hub')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
             <h1>Agenda de Reservas</h1>
@@ -380,6 +382,9 @@
             </div>
         </section>
 
+        <!-- ==============================================
+             SUB-TELAS DE LOGÍSTICA E ESTOQUE
+        =================================================== -->
         <section id="areas-lista" class="section">
             <div class="btn-back-styled" onclick="navegar('produtos-hub')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
             <h1>Áreas de Estoque</h1><div id="grid-areas" class="grid-areas-layout"></div>
@@ -437,6 +442,9 @@
             <div class="table-container"><table><thead><tr><th>Item</th><th style="text-align:center;">Atual</th><th style="text-align:center;">Mín.</th><th style="text-align:center; color: var(--primary);">Pedir</th></tr></thead><tbody id="tabela-pedidos-filtrada"></tbody></table></div>
         </section>
 
+        <!-- ==============================================
+             CONFIGURAÇÕES ADMIN GERAIS E CADASTROS
+        =================================================== -->
         <section id="configuracoes" class="section">
             <div class="btn-back-styled" onclick="navegar('inicio')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
             <h1>Configurações Admin</h1>
@@ -454,12 +462,19 @@
                 <h3>2. Métodos de Compra</h3><input type="hidden" id="edit-met-id"><input type="text" id="met-nome" placeholder="Ex: Atacadão...">
                 <button class="btn-submit" id="btn-salvar-met" onclick="salvarMetodo()">Salvar Método</button>
             </div>
-            <div class="card"><h3>Métodos Existentes</h3><div id="lista-metodos-config" style="margin-top:10px;"></div></div>
+            
+            <!-- LISTA DE MÉTODOS DE COMPRA (ESPAÇADOS SEM IMAGEM) -->
+            <div class="card">
+                <h3>Métodos Existentes</h3>
+                <div id="lista-metodos-config" style="margin-top:10px;"></div>
+            </div>
         </section>
 
+        <!-- ATRIBUIÇÕES EM MASSA -->
         <section id="atribuir-categoria" class="section require-auth"><div class="btn-back-styled" onclick="navegar('configuracoes')">✕</div><h1 id="titulo-atribuir-cat">Atribuir</h1><div class="card"><input type="hidden" id="atribuir-cat-id"><div id="lista-produtos-atribuir" style="display: flex; flex-direction: column; gap: 8px; max-height: 55vh; overflow-y: auto;"></div><button class="btn-submit" onclick="salvarAtribuicaoCategoria()">SALVAR</button></div></section>
         <section id="atribuir-metodo" class="section require-auth"><div class="btn-back-styled" onclick="navegar('configuracoes')">✕</div><h1 id="titulo-atribuir-met">Atribuir Método</h1><div class="card"><input type="hidden" id="atribuir-met-id"><div id="lista-produtos-atribuir-met" style="display: flex; flex-direction: column; gap: 8px; max-height: 55vh; overflow-y: auto;"></div><button class="btn-submit" onclick="salvarAtribuicaoMetodo()">SALVAR</button></div></section>
 
+        <!-- NOVO PRODUTO E ÁREA -->
         <section id="novo-produto" class="section require-auth">
             <h1 style="font-size: 1.3rem;">Novo Produto</h1>
             <div class="card">
@@ -498,6 +513,7 @@
         <section id="nova-area" class="section require-auth"><h1>Nova Área</h1><div class="card"><input type="text" id="area-nome" placeholder="Nome da área"><button class="btn-submit" onclick="salvarArea()">CRIAR</button></div></section>
     </main>
 
+    <!-- FIREBASE E SCRIPT PRINCIPAL -->
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
 
@@ -540,7 +556,7 @@
             "Bistrôs": { macro: "Bistrôs", max: 3, top: "640px", left: "580px", tipo: "bistro" }
         };
         
-        // ADMIN
+        // ADMIN E SENHA
         let isAdmin = false; const SENHA_ADMIN = "411 J@nder114";
         function fecharModalSenha() { document.getElementById('modalSenha').style.display = 'none'; }
         function verificarSenha() { 
@@ -561,7 +577,7 @@
 
         let navDate = new Date(); let dataAtualReserva = "";
 
-        // LISTENERS FIREBASE (BLINDADOS)
+        // LISTENERS FIREBASE COM TRY/CATCH PARA PROTEÇÃO
         db.ref('areas').on('value', s => { try { areas = s.val() ? Object.entries(s.val()).map(([key, nome]) => ({key, nome})) : []; renderizarAreas(); renderizarChecksConfig(); } catch(e){console.error(e);} });
         db.ref('produtos').on('value', s => { try { produtos = s.val() || {}; renderizarGradeAgrupada(); if(document.getElementById('pedidos-lista').classList.contains('active')){ const metKey = Object.keys(metodosCompra).find(k => metodosCompra[k].nome === document.getElementById('titulo-pedido-metodo').innerText.replace('Pedidos: ', '')); if(metKey) verPedidoPorMetodo(metKey); } } catch(e){console.error(e);} });
         db.ref('categorias').on('value', s => { try { categorias = s.val() || {}; renderizarPresets(); renderizarGradeAgrupada(); } catch(e){console.error(e);} });
@@ -584,6 +600,8 @@
                 if(alvo) alvo.classList.add('active'); 
                 if(btn) { document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); } 
                 window.scrollTo(0, 0); 
+                
+                // Trata a escala do mapa ao entrar nele
                 if(id === 'mapa-salao') ajustarEscalaMapa();
             } catch(e) { console.error(e); }
         }
@@ -622,6 +640,7 @@
             
             navegar('mapa-salao');
             carregarReservasMapa();
+            ajustarEscalaMapa();
         }
 
         // CARREGA A LISTA DE RESERVAS PARA MONTAR NO MAPA
@@ -898,8 +917,18 @@
                 }
                 
                 if(atual === 'reservada') { 
-                    if(confirm(`Excluir a reserva de: ${layoutDia[mesaId].nome}?`)) {
-                        db.ref(`mapas/${mapaAtualData}/${mapaAtualTurno}/${mesaId}`).set({status: 'ativa'});
+                    const nomeAlvo = layoutDia[mesaId].nome;
+                    if(confirm(`Excluir a reserva de: ${nomeAlvo}? (Isso vai liberar todas as mesas vinculadas a esta reserva)`)) {
+                        let updates = {};
+                        for(let keyMesa in layoutDia) {
+                            if(layoutDia[keyMesa].status === 'reservada' && layoutDia[keyMesa].nome === nomeAlvo) {
+                                updates[`mapas/${mapaAtualData}/${mapaAtualTurno}/${keyMesa}`] = { status: 'ativa' };
+                            }
+                        }
+                        db.ref().update(updates).then(() => {
+                            atualizarPainelDinamicoMapa();
+                            carregarMapa(); 
+                        });
                     }
                     return; 
                 }
@@ -1312,11 +1341,11 @@
         function renderizarMetodosConfig() { 
             try {
                 document.getElementById('lista-metodos-config').innerHTML = Object.keys(metodosCompra).map(k => `
-                    <div class="preset-config-item">
+                    <div class="preset-config-item" style="padding:10px 0; border-bottom:1px solid #e2e8f0; margin-bottom:8px;">
                         <div style="display:flex; align-items:center;">
                             <button class="action-icon edit-btn" onclick="editarMetodo('${k}')">✎</button>
                             <button class="action-icon add-btn" onclick="abrirAtribuirMetodo('${k}')">➕</button>
-                            <strong style="font-size:1.05rem; margin-left:5px; display:flex; align-items:center;">${obterIconeMetodo(metodosCompra[k].nome)} <span style="margin-left:4px;">${metodosCompra[k].nome}</span></strong>
+                            <strong style="font-size:1.05rem; margin-left:10px; display:flex; align-items:center;"><span>${metodosCompra[k].nome}</span></strong>
                             <span style="margin-left:auto; color:red; cursor:pointer;" onclick="prepararExclusaoMet('${k}')">Excluir</span>
                         </div>
                     </div>`).join(''); 
@@ -1334,7 +1363,7 @@
                 }
                 grid.innerHTML = chaves.map(k => `
                     <div class="card-nav" onclick="verPedidoPorMetodo('${k}')">
-                        ${obterIconeMetodo(metodosCompra[k].nome, true)}<h3>${metodosCompra[k].nome}</h3>
+                        ${obterIconeMetodo(metodosCompra[k].nome, true)}<h3 style="margin-top:5px;">${metodosCompra[k].nome}</h3>
                     </div>`).join(''); 
             } catch(e) { console.error(e); }
         }
