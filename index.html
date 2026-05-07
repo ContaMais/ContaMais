@@ -116,6 +116,17 @@
         .chip { background: #e2e8f0; padding: 8px 14px; border-radius: 15px; font-size: 0.85rem; cursor: pointer; font-weight: 600; margin: 3px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid transparent; transition: 0.2s; }
         .active-chip { background: var(--primary) !important; color: white !important; border-color: var(--bg-sidebar-active) !important; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
+        /* IMAGENS DE RECEITA - 9x16 VERTICAL */
+        .img-preview-9x16 { width: 135px; height: 240px; object-fit: cover; border-radius: 8px; margin-top: 10px; display: none; border: 1px solid var(--border-color); }
+        .slider-enquadramento { width: 135px; margin-top: 8px; display: none; accent-color: var(--primary); }
+        
+        .receita-detail-flex { display: flex; gap: 15px; align-items: flex-start; margin-bottom: 15px; }
+        .receita-detail-ingredientes { flex: 1; }
+        .receita-detail-img-wrapper { flex-shrink: 0; width: 135px; height: 240px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 1px solid var(--border-color); }
+        .receita-detail-img { width: 100%; height: 100%; object-fit: cover; }
+        
+        textarea { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid var(--border-color); outline: none; font-size: 0.9rem; font-family: inherit; resize: vertical; min-height: 100px; }
+
         /* AGENDA */
         .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; color: var(--bg-sidebar); }
         .cal-btn { background: var(--bg-sidebar); color: white; border: none; border-radius: 8px; padding: 8px 15px; cursor: pointer; font-weight: bold; }
@@ -258,6 +269,20 @@
         </div>
     </div>
 
+    <!-- MODAL QUANTIDADE DE INGREDIENTE DA RECEITA -->
+    <div id="modalIngredienteQtd" class="modal-overlay" style="z-index: 4000;">
+        <div class="modal-box">
+            <h3 id="ingrediente-modal-nome" style="margin-bottom: 10px; color: var(--primary);">Produto</h3>
+            <p id="ingrediente-modal-lbl" style="font-weight: 700; margin-bottom: 5px; color: var(--text-main);">Quantidade:</p>
+            <input type="number" id="ingrediente-modal-qtd" placeholder="Ex: 50" style="margin-bottom: 15px;">
+            
+            <div style="display: flex; gap: 10px;">
+                <button onclick="document.getElementById('modalIngredienteQtd').style.display='none'" style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #ccc; background: white; font-weight: bold; cursor: pointer;">Cancelar</button>
+                <button onclick="confirmarIngredienteQtd()" style="flex: 1; padding: 10px; border-radius: 8px; background: var(--primary); color: white; border: none; font-weight: bold; cursor: pointer;">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- MENU LATERAL REESTRUTURADO -->
     <aside>
         <div class="logo-container"><img src="contamais.svg" alt="ContaMais Logo" class="logo-img"></div>
@@ -278,6 +303,7 @@
             <div id="fabOptions" class="fab-options">
                 <button class="fab-item" onclick="abrirCadastro('nova-area'); toggleFab()">📍 Nova Área</button>
                 <button class="fab-item" onclick="abrirCadastroProduto(); toggleFab()">🍾 Novo Produto</button>
+                <button class="fab-item" onclick="abrirNovaReceita(); toggleFab()">🍹 Nova Receita</button>
             </div>
         </div>
 
@@ -298,6 +324,7 @@
                 <div class="card-nav" onclick="navegar('areas-lista')"><i>📍</i><h3>Áreas</h3></div>
                 <div class="card-nav" onclick="navegar('produtos-categorias')"><i>📦</i><h3>Itens</h3></div>
                 <div class="card-nav" onclick="navegar('pedidos-metodos')"><i>🛒</i><h3>Pedidos</h3></div>
+                <div class="card-nav" onclick="abrirReceitas()"><i>🍹</i><h3>Receitas</h3></div>
             </div>
         </section>
 
@@ -429,7 +456,6 @@
                     <div class="btn-back-styled" style="margin:0;" onclick="navegar('produtos-hub')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
                     <h1 id="titulo-aba-produtos" style="margin:0; font-size: 1.2rem;">Categorias</h1>
                 </div>
-                <button class="btn-toggle-grupo" onclick="toggleAgrupamentoProdutos()">🔄 Agrupar</button>
             </div>
             <div id="grid-produtos-agrupados" class="grid-areas-layout"></div>
             <h2 id="titulo-sem-grupo" style="margin-top:1.5rem; font-size: 1.1rem;">Sem Categoria</h2>
@@ -476,6 +502,98 @@
             <div class="btn-back-styled" onclick="navegar('pedidos-metodos')">✕</div>
             <h1 id="titulo-pedido-metodo" style="font-size: 1.2rem;">Pedidos</h1>
             <div class="table-container"><table><thead><tr><th>Item</th><th style="text-align:center;">Atual</th><th style="text-align:center;">Mín.</th><th style="text-align:center; color: var(--primary);">Pedir</th></tr></thead><tbody id="tabela-pedidos-filtrada"></tbody></table></div>
+        </section>
+
+        <!-- ==============================================
+             NOVA SEÇÃO DE RECEITAS
+        =================================================== -->
+        <section id="receitas-lista" class="section">
+            <div class="btn-back-styled" onclick="navegar('produtos-hub')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
+            <h1>Receitas</h1>
+            <div id="grid-receitas" class="grid-areas-layout"></div>
+        </section>
+
+        <section id="nova-receita" class="section req-dono">
+            <div class="btn-back-styled" onclick="abrirReceitas()">✕</div>
+            <h1>Nova Receita</h1>
+            <div class="card">
+                <input type="text" id="receita-nome-input" placeholder="Nome da Receita (Ex: Caipirinha)">
+                
+                <p class="req-dono" style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">Foto da Receita (Opcional):</p>
+                <input type="file" id="receita-foto-input" accept="image/*" class="req-dono" onchange="previewReceitaFoto(event, 'novo')">
+                <div style="display:flex; flex-direction:column; align-items:flex-start;">
+                    <img id="receita-foto-preview-novo" class="img-preview-9x16" alt="Preview da Receita">
+                    <div id="wrap-slider-novo" style="display:none; margin-top:8px;">
+                        <span style="font-size:0.75rem; color:#64748b; font-weight:bold;">↕️ Ajustar Enquadramento</span>
+                        <input type="range" id="receita-foto-pos-novo" class="slider-enquadramento" min="0" max="100" value="50" oninput="ajustarEnquadramento(this.value, 'novo')">
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 20px; font-size:1rem; color:var(--primary);">Ingredientes:</h3>
+                <div id="lista-ingredientes-receita" style="margin-top: 10px; display:flex; flex-direction:column; gap:8px;"></div>
+                <button class="btn-submit" onclick="irParaSelecionarIngrediente('novo')" style="background: #e2e8f0; color: #475569; margin-top:15px; margin-bottom: 20px;">+ Adicionar Ingrediente</button>
+                
+                <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">Modo de Preparo:</p>
+                <textarea id="receita-preparo-input" placeholder="Descreva o passo a passo da receita..."></textarea>
+
+                <hr style="opacity: 0.2; margin-top: 15px; margin-bottom: 15px;">
+                <button class="btn-submit" onclick="salvarReceita()">SALVAR RECEITA</button>
+            </div>
+        </section>
+
+        <section id="editar-receita" class="section req-dono">
+            <div class="btn-back-styled" onclick="verDetalhesReceita(receitaAtualKey)">✕</div>
+            <h1>Editar Receita</h1>
+            <div class="card">
+                <input type="hidden" id="edit-receita-id">
+                <input type="text" id="edit-receita-nome-input" placeholder="Nome da Receita (Ex: Caipirinha)">
+                
+                <p class="req-dono" style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">Foto da Receita:</p>
+                <input type="file" id="edit-receita-foto-input" accept="image/*" class="req-dono" onchange="previewReceitaFoto(event, 'edit')">
+                <div style="display:flex; flex-direction:column; align-items:flex-start;">
+                    <img id="receita-foto-preview-edit" class="img-preview-9x16" alt="Preview da Receita">
+                    <div id="wrap-slider-edit" style="display:none; margin-top:8px;">
+                        <span style="font-size:0.75rem; color:#64748b; font-weight:bold;">↕️ Ajustar Enquadramento</span>
+                        <input type="range" id="receita-foto-pos-edit" class="slider-enquadramento" min="0" max="100" value="50" oninput="ajustarEnquadramento(this.value, 'edit')">
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 20px; font-size:1rem; color:var(--primary);">Ingredientes:</h3>
+                <div id="edit-lista-ingredientes-receita" style="margin-top: 10px; display:flex; flex-direction:column; gap:8px;"></div>
+                <button class="btn-submit" onclick="irParaSelecionarIngrediente('edit')" style="background: #e2e8f0; color: #475569; margin-top:15px; margin-bottom: 20px;">+ Adicionar Ingrediente</button>
+                
+                <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">Modo de Preparo:</p>
+                <textarea id="edit-receita-preparo-input" placeholder="Descreva o passo a passo da receita..."></textarea>
+
+                <hr style="opacity: 0.2; margin-top: 15px; margin-bottom: 15px;">
+                <button class="btn-submit" onclick="salvarEdicaoReceita()">SALVAR RECEITA</button>
+                <span style="color:var(--primary); cursor:pointer; display:block; text-align:center; margin-top:15px; font-weight:bold; font-size:0.85rem;" onclick="prepararExclusaoReceita()">Excluir Receita</span>
+            </div>
+        </section>
+
+        <section id="selecionar-ingrediente" class="section req-dono">
+            <div class="btn-back-styled" onclick="navegar(ctxIngredienteTemp === 'novo' ? 'nova-receita' : 'editar-receita')">✕</div>
+            <h1>Selecionar Item</h1>
+            <input type="text" id="busca-ingrediente" class="search-bar" placeholder="🔍 Pesquisar produto..." onkeyup="filtrarTabela('busca-ingrediente', 'tabela-ingredientes')">
+            <div class="table-container">
+                <table>
+                    <tbody id="tabela-ingredientes"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="detalhe-receita" class="section">
+            <div class="header-com-acao" style="margin-bottom: 1rem;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div class="btn-back-styled" style="margin:0;" onclick="abrirReceitas()"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
+                    <h1 id="detalhe-receita-titulo" style="margin:0; font-size: 1.3rem;">Receita</h1>
+                </div>
+                <div style="display:flex; gap:5px;">
+                    <button class="action-icon info-btn req-dono" onclick="toggleReceitaInfo()">ⓘ</button>
+                    <button class="action-icon edit-btn req-dono" onclick="abrirEdicaoReceita()">✎</button>
+                </div>
+            </div>
+            <div class="card" id="detalhe-receita-content" style="display:flex; flex-direction:column;"></div>
         </section>
 
         <!-- ==============================================
@@ -559,12 +677,23 @@
             <div class="card">
                 <input type="text" id="prod-nome" placeholder="Ex: Coca-Cola">
                 
+                <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">Preço de Custo (R$):</p>
+                <input type="number" id="prod-preco-custo" placeholder="Ex: 5.50" step="0.01">
+
                 <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">1. Assinale a Categoria <span style="font-size:0.75rem; font-weight:normal; color:var(--primary);">*(Apenas uma)*</span>:</p>
                 <div id="presets-container" style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"></div>
                 
                 <div id="wrap-subgrupo-novo" style="display:none; margin-bottom:10px; padding:10px; border:1px dashed var(--primary); border-radius:8px; background: #fff5f5;">
                     <p style="font-size:0.9rem; margin: 0 0 8px 0; font-weight:700; color:var(--primary);">A qual Especificação pertence? <span style="font-size:0.75rem; font-weight:normal;">*(Apenas um)*</span></p>
                     <div id="prod-subgrupo-container" style="display:flex; flex-wrap:wrap; gap:5px;"></div>
+                </div>
+
+                <div id="wrap-destilados-novo" style="display:none; margin-bottom:10px; padding:10px; border:1px solid #10b981; border-radius:8px; background: #f0fdf4;">
+                    <p style="font-size:0.9rem; margin: 0 0 8px 0; font-weight:700; color:#047857;">Informações do Destilado:</p>
+                    <p style="font-size:0.8rem; margin: 5px 0;">Volume da Garrafa (ml):</p>
+                    <input type="number" id="prod-ml-garrafa" placeholder="Ex: 1000">
+                    <p style="font-size:0.8rem; margin: 10px 0 5px 0;">Preço da Garrafa (R$):</p>
+                    <input type="number" id="prod-preco-garrafa" placeholder="Ex: 85.00" step="0.01">
                 </div>
 
                 <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">2. Selecione o Método de Compra <span style="font-size:0.75rem; font-weight:normal; color:var(--primary);">*(Apenas um)*</span>:</p>
@@ -585,12 +714,23 @@
             <div class="card">
                 <input type="hidden" id="edit-prod-id"><input type="text" id="edit-prod-nome">
                 
+                <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">Preço de Custo (R$):</p>
+                <input type="number" id="edit-prod-preco-custo" placeholder="Ex: 5.50" step="0.01">
+
                 <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">1. Assinale a Categoria <span style="font-size:0.75rem; font-weight:normal; color:var(--primary);">*(Apenas uma)*</span>:</p>
                 <div id="edit-presets-container" style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"></div>
                 
                 <div id="wrap-subgrupo-edit" style="display:none; margin-bottom:10px; padding:10px; border:1px dashed var(--primary); border-radius:8px; background: #fff5f5;">
                     <p style="font-size:0.9rem; margin: 0 0 8px 0; font-weight:700; color:var(--primary);">A qual Especificação pertence? <span style="font-size:0.75rem; font-weight:normal;">*(Apenas um)*</span></p>
                     <div id="edit-prod-subgrupo-container" style="display:flex; flex-wrap:wrap; gap:5px;"></div>
+                </div>
+
+                <div id="wrap-destilados-edit" style="display:none; margin-bottom:10px; padding:10px; border:1px solid #10b981; border-radius:8px; background: #f0fdf4;">
+                    <p style="font-size:0.9rem; margin: 0 0 8px 0; font-weight:700; color:#047857;">Informações do Destilado:</p>
+                    <p style="font-size:0.8rem; margin: 5px 0;">Volume da Garrafa (ml):</p>
+                    <input type="number" id="edit-prod-ml-garrafa" placeholder="Ex: 1000">
+                    <p style="font-size:0.8rem; margin: 10px 0 5px 0;">Preço da Garrafa (R$):</p>
+                    <input type="number" id="edit-prod-preco-garrafa" placeholder="Ex: 85.00" step="0.01">
                 </div>
 
                 <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">2. Selecione o Método de Compra <span style="font-size:0.75rem; font-weight:normal; color:var(--primary);">*(Apenas um)*</span>:</p>
@@ -634,7 +774,7 @@
         // CAPACIDADE DAS ÁREAS
         const CAPACIDADE_AREAS = { "Varanda": 20, "Salão 1 - Frente": 30, "Salão 1 - Corredor": 30, "Salão 2 - Parede": 40, "Salão 2 - Meio": 40, "Salão 2 - Corrimão": 15, "Salão 2 - Mesas Redondas": 3, "Salão 2 - Bistrôs": 3, "Salão 2 - Brinquedão": 60, "Laje": 60 };
 
-        let areas = [], produtos = {}, categorias = {}, metodosCompra = {}, reservasApp = {};
+        let areas = [], produtos = {}, categorias = {}, metodosCompra = {}, reservasApp = {}, receitasDB = {};
         let areaAtualKey = "", catsNovo = [], catsEdit = [], agrupamentoAtual = 'categorias'; 
         
         let mapasApp = {}; let modoMontagemMapa = false; let mesasSelecionadasMapa = []; let areaFocadaMapa = null; let mapaAtualData = ""; let mapaAtualTurno = "";
@@ -646,7 +786,18 @@
         let prodSubNovo = "";
         let prodSubEdit = "";
         let activeSubgroupFilter = "Todos";
-        let activeAdminSubgroupFilter = "Todos"; // Para a seção admin
+        let activeAdminSubgroupFilter = "Todos"; 
+
+        // Estados das Receitas
+        let receitaAtualKey = "";
+        let receitaEmConstrucao = { nome: "", ingredientes: [], preparo: "", foto: "" };
+        let receitaEmEdicao = { nome: "", ingredientes: [], preparo: "", foto: "" };
+        let ingredienteSelecionadoTemp = "";
+        let ctxIngredienteTemp = "novo";
+        let base64ReceitaFoto = "";
+        let base64ReceitaFotoEdit = "";
+        let posReceitaFoto = 50;
+        let posReceitaFotoEdit = 50;
 
         // ==========================================
         // SISTEMA DE AUTENTICAÇÃO E CARGOS (RBAC)
@@ -900,6 +1051,7 @@
         db.ref('metodos').on('value', s => { try { metodosCompra = s.val() || {}; renderizarMetodosConfig(); renderizarPresetsMetodos(); renderizarGradeAgrupada(); renderizarPedidosMetodos(); } catch(e){} });
         db.ref('reservas').on('value', s => { try { reservasApp = s.val() || {}; if(document.getElementById('agenda-view').classList.contains('active')) renderizarCalendario(); if(document.getElementById('agenda-detalhe').classList.contains('active')) renderizarReservasDia(); if(document.getElementById('mapa-salao').classList.contains('active')) carregarReservasMapa(); } catch(e){} });
         db.ref('mapas').on('value', s => { try { mapasApp = s.val() || {}; if(document.getElementById('mapa-salao').classList.contains('active')) { carregarMapa(); carregarReservasMapa(); } } catch(e){} });
+        db.ref('receitas').on('value', s => { try { receitasDB = s.val() || {}; if(document.getElementById('receitas-lista').classList.contains('active')) renderizarReceitas(); if(document.getElementById('detalhe-receita').classList.contains('active')) verDetalhesReceita(receitaAtualKey); } catch(e){} });
 
         // ==========================================
         // SISTEMA DE MAPA DE SALÃO
@@ -1348,8 +1500,7 @@
         }
 
         function renderizarAreas() { try { const grid = document.getElementById('grid-areas'); if(!grid) return; grid.innerHTML = areas.map(a => `<div class="card-nav" onclick="verArea('${a.key}', '${a.nome}')"><i>${obterEmoji(a.nome)}</i><h3>${a.nome || 'Área'}</h3></div>`).join(''); } catch(e){} }
-        function toggleAgrupamentoProdutos() { agrupamentoAtual = agrupamentoAtual === 'categorias' ? 'metodos' : 'categorias'; document.getElementById('btn-toggle-grupo').innerHTML = agrupamentoAtual === 'categorias' ? '🔄 Agrupar: Categorias' : '🔄 Agrupar: Métodos Compra'; renderizarGradeAgrupada(); }
-
+        
         function renderizarGradeAgrupada() { 
             try {
                 const g = document.getElementById('grid-produtos-agrupados'); const ts = document.getElementById('tabela-produtos-sem-grupo'); if(!g || !ts) return; 
@@ -1491,7 +1642,32 @@
                 document.getElementById('tabela-locais-produto').innerHTML = locaisHtml || `<tr><td colspan="2" style="text-align:center; color:#64748b;">Não alocado em nenhuma área.</td></tr>`; 
                 
                 const boxFardosGeral = t > 1 ? `<div><strong style="color:var(--primary);">Fardos Fechados:</strong> <span style="color:#64748b;">${Math.floor(tG/t)} Fardos (Geral)</span></div>` : '';
-                document.getElementById('info-extra-prod').innerHTML = `<div style="padding:12px; background:var(--row-even); border-radius:8px; border:1px solid var(--border-color); display:flex; flex-direction:column; gap:8px; margin-top:10px;"><div><strong style="color:var(--primary);">Categorias:</strong> <span style="color:#64748b;">${pC.length>0?pC.join(', '):'Nenhuma'}</span></div><div><strong style="color:var(--primary);">Método:</strong> <span style="color:#64748b;">${p.metodoCompra||"Não atribuído"}</span></div><div><strong style="color:var(--primary);">Especificação (Subgrupo):</strong> <span style="color:#64748b;">${p.subgrupo||"Nenhum"}</span></div><div><strong style="color:var(--primary);">Estoque Mín.:</strong> <span style="color:#64748b;">${p.estoqueMinimo||0} ${t>1?'Fardos':'Unidades'}</span></div>${boxFardosGeral}</div>`; 
+                
+                // Formatação Preço de Custo Geral (BLINDADO COM REQ-DONO)
+                let htmlCustoGeral = `<p class="req-dono" style="font-size:0.9rem; margin-bottom:5px;"><strong>Preço de Custo (Geral):</strong> R$ ${Number(p.precoCusto||0).toFixed(2).replace('.', ',')}</p>`;
+                
+                // Formatação Destilados Específico (BLINDADO COM REQ-DONO)
+                let htmlInfoDestilado = '';
+                if(p.detalhesDestilado && p.detalhesDestilado.ml) {
+                    const precoLt = (Number(p.detalhesDestilado.precoGarrafa) / Number(p.detalhesDestilado.ml)) * 1000;
+                    htmlInfoDestilado = `<div class="req-dono"><hr style="opacity:0.2; margin: 10px 0;">
+                        <p style="font-size:0.9rem; margin-bottom:5px; color:#047857; font-weight:bold;">🍹 Cálculos de Destilado</p>
+                        <p style="font-size:0.85rem; margin-bottom:3px;"><strong>Volume:</strong> ${p.detalhesDestilado.ml} ml</p>
+                        <p style="font-size:0.85rem; margin-bottom:3px;"><strong>Preço Garrafa:</strong> R$ ${Number(p.detalhesDestilado.precoGarrafa).toFixed(2).replace('.', ',')}</p>
+                        <p style="font-size:0.85rem; margin-bottom:3px;"><strong>Preço por Litro (1L):</strong> R$ ${precoLt.toFixed(2).replace('.', ',')}</p></div>`;
+                }
+
+                document.getElementById('info-extra-prod').innerHTML = `
+                    <div style="padding:12px; background:var(--row-even); border-radius:8px; border:1px solid var(--border-color); display:flex; flex-direction:column; gap:8px; margin-top:10px;">
+                        ${htmlCustoGeral}
+                        ${htmlInfoDestilado}
+                        <hr class="req-dono" style="opacity:0.2; margin: 5px 0;">
+                        <div><strong style="color:var(--primary);">Categorias:</strong> <span style="color:#64748b;">${pC.length>0?pC.join(', '):'Nenhuma'}</span></div>
+                        <div><strong style="color:var(--primary);">Método:</strong> <span style="color:#64748b;">${p.metodoCompra||"Não atribuído"}</span></div>
+                        <div><strong style="color:var(--primary);">Especificação (Subgrupo):</strong> <span style="color:#64748b;">${p.subgrupo||"Nenhum"}</span></div>
+                        <div><strong style="color:var(--primary);">Estoque Mín.:</strong> <span style="color:#64748b;">${p.estoqueMinimo||0} ${t>1?'Fardos':'Unidades'}</span></div>
+                        ${boxFardosGeral}
+                    </div>`; 
             } catch(e) {}
         }
 
@@ -1734,6 +1910,16 @@
             }
         }
 
+        // ==========================================
+        // CHECAGEM DE DESTILADOS (NOVO/EDIT)
+        // ==========================================
+        function checarDestilado(ctx) {
+            const arr = ctx === 'novo' ? catsNovo : catsEdit;
+            const isDestilado = arr.some(c => c.toLowerCase().includes('destilado'));
+            const wrapId = ctx === 'novo' ? 'wrap-destilados-novo' : 'wrap-destilados-edit';
+            document.getElementById(wrapId).style.display = isDestilado ? 'block' : 'none';
+        }
+
         function togglePreset(k, ctx) { 
             const n=categorias[k].nome;
             const t=ctx==='novo'?'checks-areas':'edit-checks-areas';
@@ -1750,6 +1936,7 @@
             atualizarLabelEstoqueMinimo(ctx, a); 
             renderizarPresets(); 
             renderSubgrupos(ctx);
+            checarDestilado(ctx);
         }
 
         function editarCategoria(k) { 
@@ -1798,14 +1985,18 @@
             const checksHTML = areas.length ? areas.map(a=>`<label class="check-item"><input type="checkbox" value="${a.nome}"> <span>${a.nome}</span></label>`).join('') : '<span style="color:#64748b; font-size:0.85rem;">Nenhuma área cadastrada. Cadastre uma área primeiro.</span>';
             document.getElementById('checks-areas').innerHTML=checksHTML; 
             document.getElementById('prod-nome').value=""; 
+            document.getElementById('prod-preco-custo').value="";
             document.getElementById('prod-metodo-selecionado').value=""; 
             document.getElementById('prod-estoque-minimo').value="0"; 
+            document.getElementById('prod-ml-garrafa').value="";
+            document.getElementById('prod-preco-garrafa').value="";
             catsNovo=[]; 
             prodSubNovo="";
             atualizarLabelEstoqueMinimo('novo',catsNovo); 
             renderizarPresets(); 
             renderizarPresetsMetodos(); 
             renderSubgrupos('novo');
+            checarDestilado('novo');
             navegar('novo-produto'); 
         }
 
@@ -1813,6 +2004,7 @@
         
         function salvarProduto() { 
             const n=document.getElementById('prod-nome').value; 
+            const pCusto = Number(document.getElementById('prod-preco-custo').value) || 0;
             const met=document.getElementById('prod-metodo-selecionado').value; 
             const min=Number(document.getElementById('prod-estoque-minimo').value)||0; 
             
@@ -1821,10 +2013,21 @@
             
             if(n && s.length){
                 const e={}; s.forEach(x=>e[x]={f:0,u:0}); 
+                
+                let detDestilado = null;
+                if(catsNovo.some(c => c.toLowerCase().includes('destilado'))) {
+                    detDestilado = {
+                        ml: Number(document.getElementById('prod-ml-garrafa').value) || 0,
+                        precoGarrafa: Number(document.getElementById('prod-preco-garrafa').value) || 0
+                    };
+                }
+
                 db.ref('produtos').push({
                     nome:n, 
+                    precoCusto: pCusto,
                     categorias:catsNovo.length?catsNovo:null, 
                     subgrupo: prodSubNovo || null,
+                    detalhesDestilado: detDestilado,
                     metodoCompra:met, 
                     estoqueMinimo:min, 
                     locais:s, 
@@ -1833,6 +2036,7 @@
                 document.getElementById('prod-nome').value=""; 
                 document.getElementById('prod-metodo-selecionado').value=""; 
                 document.getElementById('prod-estoque-minimo').value="0"; 
+                document.getElementById('prod-preco-custo').value="";
                 navegar('produtos-categorias');
             } else alert("Assinale área vinculada."); 
         }
@@ -1841,14 +2045,25 @@
             const p=produtos[k]; 
             document.getElementById('edit-prod-id').value=k; 
             document.getElementById('edit-prod-nome').value=p.nome; 
+            document.getElementById('edit-prod-preco-custo').value = p.precoCusto || "";
             document.getElementById('edit-prod-metodo-selecionado').value=p.metodoCompra||""; 
             document.getElementById('edit-prod-estoque-minimo').value=p.estoqueMinimo||0; 
             catsEdit=getCategoriasProduto(p); 
             prodSubEdit = p.subgrupo || "";
+            
+            if(p.detalhesDestilado) {
+                document.getElementById('edit-prod-ml-garrafa').value = p.detalhesDestilado.ml || "";
+                document.getElementById('edit-prod-preco-garrafa').value = p.detalhesDestilado.precoGarrafa || "";
+            } else {
+                document.getElementById('edit-prod-ml-garrafa').value = "";
+                document.getElementById('edit-prod-preco-garrafa').value = "";
+            }
+
             atualizarLabelEstoqueMinimo('edit',catsEdit); 
             renderizarPresets(); 
             renderizarPresetsMetodos(); 
             renderSubgrupos('edit');
+            checarDestilado('edit');
             
             const checksHTML = areas.length ? areas.map(a=>`<label class="check-item"><input type="checkbox" value="${a.nome}" ${(p.locais||[]).includes(a.nome)?'checked':''}> <span>${a.nome}</span></label>`).join('') : '<span style="color:#64748b; font-size:0.85rem;">Nenhuma área cadastrada. Cadastre uma área primeiro.</span>';
             document.getElementById('edit-checks-areas').innerHTML=checksHTML; 
@@ -1858,17 +2073,28 @@
         function salvarEdicaoProduto() { 
             const id=document.getElementById('edit-prod-id').value;
             const n=document.getElementById('edit-prod-nome').value;
+            const pCusto = Number(document.getElementById('edit-prod-preco-custo').value) || 0;
             const met=document.getElementById('edit-prod-metodo-selecionado').value;
             const min=Number(document.getElementById('edit-prod-estoque-minimo').value)||0; 
             
             if(!met){alert("Selecione um Método.");return;} 
             const l=Array.from(document.querySelectorAll('#edit-checks-areas input:checked')).map(i=>i.value); 
             
+            let detDestilado = null;
+            if(catsEdit.some(c => c.toLowerCase().includes('destilado'))) {
+                detDestilado = {
+                    ml: Number(document.getElementById('edit-prod-ml-garrafa').value) || 0,
+                    precoGarrafa: Number(document.getElementById('edit-prod-preco-garrafa').value) || 0
+                };
+            }
+
             db.ref('produtos/'+id).update({
                 nome:n, 
+                precoCusto: pCusto,
                 categorias:catsEdit.length?catsEdit:null, 
                 categoria:null, 
                 subgrupo: prodSubEdit || null,
+                detalhesDestilado: detDestilado,
                 metodoCompra:met, 
                 estoqueMinimo:min, 
                 locais:l.length?l:null
@@ -1883,6 +2109,329 @@
         function prepararExclusaoProd() { document.getElementById('modalMsg').innerHTML=`Excluir <strong>${document.getElementById('edit-prod-nome').value}</strong>?`; document.getElementById('modalDelete').style.display='flex'; document.getElementById('confirmDeleteBtn').onclick=()=>{db.ref('produtos/'+document.getElementById('edit-prod-id').value).remove();fecharModal();navegar('produtos-categorias');}; }
         function prepararExclusaoCat(k) { document.getElementById('modalMsg').innerHTML=`Excluir preset <strong>${categorias[k].nome}</strong>?`; document.getElementById('modalDelete').style.display='flex'; document.getElementById('confirmDeleteBtn').onclick=()=>{db.ref('categorias/'+k).remove();fecharModal();}; }
         function prepararExclusaoMet(k) { document.getElementById('modalMsg').innerHTML=`Excluir método <strong>${metodosCompra[k].nome}</strong>?`; document.getElementById('modalDelete').style.display='flex'; document.getElementById('confirmDeleteBtn').onclick=()=>{db.ref('metodos/'+k).remove();fecharModal();}; }
+
+        // ==========================================
+        // SISTEMA DE RECEITAS
+        // ==========================================
+        function toggleReceitaInfo() {
+            const panel = document.getElementById('receita-info-painel');
+            if(panel) panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function previewReceitaFoto(event, ctx) {
+            const file = event.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    if(ctx === 'novo') {
+                        base64ReceitaFoto = e.target.result;
+                        const preview = document.getElementById('receita-foto-preview-novo');
+                        preview.src = base64ReceitaFoto;
+                        preview.style.display = 'block';
+                        preview.style.objectPosition = 'center 50%';
+                        document.getElementById('wrap-slider-novo').style.display = 'block';
+                        document.getElementById('receita-foto-pos-novo').value = 50;
+                        posReceitaFoto = 50;
+                    } else {
+                        base64ReceitaFotoEdit = e.target.result;
+                        const preview = document.getElementById('receita-foto-preview-edit');
+                        preview.src = base64ReceitaFotoEdit;
+                        preview.style.display = 'block';
+                        preview.style.objectPosition = 'center 50%';
+                        document.getElementById('wrap-slider-edit').style.display = 'block';
+                        document.getElementById('receita-foto-pos-edit').value = 50;
+                        posReceitaFotoEdit = 50;
+                    }
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        function ajustarEnquadramento(val, ctx) {
+            if(ctx === 'novo') {
+                posReceitaFoto = val;
+                document.getElementById('receita-foto-preview-novo').style.objectPosition = `center ${val}%`;
+            } else {
+                posReceitaFotoEdit = val;
+                document.getElementById('receita-foto-preview-edit').style.objectPosition = `center ${val}%`;
+            }
+        }
+
+        function abrirReceitas() {
+            navegar('receitas-lista');
+            renderizarReceitas();
+        }
+
+        function renderizarReceitas() {
+            const grid = document.getElementById('grid-receitas');
+            const chaves = Object.keys(receitasDB);
+            if(chaves.length === 0) {
+                grid.innerHTML = `<p style="color:#64748b; font-size:0.9rem; text-align:center;">Nenhuma receita cadastrada ainda.</p>`;
+                return;
+            }
+            
+            grid.innerHTML = chaves.map(k => {
+                const r = receitasDB[k];
+                
+                let custoTotal = 0;
+                (r.ingredientes || []).forEach(ing => {
+                    let p = produtos[ing.idProduto];
+                    if(p) {
+                        if(ing.unidade === 'ml' && p.detalhesDestilado && p.detalhesDestilado.ml) {
+                            custoTotal += (Number(p.detalhesDestilado.precoGarrafa) / Number(p.detalhesDestilado.ml)) * Number(ing.qtd);
+                        } else {
+                            custoTotal += Number(p.precoCusto || 0) * Number(ing.qtd);
+                        }
+                    }
+                });
+
+                let imgOrIcon = r.foto ? `<img src="${r.foto}" style="width:60px; height:60px; object-fit:cover; object-position: center ${r.fotoPos||50}%; border-radius:10px; margin-bottom:8px;">` : `<i style="font-size: 2.2rem; display: block; margin-bottom: 8px; font-style: normal;">🍹</i>`;
+
+                return `<div class="card-nav" onclick="verDetalhesReceita('${k}')">
+                    ${imgOrIcon}
+                    <h3 style="font-size: 0.95rem; color: var(--bg-sidebar);">${r.nome}</h3>
+                    <span class="req-dono" style="font-size:0.85rem; color:#10b981; font-weight:bold; margin-top:5px;">R$ ${custoTotal.toFixed(2).replace('.', ',')}</span>
+                </div>`;
+            }).join('');
+        }
+
+        function verDetalhesReceita(k) {
+            receitaAtualKey = k;
+            const r = receitasDB[k];
+            if(!r) return;
+            
+            document.getElementById('detalhe-receita-titulo').innerText = r.nome;
+            
+            let custoTotal = 0;
+            let ingredientesHtml = (r.ingredientes || []).map(ing => {
+                let p = produtos[ing.idProduto];
+                let custoIng = 0;
+                let detalheCusto = "";
+                if(p) {
+                    if(ing.unidade === 'ml' && p.detalhesDestilado && p.detalhesDestilado.ml) {
+                        custoIng = (Number(p.detalhesDestilado.precoGarrafa) / Number(p.detalhesDestilado.ml)) * Number(ing.qtd);
+                    } else {
+                        custoIng = Number(p.precoCusto || 0) * Number(ing.qtd);
+                    }
+                    custoTotal += custoIng;
+                    detalheCusto = ` <span class="req-dono" style="color:#10b981; font-size:0.75rem;">(R$ ${custoIng.toFixed(2).replace('.', ',')})</span>`;
+                } else {
+                    detalheCusto = ` <span class="req-dono" style="color:red; font-size:0.75rem;">(Produto excluído)</span>`;
+                }
+                return `<li style="margin-bottom:5px; border-bottom:1px solid #e2e8f0; padding-bottom:5px;"><strong>${ing.qtd} ${ing.unidade}</strong> de ${ing.nome}${detalheCusto}</li>`;
+            }).join('');
+
+            let fotoHtml = r.foto ? `<div class="receita-detail-img-wrapper"><img src="${r.foto}" class="receita-detail-img" style="object-position: center ${r.fotoPos||50}%;" alt="Foto da Receita"></div>` : '';
+            let preparoHtml = r.preparo ? `<div style="margin-top:15px; padding:10px; background:#f8fafc; border-radius:8px; font-size:0.9rem; line-height:1.5; border:1px solid var(--border-color);"><strong>Modo de Preparo:</strong><br>${r.preparo.replace(/\n/g, '<br>')}</div>` : '';
+            
+            document.getElementById('detalhe-receita-content').innerHTML = `
+                <div id="receita-info-painel" class="req-dono" style="display:none; background:#f0fdf4; border:1px solid #10b981; border-radius:8px; padding:12px; margin-bottom:15px;">
+                    <h3 style="color:#047857; margin:0; font-size:1.1rem;">Custo de Produção: R$ ${custoTotal.toFixed(2).replace('.', ',')}</h3>
+                </div>
+                
+                <div class="receita-detail-flex">
+                    <div class="receita-detail-ingredientes">
+                        <h3 style="color:var(--primary); font-size:1rem; margin-bottom:10px;">Ingredientes:</h3>
+                        <ul style="list-style:none; padding:0; margin:0; font-size:0.9rem;">
+                            ${ingredientesHtml}
+                        </ul>
+                    </div>
+                    ${fotoHtml}
+                </div>
+                ${preparoHtml}
+            `;
+            
+            navegar('detalhe-receita');
+        }
+
+        function abrirNovaReceita() {
+            receitaEmConstrucao = { nome: "", ingredientes: [], preparo: "", foto: "", fotoPos: 50 };
+            document.getElementById('receita-nome-input').value = "";
+            document.getElementById('receita-preparo-input').value = "";
+            document.getElementById('receita-foto-input').value = "";
+            document.getElementById('receita-foto-preview-novo').style.display = 'none';
+            document.getElementById('wrap-slider-novo').style.display = 'none';
+            base64ReceitaFoto = "";
+            posReceitaFoto = 50;
+            renderIngredientesReceita();
+            navegar('nova-receita');
+        }
+
+        function abrirEdicaoReceita() {
+            const k = receitaAtualKey;
+            const r = receitasDB[k];
+            if(!r) return;
+            
+            document.getElementById('edit-receita-id').value = k;
+            document.getElementById('edit-receita-nome-input').value = r.nome || "";
+            document.getElementById('edit-receita-preparo-input').value = r.preparo || "";
+            
+            base64ReceitaFotoEdit = r.foto || "";
+            posReceitaFotoEdit = r.fotoPos !== undefined ? r.fotoPos : 50;
+            
+            const preview = document.getElementById('receita-foto-preview-edit');
+            const wrapSlider = document.getElementById('wrap-slider-edit');
+            const slider = document.getElementById('receita-foto-pos-edit');
+            
+            if(r.foto) {
+                preview.src = r.foto;
+                preview.style.display = 'block';
+                preview.style.objectPosition = `center ${posReceitaFotoEdit}%`;
+                wrapSlider.style.display = 'block';
+                slider.value = posReceitaFotoEdit;
+            } else {
+                preview.style.display = 'none';
+                wrapSlider.style.display = 'none';
+            }
+            
+            receitaEmEdicao.ingredientes = r.ingredientes ? [...r.ingredientes] : [];
+            renderIngredientesReceitaEdit();
+            navegar('editar-receita');
+        }
+
+        function renderIngredientesReceita() {
+            const lista = document.getElementById('lista-ingredientes-receita');
+            if(receitaEmConstrucao.ingredientes.length === 0) {
+                lista.innerHTML = `<p style="color:#94a3b8; font-size:0.85rem; font-style:italic;">Nenhum ingrediente adicionado.</p>`;
+                return;
+            }
+            lista.innerHTML = receitaEmConstrucao.ingredientes.map((ing, idx) => `
+                <div style="display:flex; justify-content:space-between; background:white; border:1px solid #e2e8f0; padding:10px; border-radius:6px; align-items:center;">
+                    <span style="font-size:0.9rem;"><strong>${ing.qtd} ${ing.unidade}</strong> de ${ing.nome}</span>
+                    <button style="background:red; color:white; border:none; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="removerIngrediente(${idx})">×</button>
+                </div>
+            `).join('');
+        }
+        
+        function renderIngredientesReceitaEdit() {
+            const lista = document.getElementById('edit-lista-ingredientes-receita');
+            if(receitaEmEdicao.ingredientes.length === 0) {
+                lista.innerHTML = `<p style="color:#94a3b8; font-size:0.85rem; font-style:italic;">Nenhum ingrediente adicionado.</p>`;
+                return;
+            }
+            lista.innerHTML = receitaEmEdicao.ingredientes.map((ing, idx) => `
+                <div style="display:flex; justify-content:space-between; background:white; border:1px solid #e2e8f0; padding:10px; border-radius:6px; align-items:center;">
+                    <span style="font-size:0.9rem;"><strong>${ing.qtd} ${ing.unidade}</strong> de ${ing.nome}</span>
+                    <button style="background:red; color:white; border:none; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="removerIngredienteEdit(${idx})">×</button>
+                </div>
+            `).join('');
+        }
+
+        function removerIngrediente(idx) {
+            receitaEmConstrucao.ingredientes.splice(idx, 1);
+            renderIngredientesReceita();
+        }
+        
+        function removerIngredienteEdit(idx) {
+            receitaEmEdicao.ingredientes.splice(idx, 1);
+            renderIngredientesReceitaEdit();
+        }
+
+        function irParaSelecionarIngrediente(ctx) {
+            ctxIngredienteTemp = ctx;
+            document.getElementById('busca-ingrediente').value = "";
+            const tbody = document.getElementById('tabela-ingredientes');
+            const chaves = Object.keys(produtos).sort((a,b) => produtos[a].nome.localeCompare(produtos[b].nome));
+            
+            tbody.innerHTML = chaves.map(k => `
+                <tr style="cursor:pointer;" onclick="escolherIngrediente('${k}')">
+                    <td class="col-item" style="padding:15px 10px;">${produtos[k].nome}</td>
+                    <td style="text-align:right; font-size:1.2rem; color:var(--primary);">+</td>
+                </tr>
+            `).join('');
+            
+            navegar('selecionar-ingrediente');
+        }
+
+        function escolherIngrediente(pk) {
+            ingredienteSelecionadoTemp = pk;
+            const p = produtos[pk];
+            const isDestilado = getCategoriasProduto(p).some(c => c.toLowerCase().includes('destilado'));
+            
+            document.getElementById('ingrediente-modal-nome').innerText = p.nome;
+            document.getElementById('ingrediente-modal-lbl').innerText = isDestilado ? "Quantos ml?" : "Quantidade:";
+            document.getElementById('ingrediente-modal-qtd').value = "";
+            
+            document.getElementById('modalIngredienteQtd').style.display = 'flex';
+        }
+
+        function confirmarIngredienteQtd() {
+            const qtd = document.getElementById('ingrediente-modal-qtd').value;
+            if(!qtd || Number(qtd) <= 0) { alert("Informe uma quantidade válida."); return; }
+            
+            const p = produtos[ingredienteSelecionadoTemp];
+            const isDestilado = getCategoriasProduto(p).some(c => c.toLowerCase().includes('destilado'));
+            
+            const novoIngrediente = { 
+                idProduto: ingredienteSelecionadoTemp, 
+                nome: p.nome, 
+                qtd: qtd, 
+                unidade: isDestilado ? 'ml' : 'un' 
+            };
+            
+            if(ctxIngredienteTemp === 'novo') {
+                receitaEmConstrucao.ingredientes.push(novoIngrediente);
+                navegar('nova-receita');
+                renderIngredientesReceita();
+            } else {
+                receitaEmEdicao.ingredientes.push(novoIngrediente);
+                navegar('editar-receita');
+                renderIngredientesReceitaEdit();
+            }
+            
+            document.getElementById('modalIngredienteQtd').style.display = 'none';
+        }
+
+        function salvarReceita() {
+            const nome = document.getElementById('receita-nome-input').value.trim();
+            const preparo = document.getElementById('receita-preparo-input').value.trim();
+            if(!nome) { alert("Dê um nome para a receita!"); return; }
+            if(receitaEmConstrucao.ingredientes.length === 0) { alert("Adicione pelo menos um ingrediente!"); return; }
+            
+            db.ref('receitas').push({
+                nome: nome,
+                ingredientes: receitaEmConstrucao.ingredientes,
+                preparo: preparo,
+                foto: base64ReceitaFoto,
+                fotoPos: posReceitaFoto
+            }).then(() => {
+                abrirReceitas();
+            });
+        }
+        
+        function salvarEdicaoReceita() {
+            const k = document.getElementById('edit-receita-id').value;
+            const nome = document.getElementById('edit-receita-nome-input').value.trim();
+            const preparo = document.getElementById('edit-receita-preparo-input').value.trim();
+            
+            if(!nome) { alert("Dê um nome para a receita!"); return; }
+            if(receitaEmEdicao.ingredientes.length === 0) { alert("Adicione pelo menos um ingrediente!"); return; }
+            
+            db.ref('receitas/' + k).update({
+                nome: nome,
+                ingredientes: receitaEmEdicao.ingredientes,
+                preparo: preparo,
+                foto: base64ReceitaFotoEdit,
+                fotoPos: posReceitaFotoEdit
+            }).then(() => {
+                verDetalhesReceita(k);
+            });
+        }
+
+        function prepararExclusaoReceita() {
+            const k = document.getElementById('edit-receita-id').value;
+            document.getElementById('modalMsg').innerHTML=`Excluir a receita <strong>${document.getElementById('edit-receita-nome-input').value}</strong>?`; 
+            document.getElementById('modalDelete').style.display='flex'; 
+            document.getElementById('confirmDeleteBtn').onclick=() => {
+                db.ref('receitas/'+k).remove();
+                fecharModal();
+                abrirReceitas();
+            }; 
+        }
+
+        function fecharModal() {
+            document.getElementById('modalDelete').style.display = 'none';
+        }
 
     </script>
 </body>
