@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ContaMais - Gestão Logística</title>
+    <title>AdmiNiran - Gestão Logística</title>
     <link rel="icon" type="image/png" href="logoproj.png">
     <style>
         :root {
@@ -116,17 +116,19 @@
         .chip { background: #e2e8f0; padding: 8px 14px; border-radius: 15px; font-size: 0.85rem; cursor: pointer; font-weight: 600; margin: 3px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid transparent; transition: 0.2s; }
         .active-chip { background: var(--primary) !important; color: white !important; border-color: var(--bg-sidebar-active) !important; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
-        /* IMAGENS DE RECEITA - 9x16 VERTICAL */
-        .img-preview-9x16 { width: 135px; height: 240px; object-fit: cover; border-radius: 8px; margin-top: 10px; display: none; border: 1px solid var(--border-color); }
-        .slider-enquadramento { width: 135px; margin-top: 8px; display: none; accent-color: var(--primary); }
+        /* IMAGENS DE RECEITA E ENQUADRAMENTO */
+        .crop-container { width: 135px; height: 240px; overflow: hidden; border-radius: 8px; border: 2px dashed var(--primary); background: #f8fafc; position: relative; display: flex; align-items: center; justify-content: center; }
+        .crop-img { width: 100%; height: 100%; object-fit: cover; position: absolute; transform-origin: center center; transition: transform 0.1s ease-out; }
+        
+        .slider-enquadramento { width: 135px; margin-top: 8px; display: block; accent-color: var(--primary); cursor: pointer; }
+        .slider-zoom { width: 135px; margin-top: 4px; display: block; accent-color: #10b981; cursor: pointer; }
         
         .receita-detail-flex { display: flex; gap: 15px; align-items: flex-start; margin-bottom: 15px; }
         .receita-detail-ingredientes { flex: 1; }
-        .receita-detail-img-wrapper { flex-shrink: 0; width: 135px; height: 240px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 1px solid var(--border-color); }
-        .receita-detail-img { width: 100%; height: 100%; object-fit: cover; }
+        .receita-detail-img-wrapper { flex-shrink: 0; width: 135px; height: 240px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 1px solid var(--border-color); position: relative; }
+        .receita-detail-img { position: absolute; width: 100%; height: 100%; object-fit: cover; }
         
         textarea { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid var(--border-color); outline: none; font-size: 0.9rem; font-family: inherit; resize: vertical; min-height: 100px; }
-
         /* AGENDA */
         .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; color: var(--bg-sidebar); }
         .cal-btn { background: var(--bg-sidebar); color: white; border: none; border-radius: 8px; padding: 8px 15px; cursor: pointer; font-weight: bold; }
@@ -522,10 +524,15 @@
                 <p class="req-dono" style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">Foto da Receita (Opcional):</p>
                 <input type="file" id="receita-foto-input" accept="image/*" class="req-dono" onchange="previewReceitaFoto(event, 'novo')">
                 <div style="display:flex; flex-direction:column; align-items:flex-start;">
-                    <img id="receita-foto-preview-novo" class="img-preview-9x16" alt="Preview da Receita">
-                    <div id="wrap-slider-novo" style="display:none; margin-top:8px;">
-                        <span style="font-size:0.75rem; color:#64748b; font-weight:bold;">↕️ Ajustar Enquadramento</span>
-                        <input type="range" id="receita-foto-pos-novo" class="slider-enquadramento" min="0" max="100" value="50" oninput="ajustarEnquadramento(this.value, 'novo')">
+                    <div id="crop-wrapper-novo" class="crop-container" style="display:none; margin-top:10px;">
+                        <img id="receita-foto-preview-novo" class="crop-img" alt="Preview">
+                    </div>
+                    <div id="wrap-slider-novo" style="display:none; margin-top:8px; width: 135px;">
+                        <span style="font-size:0.7rem; color:#64748b; font-weight:bold; display:block; text-align:center;">🔍 Zoom</span>
+                        <input type="range" id="receita-foto-zoom-novo" class="slider-zoom" min="1" max="3" step="0.1" value="1" oninput="ajustarEnquadramento('novo')">
+                        <span style="font-size:0.7rem; color:#64748b; font-weight:bold; display:block; text-align:center; margin-top:5px;">↕️↔️ Posição X / Y</span>
+                        <input type="range" id="receita-foto-posx-novo" class="slider-enquadramento" min="0" max="100" value="50" oninput="ajustarEnquadramento('novo')">
+                        <input type="range" id="receita-foto-posy-novo" class="slider-enquadramento" min="0" max="100" value="50" oninput="ajustarEnquadramento('novo')">
                     </div>
                 </div>
 
@@ -551,10 +558,15 @@
                 <p class="req-dono" style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">Foto da Receita:</p>
                 <input type="file" id="edit-receita-foto-input" accept="image/*" class="req-dono" onchange="previewReceitaFoto(event, 'edit')">
                 <div style="display:flex; flex-direction:column; align-items:flex-start;">
-                    <img id="receita-foto-preview-edit" class="img-preview-9x16" alt="Preview da Receita">
-                    <div id="wrap-slider-edit" style="display:none; margin-top:8px;">
-                        <span style="font-size:0.75rem; color:#64748b; font-weight:bold;">↕️ Ajustar Enquadramento</span>
-                        <input type="range" id="receita-foto-pos-edit" class="slider-enquadramento" min="0" max="100" value="50" oninput="ajustarEnquadramento(this.value, 'edit')">
+                    <div id="crop-wrapper-edit" class="crop-container" style="display:none; margin-top:10px;">
+                        <img id="receita-foto-preview-edit" class="crop-img" alt="Preview">
+                    </div>
+                    <div id="wrap-slider-edit" style="display:none; margin-top:8px; width: 135px;">
+                        <span style="font-size:0.7rem; color:#64748b; font-weight:bold; display:block; text-align:center;">🔍 Zoom</span>
+                        <input type="range" id="receita-foto-zoom-edit" class="slider-zoom" min="1" max="3" step="0.1" value="1" oninput="ajustarEnquadramento('edit')">
+                        <span style="font-size:0.7rem; color:#64748b; font-weight:bold; display:block; text-align:center; margin-top:5px;">↕️↔️ Posição X / Y</span>
+                        <input type="range" id="receita-foto-posx-edit" class="slider-enquadramento" min="0" max="100" value="50" oninput="ajustarEnquadramento('edit')">
+                        <input type="range" id="receita-foto-posy-edit" class="slider-enquadramento" min="0" max="100" value="50" oninput="ajustarEnquadramento('edit')">
                     </div>
                 </div>
 
@@ -796,8 +808,8 @@
         let ctxIngredienteTemp = "novo";
         let base64ReceitaFoto = "";
         let base64ReceitaFotoEdit = "";
-        let posReceitaFoto = 50;
-        let posReceitaFotoEdit = 50;
+        let configEnquadramentoNovo = { x: 50, y: 50, scale: 1 };
+        let configEnquadramentoEdit = { x: 50, y: 50, scale: 1 };
 
         // ==========================================
         // SISTEMA DE AUTENTICAÇÃO E CARGOS (RBAC)
@@ -1057,8 +1069,7 @@
         // SISTEMA DE MAPA DE SALÃO
         // ==========================================
         const macroAreas = { "Brinquedão": { top: "80px", left: "60px", w: 600, h: 220 }, "Parede": { top: "340px", left: "60px", w: 110, h: 500 }, "Meio": { top: "340px", left: "210px", w: 110, h: 500 }, "Mesas Redondas": { top: "360px", left: "370px", w: 120, h: 180 }, "Corrimão": { top: "560px", left: "370px", w: 120, h: 250 }, "Bistrôs": { top: "620px", left: "550px", w: 110, h: 200 } };
-        const configMapa = { "Brinq. 1": { macro: "Brinquedão", max: 6, chairsL: 10, chairsR: 10, top: "90px", left: "80px", tipo: "normal" }, "Brinq. 2": { macro: "Brinquedão", max: 5, chairsL: 8, chairsR: 8, top: "90px", left: "245px", tipo: "normal" }, "Brinq. 3": { macro: "Brinquedão", max: 4, chairsL: 7, chairsR: 7, top: "90px", left: "410px", tipo: "normal" }, "Brinq. 4": { macro: "Brinquedão", max: 4, chairsL: 6, chairsT: 2, chairsB: 2, top: "90px", left: "580px", tipo: "parede-direita" }, "Parede": { macro: "Parede", max: 13, chairsL: 20, chairsR: 20, top: "350px", left: "80px", tipo: "normal" }, "Meio": { macro: "Meio", max: 13, chairsL: 20, chairsR: 20, top: "350px", left: "230px", tipo: "normal" }, "Mesas Redondas": { macro: "Mesas Redondas", max: 3, top: "380px", left: "410px", tipo: "redonda" }, "Corrimão": { macro: "Corrimão", max: 6, chairsL: 10, chairsR: 10, top: "580px", left: "390px", tipo: "normal" }, "Bistrôs": { macro: "Bistrôs", max: 3, top: "640px", left: "580px", tipo: "bistro" } };
-
+        const configMapa = { "Brinq1": { macro: "Brinquedão", max: 6, chairsL: 10, chairsR: 10, top: "90px", left: "80px", tipo: "normal" }, "Brinq2": { macro: "Brinquedão", max: 5, chairsL: 8, chairsR: 8, top: "90px", left: "245px", tipo: "normal" }, "Brinq3": { macro: "Brinquedão", max: 4, chairsL: 7, chairsR: 7, top: "90px", left: "410px", tipo: "normal" }, "Brinq4": { macro: "Brinquedão", max: 4, chairsL: 6, chairsT: 2, chairsB: 2, top: "90px", left: "580px", tipo: "parede-direita" }, "Parede": { macro: "Parede", max: 13, chairsL: 20, chairsR: 20, top: "350px", left: "80px", tipo: "normal" }, "Meio": { macro: "Meio", max: 13, chairsL: 20, chairsR: 20, top: "350px", left: "230px", tipo: "normal" }, "Mesas Redondas": { macro: "Mesas Redondas", max: 3, top: "380px", left: "410px", tipo: "redonda" }, "Corrimão": { macro: "Corrimão", max: 6, chairsL: 10, chairsR: 10, top: "580px", left: "390px", tipo: "normal" }, "Bistrôs": { macro: "Bistrôs", max: 3, top: "640px", left: "580px", tipo: "bistro" } };
         function abrirMapaComFiltro() {
             const dt = document.getElementById('setup-mapa-data').value;
             const tn = document.getElementById('setup-mapa-turno').value;
@@ -1234,6 +1245,7 @@
                 }
 
                 let partes = mesaId.split('_'); let subAreaAtual = partes[0]; let idxAtual = parseInt(partes[1]); let confMesa = configMapa[subAreaAtual];
+                
                 if (confMesa.tipo === 'redonda' || confMesa.tipo === 'bistro') {
                     if (mesasSelecionadasMapa.includes(mesaId)) mesasSelecionadasMapa = []; else mesasSelecionadasMapa = [mesaId]; 
                 } else {
@@ -2127,34 +2139,52 @@
                         base64ReceitaFoto = e.target.result;
                         const preview = document.getElementById('receita-foto-preview-novo');
                         preview.src = base64ReceitaFoto;
-                        preview.style.display = 'block';
-                        preview.style.objectPosition = 'center 50%';
+                        document.getElementById('crop-wrapper-novo').style.display = 'flex';
                         document.getElementById('wrap-slider-novo').style.display = 'block';
-                        document.getElementById('receita-foto-pos-novo').value = 50;
-                        posReceitaFoto = 50;
+                        
+                        configEnquadramentoNovo = { x: 50, y: 50, scale: 1 };
+                        document.getElementById('receita-foto-zoom-novo').value = 1;
+                        document.getElementById('receita-foto-posx-novo').value = 50;
+                        document.getElementById('receita-foto-posy-novo').value = 50;
+                        aplicarEnquadramentoVisual(preview, configEnquadramentoNovo);
                     } else {
                         base64ReceitaFotoEdit = e.target.result;
                         const preview = document.getElementById('receita-foto-preview-edit');
                         preview.src = base64ReceitaFotoEdit;
-                        preview.style.display = 'block';
-                        preview.style.objectPosition = 'center 50%';
+                        document.getElementById('crop-wrapper-edit').style.display = 'flex';
                         document.getElementById('wrap-slider-edit').style.display = 'block';
-                        document.getElementById('receita-foto-pos-edit').value = 50;
-                        posReceitaFotoEdit = 50;
+                        
+                        configEnquadramentoEdit = { x: 50, y: 50, scale: 1 };
+                        document.getElementById('receita-foto-zoom-edit').value = 1;
+                        document.getElementById('receita-foto-posx-edit').value = 50;
+                        document.getElementById('receita-foto-posy-edit').value = 50;
+                        aplicarEnquadramentoVisual(preview, configEnquadramentoEdit);
                     }
                 }
                 reader.readAsDataURL(file);
             }
         }
         
-        function ajustarEnquadramento(val, ctx) {
+        function ajustarEnquadramento(ctx) {
             if(ctx === 'novo') {
-                posReceitaFoto = val;
-                document.getElementById('receita-foto-preview-novo').style.objectPosition = `center ${val}%`;
+                configEnquadramentoNovo.scale = document.getElementById('receita-foto-zoom-novo').value;
+                configEnquadramentoNovo.x = document.getElementById('receita-foto-posx-novo').value;
+                configEnquadramentoNovo.y = document.getElementById('receita-foto-posy-novo').value;
+                aplicarEnquadramentoVisual(document.getElementById('receita-foto-preview-novo'), configEnquadramentoNovo);
             } else {
-                posReceitaFotoEdit = val;
-                document.getElementById('receita-foto-preview-edit').style.objectPosition = `center ${val}%`;
+                configEnquadramentoEdit.scale = document.getElementById('receita-foto-zoom-edit').value;
+                configEnquadramentoEdit.x = document.getElementById('receita-foto-posx-edit').value;
+                configEnquadramentoEdit.y = document.getElementById('receita-foto-posy-edit').value;
+                aplicarEnquadramentoVisual(document.getElementById('receita-foto-preview-edit'), configEnquadramentoEdit);
             }
+        }
+
+        function aplicarEnquadramentoVisual(imgElement, config) {
+            // O object-position move a textura da foto dentro da borda
+            imgElement.style.objectPosition = `${config.x}% ${config.y}%`;
+            // O transform-origin garante que o zoom vá para a direção correta
+            imgElement.style.transformOrigin = `${config.x}% ${config.y}%`;
+            imgElement.style.transform = `scale(${config.scale})`;
         }
 
         function abrirReceitas() {
