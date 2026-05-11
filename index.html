@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AdmiNiran - Gestão Logística</title>
     <link rel="icon" type="image/png" href="logoproj.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
         :root {
             --primary: #b72929;        
@@ -16,10 +20,75 @@
             --text-sidebar: #fbeee3;
             --border-color: #e2e8f0;
             --row-even: #fdf8f4; 
+            /* Novas Variáveis Premium */
+            --shadow-premium: 0 2px 4px rgba(40, 6, 6, 0.04), 0 12px 32px rgba(40, 6, 6, 0.12);
+            --transition-fluid: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            --radius-lg: 20px;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { display: flex; background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
+        /* Overlay do Botão (+) */
+        #fab-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(40, 6, 6, 0.4);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 1400;
+            display: none;
+            opacity: 0;
+            transition: var(--transition-fluid);
+        }
+        #fab-overlay.active { display: block; opacity: 1; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Manrope', sans-serif; font-weight: 600; -webkit-tap-highlight-color: transparent; }
+        
+        /* Idea 4: Inputs Premium (Sem outline azul, com aura suave) */
+        input:focus, select:focus, textarea:focus, button:focus { outline: none; box-shadow: 0 0 0 3px rgba(183, 41, 41, 0.15); border-color: rgba(183, 41, 41, 0.4); transition: var(--transition-fluid); }
+        
+        html { background-color: var(--bg-body); }
+        body { 
+            background-color: transparent; /* Deixa a textura aparecer! */
+            color: var(--text-main); 
+            line-height: 1.5; 
+            position: relative; 
+            z-index: 0; 
+        }
+
+        /* O Fundo Trançado Orgânico */
+        body::before {
+            content: "";
+            position: fixed; /* O fundo fica estático enquanto você rola a página */
+            top: -50%; 
+            left: -50%;
+            width: 200%; /* Criamos uma área gigante para poder girar sem cortar as bordas */
+            height: 200%;
+            background-image: url('fundo-trancado.jpeg'); /* Sua imagem aqui */
+            background-repeat: repeat;
+            
+            /* 1. Melhora a qualidade (compacta a imagem para os fios ficarem finos e em alta resolução) */
+            background-size: 120px; 
+            
+            /* 4. Inclinação orgânica (Gira o trançado em 10 graus) */
+            transform: rotate(-10deg);
+            
+            /* 2 e 3. Mágica de Cores e Sombras */
+            /* contrast(0.4): Mata as sombras fortes, deixando o desenho mais plano e suave */
+            /* sepia(1) + hue-rotate(320deg) + saturate(3): Transforma o bege/marrom em tom de Vinho/Bordeaux */
+            filter: contrast(0.4) sepia(1) hue-rotate(320deg) saturate(3) brightness(0.8);
+            
+            opacity: 0.05; /* O segredo do luxo: quase invisível, apenas uma marca d'água tátil */
+            pointer-events: none; /* Impede que o fundo atrapalhe os cliques dos botões */
+            z-index: -1; /* Joga a textura para a camada mais profunda da tela */
+        }
+
+        /* Idea 3: Container de Notificações (Toasts) */
+        #toast-container { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column-reverse; gap: 10px; pointer-events: none; }
+        .toast { background: var(--bg-sidebar); color: var(--text-sidebar); padding: 12px 20px; border-radius: 12px; font-size: 0.9rem; font-weight: 700; box-shadow: var(--shadow-premium); min-width: 250px; text-align: center; animation: toastIn 0.3s cubic-bezier(0.25, 1, 0.5, 1); opacity: 1; transition: opacity 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .toast.success { border-left: 4px solid #4caf50; }
+        .toast.error { border-left: 4px solid var(--primary); }
+        @keyframes toastIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        /* No Mobile, ajusta a posição do toast */
+        @media (max-width: 768px) { #toast-container { bottom: 10px; width: 90%; } }
         
         /* ================== REGRAS DE PERMISSÃO (CARGOS) ================== */
         body.role-visualizador .req-dono, 
@@ -47,14 +116,36 @@
         .btn-novo-top { display: none; }
 
         /* GERAL */
-        main { margin-left: 260px; padding: 1.5rem; width: 100%; position: relative; padding-bottom: 100px; transition: 0.3s; min-height: 100vh; }
-        h1 { margin-bottom: 1rem; color: var(--bg-sidebar); font-weight: 800; font-size: 1.4rem; }
-        .header-com-acao { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px; }
-        .btn-toggle-grupo { background: var(--primary); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s; font-size: 0.85rem; }
+       main { margin-left: 260px; padding: 1.5rem; width: calc(100% - 260px); position: relative; padding-bottom: 100px; transition: 0.3s; min-height: 100vh; overflow-x: hidden; }
+        h1 { margin-bottom: 1.5rem; color: var(--bg-sidebar); font-weight: 800; font-size: 1.8rem; letter-spacing: -0.5px; }
+        h2, h3, th, strong { font-weight: 800; }
         
-        .section { display: none; animation: fadeIn 0.2s ease-out; }
+        /* Layout em Lista (Barras Horizontais) para Áreas e Itens */
+        .grid-areas-layout { display: flex !important; flex-direction: column !important; gap: 0.8rem; }
+        .grid-areas-layout .card-nav { flex-direction: row; padding: 1rem 1.5rem; justify-content: flex-start; text-align: left; gap: 15px; }
+        .grid-areas-layout .card-nav i { margin-bottom: 0; font-size: 1.8rem; color: var(--primary); }
+        .grid-areas-layout .card-nav h3 { font-size: 1.05rem; flex-grow: 1; }
+        .grid-areas-layout .card-nav img { margin: 0; width: 32px !important; height: 32px !important; }
+
+        .header-com-acao { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px; }
+        .btn-toggle-grupo { background: var(--primary); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s; font-size: 0.85rem; }    
+        .section { display: none; animation: slideIn 0.5s cubic-bezier(0.25, 1, 0.5, 1); }
         .section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { 
+            from { opacity: 0; transform: translateY(10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+
+        .card { 
+            background: var(--card-bg); 
+            padding: 1.5rem; 
+            border-radius: var(--radius-lg); 
+            box-shadow: var(--shadow-premium); 
+            margin-bottom: 1.5rem; 
+            border: 1px solid rgba(40, 6, 6, 0.03); 
+            transition: var(--transition-fluid);
+        }
+        .card:hover { transform: translateY(-2px); }
 
         .btn-back-styled { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: var(--bg-sidebar); color: var(--primary); border-radius: 10px; border: 2px solid var(--primary); cursor: pointer; margin-bottom: 1rem; }
         .btn-back-styled svg { width: 25px; height: 25px; fill: currentColor; }
@@ -203,7 +294,7 @@
             .mapa-coluna-controles { width: 100%; flex: 0 0 auto; max-height: 45vh; padding-right: 0; order: 1; }
             .mapa-coluna-mapa { width: 100%; flex: 1 1 0; order: 2; }
             
-            .grid-home, .grid-areas-layout { grid-template-columns: repeat(2, 1fr); }
+            .grid-home { grid-template-columns: repeat(2, 1fr); }
         }
 
         @media (max-width: 768px) { 
@@ -217,21 +308,32 @@
             .nav-btn.active { border-bottom: 3px solid var(--primary); background: var(--bg-sidebar-active); }
             .nav-btn span { display: block !important; font-size: 0.60rem; font-weight: normal; text-align: center; }
             
-            /* Botão de Cargo na Esquerda e Botão (+) na Direita (Só Mobile) */
             .btn-config { top: 9px; left: 10px; width: 42px; height: 42px; font-size: 1.5rem; font-weight: bold; background: white; color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.2); border-radius: 50%; }
             
             .fab-main { display: none !important; }
             .btn-novo-top { display: flex; position: fixed; top: 9px; right: 10px; z-index: 2001; font-size: 1.8rem; color: white; background: var(--primary); border: none; cursor: pointer; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-            .fab-options { top: 55px; bottom: auto; right: 10px; }
+            .fab-options { top: 70px; bottom: auto; right: 10px; width: calc(100% - 20px); }
+            .fab-item { width: 100%; justify-content: center; padding: 15px; border-radius: 12px; }
 
-            main { margin-left: 0; padding: 5rem 0.5rem 85px 0.5rem; } 
+            main { margin-left: 0; width: 100%; padding: 5rem 0.5rem 85px 0.5rem; overflow-x: hidden; } 
             h1 { font-size: 1.2rem; }
-            th, td { padding: 0.6rem 0.3rem; font-size: 0.75rem; white-space: nowrap; }
-            .col-item { font-size: 0.8rem; max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
+
+            /* ESTILO BOTTOM SHEET PARA MODAIS */
+            .modal-overlay { align-items: flex-end; }
+            .modal-box { 
+                max-width: none; 
+                width: 100%; 
+                border-radius: 24px 24px 0 0; 
+                padding: 2rem 1.5rem;
+                animation: slideUp 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+                border-bottom: none;
+            }
+            @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         }
     </style>
 </head>
 <body class="role-visualizador">
+    <div id="fab-overlay" onclick="toggleFab()"></div>
 
     <!-- TOPO MOBILE COM LOGO -->
     <div class="mobile-topbar"><img src="contamais.svg" alt="ContaMais Logo"></div>
@@ -284,27 +386,25 @@
         </div>
     </div>
 
-    <!-- MENU LATERAL REESTRUTURADO -->
-    <aside>
-        <div class="logo-container"><img src="contamais.svg" alt="ContaMais Logo" class="logo-img"></div>
+ <aside>
+        <div class="logo-container"><img src="adminiran.svg" alt="AdmiNiran Logo" class="logo-img"></div>
         <nav id="menu-navegacao">
-            <button class="nav-btn active" id="nav-inicio" onclick="navegar('inicio', this)">🏠 <span>Início</span></button>
-            <button class="nav-btn" id="nav-produtos-hub" onclick="navegar('produtos-hub', this)">🍾 <span>Produtos</span></button>
-            <button class="nav-btn" id="nav-reservas-hub" onclick="navegar('reservas-hub', this)">📅 <span>Reservas</span></button>
+            <button class="nav-btn active" id="nav-inicio" onclick="navegar('inicio', this)"><i class="ph ph-house" style="font-size:1.3rem;"></i> <span>Início</span></button>
+            <button class="nav-btn" id="nav-produtos-hub" onclick="navegar('produtos-hub', this)"><i class="ph ph-package" style="font-size:1.3rem;"></i> <span>Produtos</span></button>
+            <button class="nav-btn" id="nav-reservas-hub" onclick="navegar('reservas-hub', this)"><i class="ph ph-calendar-blank" style="font-size:1.3rem;"></i> <span>Reservas</span></button>
             
             <div style="margin-top: auto;"></div> 
-            <button class="nav-btn" onclick="abrirModalAuth()" id="btn-login-sidebar">👤 <span>Entrar</span></button>
+            <button class="nav-btn" onclick="abrirModalAuth()" id="btn-login-sidebar"><i class="ph ph-user" style="font-size:1.3rem;"></i> <span>Entrar</span></button>
         </nav>
     </aside>
 
     <main>
-        <!-- FAB (+) APENAS DONO -->
-        <div class="fab-container req-dono">
-            <button class="fab-main" onclick="event.stopPropagation(); toggleFab()">+</button>
+       <div class="fab-container req-dono">
+            <button class="fab-main" id="fabMain" onclick="event.stopPropagation(); toggleFab()"><span style="font-weight: 800; font-size: 32px; line-height: 0; padding-bottom: 4px;">+</span></button>
             <div id="fabOptions" class="fab-options">
-                <button class="fab-item" onclick="abrirCadastro('nova-area'); toggleFab()">📍 Nova Área</button>
-                <button class="fab-item" onclick="abrirCadastroProduto(); toggleFab()">🍾 Novo Produto</button>
-                <button class="fab-item" onclick="abrirNovaReceita(); toggleFab()">🍹 Nova Receita</button>
+                <button class="fab-item" onclick="abrirCadastro('nova-area'); toggleFab()"><i class="ph ph-map-pin" style="margin-right:5px; font-size:1.1rem;"></i> Nova Área</button>
+                <button class="fab-item" onclick="abrirCadastroProduto(); toggleFab()"><i class="ph ph-wine" style="margin-right:5px; font-size:1.1rem;"></i> Novo Produto</button>
+                <button class="fab-item" onclick="abrirNovaReceita(); toggleFab()"><i class="ph ph-martini" style="margin-right:5px; font-size:1.1rem;"></i> Nova Receita</button>
             </div>
         </div>
 
@@ -681,7 +781,7 @@
 
         <!-- SEÇÃO: ORDENAÇÃO DE CATEGORIA ADMIN -->
         <section id="detalhe-categoria-admin" class="section req-dono">
-            <div class="btn-back-styled" onclick="navegar('configuracoes')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
+                        <div class="btn-back-styled" onclick="navegar('configuracoes')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
             <h1 id="titulo-config-cat">⚙️ Categoria</h1>
             <div class="card" id="info-tecnica-cat"></div>
             <div class="card" style="border-color: var(--primary);">
@@ -982,7 +1082,11 @@
 
         function toggleFab(event) { 
             if(event) event.stopPropagation();
-            document.getElementById('fabOptions').classList.toggle('active'); 
+            const options = document.getElementById('fabOptions');
+            const overlay = document.getElementById('fab-overlay');
+            
+            options.classList.toggle('active');
+            overlay.classList.toggle('active');
         }
 
         document.addEventListener('click', function(event) {
@@ -1484,8 +1588,8 @@
         // ORDENAÇÃO DE CATEGORIAS E PRODUTOS (PRIORIDADE MASTER)
         // ==========================================
         function removerAcentos(str) { return str ? str.normalize("NFD").replace(/[\u0300-\u036f]/g, "") : ""; }
-        const mapaEmojis = { "refrigerantes": "🥤", "cervejas": "🍺", "vinhos bar": "🍷", "camara fria": "🧊", "geladeira red bull": "🐂", "chopps bar": "🍻", "laje": "🪜", "atacadao": "🛒", "mercado": "🛒", "distribuidora": "🚚" };
-        function obterEmoji(nome) { const limpo = removerAcentos((nome||"").toLowerCase().trim()); for(let key in mapaEmojis) if(limpo.includes(key)) return mapaEmojis[key]; return "📦"; }
+        const mapaEmojis = { "refrigerantes": "<i class='ph ph-drop'></i>", "cervejas": "<i class='ph ph-beer-bottle'></i>", "vinhos bar": "<i class='ph ph-wine'></i>", "camara fria": "<i class='ph ph-thermometer-cold'></i>", "geladeira red bull": "<i class='ph ph-battery-charging'></i>", "chopps bar": "<i class='ph ph-pint-glass'></i>", "laje": "<i class='ph ph-ladder'></i>", "atacadao": "<i class='ph ph-shopping-cart'></i>", "mercado": "<i class='ph ph-storefront'></i>", "distribuidora": "<i class='ph ph-truck'></i>" };
+        function obterEmoji(nome) { const limpo = removerAcentos((nome||"").toLowerCase().trim()); for(let key in mapaEmojis) if(limpo.includes(key)) return mapaEmojis[key]; return "<i class='ph ph-package'></i>"; }
         function getCategoriasProduto(p) { if (!p) return []; if (p.categorias) return Array.isArray(p.categorias) ? [...p.categorias] : (typeof p.categorias==='string' ? [p.categorias] : Object.values(p.categorias)); return p.categoria ? [p.categoria] : []; }
 
         const ORDEM_CATEGORIAS = ["refrigerantes", "energeticos", "cervejas", "cervejas especiais", "frutas congeladas"];
