@@ -333,7 +333,7 @@
     <div id="fab-overlay" onclick="toggleFab()"></div>
 
     <!-- TOPO MOBILE COM LOGO -->
-    <div class="mobile-topbar"><img src="contamais.svg" alt="ContaMais Logo"></div>
+    <div class="mobile-topbar"><img src="adminiran.svg" alt="AdmiNiran Logo" style="height: 50px; width: auto;"></div>
 
     <!-- BOTÃO TOPO ESQUERDA (ENGRENAGEM OU CARGO) -->
     <button id="btn-top-role" class="btn-config" onclick="if(currentRole==='dono') abrirConfig()"></button>
@@ -397,7 +397,9 @@
 
     <main>
        <div class="fab-container req-dono">
-            <button class="fab-main" id="fabMain" onclick="event.stopPropagation(); toggleFab()"><span style="font-weight: 800; font-size: 32px; line-height: 0; padding-bottom: 4px;">+</span></button>
+            <button class="fab-main" id="fabMain" onclick="event.stopPropagation(); toggleFabclass="logo-container()">
+                <span style="font-weight: 900; font-size: 42px; color: white; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; margin: 0; padding: 0; line-height: 1;">+</span>
+            </button>
             <div id="fabOptions" class="fab-options">
                 <button class="fab-item" onclick="abrirCadastro('nova-area'); toggleFab()"><i class="ph ph-map-pin" style="margin-right:5px; font-size:1.1rem;"></i> Nova Área</button>
                 <button class="fab-item" onclick="abrirCadastroProduto(); toggleFab()"><i class="ph ph-wine" style="margin-right:5px; font-size:1.1rem;"></i> Novo Produto</button>
