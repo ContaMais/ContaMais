@@ -10,18 +10,103 @@
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
+
+        /* Garante que os títulos das páginas sejam claros */
+        h1, h2, #page-title { 
+            color: #fbeee3 !important; 
+            font-weight: 800;
+        }
+
+        /* Escurece o fundo de todas as seções/janelas que abrem */
+        #detalhe-receita, #setup-area, #gestao-estoque, .janela-modal {
+            background: rgba(20, 3, 3, 0.98) !important;
+            color: #fbeee3 !important;
+            min-height: 100vh; /* Garante que cubra a tela toda se necessário */
+        }
+
+        /* Ajusta os textos internos dessas janelas */
+        #detalhe-receita-content, #detalhe-receita-titulo, 
+        .info-secao, .info-secao h3, .info-secao p, .info-secao li {
+            color: #fbeee3 !important;
+        }
+
+        /* Corrigir ícones dentro dessas janelas específicas */
+        #detalhe-receita-content i, .info-secao i {
+            color: #fbeee3 !important;
+        }
+
+        .card-nav {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(251, 238, 227, 0.1) !important;
+            color: #fbeee3 !important;
+        }
+
+        .card-nav:hover {
+            background: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        /* Alvo: O fundo branco das janelas de inventário e áreas */
+        .card, .inventory-header, .modal-box, .setup-container {
+            background: rgba(20, 3, 3, 0.98) !important;
+            color: #fbeee3 !important;
+            border: 1px solid rgba(251, 238, 227, 0.1) !important;
+        }
+
+        /* Escurece a barra de título interna (onde está o nome da geladeira) */
+        .area-header-box {
+            background: rgba(0, 0, 0, 0.4) !important;
+            border-bottom: 1px solid rgba(251, 238, 227, 0.1) !important;
+        }
+
+        .search-box, .search-box input {
+            background: rgba(255, 255, 255, 0.05) !important;
+            color: #fbeee3 !important;
+            border: 1px solid rgba(251, 238, 227, 0.2) !important;
+        }
+
+        .search-box i {
+            color: #fbeee3 !important;
+        }
+        
+
+        /* Janelas, Modais e Cards */
+        .card, .modal-box, .card-nav { 
+            background: var(--card-bg) !important;
+            color: #fbeee3 !important; /* Cor clara em tudo */
+            border: 1px solid rgba(251, 238, 227, 0.15);
+        }
+
+        /* Forçar ícones e títulos internos a serem claros */
+        .card h1, .card h2, .card h3, .card h4, .card p, .card span, .card i,
+        .modal-box h1, .modal-box h2, .modal-box h3, .modal-box i,
+        .card-nav h3, .card-nav i, .card-nav span {
+            color: #fbeee3 !important;
+        }
+
+        /* Ajuste específico para os ícones da Phosphor dentro das janelas */
+        .ph, [class^="ph-"] {
+            color: #fbeee3 !important;
+        }
+
         :root {
             --primary: #b72929;        
-            --bg-body: #fbeee3;        
-            --bg-sidebar: #280606;     
-            --bg-sidebar-active: #3d0a0a; 
-            --card-bg: #ffffff;
-            --text-main: #280606;      
+            --bg-body: #280606; /* Fundo agora é escuro por padrão */        
+            --bg-sidebar: #1a0404; /* Sidebar ainda mais escura para contraste */
+            --bg-sidebar-active: #b72929; 
+            
+            /* Janelas em modo Dark Glass */
+            --card-bg: rgba(20, 3, 3, 0.95); /* Bem mais escuro e sólido */
+            
+            /* Textos agora são Claros (Bege) */
+            --text-main: #fbeee3;      
             --text-sidebar: #fbeee3;
-            --border-color: #e2e8f0;
-            --row-even: #fdf8f4; 
-            /* Novas Variáveis Premium */
-            --shadow-premium: 0 2px 4px rgba(40, 6, 6, 0.04), 0 12px 32px rgba(40, 6, 6, 0.12);
+            
+            /* Bordas e Listras sutis */
+            --border-color: rgba(251, 238, 227, 0.1);
+            --row-even: rgba(255, 255, 255, 0.03); 
+            
+            /* Sombras adaptadas para fundo escuro */
+            --shadow-premium: 0 8px 32px rgba(0, 0, 0, 0.4);
             --transition-fluid: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
             --radius-lg: 20px;
         }
@@ -75,8 +160,9 @@
         body.role-contribuidor .req-dono { display: none !important; }
 
         /* MENU LATERAL E TOPBAR */
-        aside { width: 260px; background: var(--bg-sidebar); color: var(--text-sidebar); padding: 2rem 0.5rem 1rem 0.5rem; position: fixed; height: 100vh; z-index: 1000; transition: 0.3s; display: flex; flex-direction: column; }
-        .logo-container { display: flex; justify-content: center; align-items: center; margin-bottom: 2.5rem; width: 100%; height: 120px; }
+        aside { width: 260px; background: var(--bg-sidebar); color: var(--text-sidebar); padding: 1rem 0.5rem; position: fixed; top: 0; left: 0; height: 100vh; z-index: 1000; display: flex; flex-direction: column; }
+        .logo-container { width: 100%; height: 120px; display: flex; justify-content: center; align-items: center; margin-bottom: 1rem; overflow: hidden; }
+        .logo-img { max-height: 100px; width: auto; object-fit: contain; }
         .logo-img { max-height: 100%; max-width: 100%; object-fit: contain; }
         aside nav { display: flex; flex-direction: column; width: 100%; flex-grow: 1; }
         .nav-btn { width: 100%; padding: 0.8rem 1rem; background: transparent; border: none; color: var(--text-sidebar); text-align: left; cursor: pointer; border-radius: 8px; margin-bottom: 0.5rem; font-size: 0.95rem; transition: 0.3s; display: flex; align-items: center; gap: 10px; border-left: 4px solid transparent; }
@@ -85,13 +171,22 @@
         .mobile-topbar { display: none; }
         
         /* Botão Config/Cargo (Topo Esquerda) */
-        .btn-config { position: fixed; top: 16px; left: 16px; background: var(--bg-sidebar); color: white; border: none; border-radius: 50%; width: 42px; height: 42px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 2000; font-size: 1.1rem; box-shadow: 0 4px 8px rgba(0,0,0,0.3); transition: 0.2s; }
-        
-        /* Botão Novo (+) Topo Direita (Só mobile) */
-        .btn-novo-top { display: none; }
+        .btn-config { top: 12px; left: 10px; width: 42px; height: 42px; font-size: 1.3rem; display: flex; align-items: center; justify-content: center; background: white; color: var(--primary); border-radius: 50%; z-index: 2001; }
+            
+            .btn-novo-top { display: flex; position: fixed; top: 12px; right: 10px; z-index: 2001; font-size: 1.6rem; color: white; background: var(--primary); border: none; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%; }
 
         /* GERAL */
-       main { margin-left: 260px; padding: 1.5rem; width: calc(100% - 260px); position: relative; padding-bottom: 100px; transition: 0.3s; min-height: 100vh; overflow-x: hidden; }
+       main { margin-left: 260px; padding: 1.5rem; width: calc(100% - 260px); min-height: 100vh; position: relative; }
+
+        /* Ajuste do botão de engrenagem para não sumir e ficar no topo certo */
+        .btn-config { 
+            position: fixed; top: 20px; left: 20px; z-index: 2000; 
+            display: flex; align-items: center; justify-content: center;
+            color: var(--bg-sidebar) !important; /* Cor escura */
+            font-size: 1.5rem;
+        }
+        
+        .btn-config i { color: var(--bg-sidebar) !important; }
         h1 { margin-bottom: 1.5rem; color: var(--bg-body); font-weight: 800; font-size: 3.1rem; letter-spacing: -0.5px; text-shadow: 0 2px 8px rgba(0,0,0,0.4); }
         
         /* Layout em Lista (Barras Horizontais) para Áreas e Itens */
@@ -99,10 +194,19 @@
         .grid-areas-layout .card-nav { flex-direction: row; padding: 1rem 1.5rem; justify-content: flex-start; text-align: left; gap: 15px; }
         .grid-areas-layout .card-nav h3 { font-size: 1.05rem; flex-grow: 1; text-align: left; }
         
-        /* Esconde ícones nas listas de áreas/itens para um visual mais limpo */
-        .grid-areas-layout .card-nav i, 
-        .grid-areas-layout .card-nav img, 
-        .grid-areas-layout .card-nav span { display: none !important; }
+        /* Esconde ícones nas listas exceto na seção de receitas */
+        .grid-areas-layout:not(#grid-receitas) .card-nav i, 
+        .grid-areas-layout:not(#grid-receitas) .card-nav img, 
+        .grid-areas-layout:not(#grid-receitas) .card-nav span { display: none !important; }
+
+        /* Estilo específico para os cards de receitas na lista */
+        #grid-receitas .card-nav {
+            flex-direction: row !important;
+            justify-content: flex-start !important;
+            text-align: left !important;
+            padding: 15px !important;
+            gap: 15px !important;
+        }
 
         /* Indicador de Estoque Padrão (Semáforo) */
         .status-dot { width: 14px; height: 14px; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-right: 10px; border: 2px solid white; flex-shrink: 0; display: block !important; }
@@ -160,11 +264,11 @@
         .card-nav h3 { font-size: 0.95rem; color: var(--bg-sidebar); }
 
         /* PESQUISA E NOVOS BOTÕES DE QTD DIVIDIDOS */
-        .search-bar { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.95rem; outline: none; transition: 0.2s; box-sizing: border-box; }
+        .search-bar { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.95rem; outline: none; transition: 0.2s; box-sizing: border-box; background: #1a0404; color: #fbeee3; }
         .search-bar:focus { border-color: var(--primary); }
         
-        .qty-box { display: inline-flex; align-items: stretch; border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; height: 38px; width: 85px; background: white; margin: 0 auto; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .qty-input { flex: 1; width: 100%; min-width: 0; border: none; text-align: center; font-weight: 800; font-size: 1.05rem; -moz-appearance: textfield; outline: none; padding: 0; color: var(--text-main); }
+        .qty-box { display: inline-flex; align-items: stretch; border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; height: 38px; width: 85px; background: #000000; margin: 0 auto; box-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+        .qty-input { flex: 1; width: 100%; min-width: 0; border: none; text-align: center; font-weight: 800; font-size: 1.05rem; -moz-appearance: textfield; outline: none; padding: 0; color: #fbeee3; background: #000000; }
         .qty-input::-webkit-outer-spin-button, .qty-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         .qty-ctrls { display: flex; flex-direction: column; width: 28px; flex-shrink: 0; border-left: 1px solid var(--border-color); }
         .qty-btn-up { background: #10b981; color: white; flex: 1; border: none; cursor: pointer; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; padding: 0; margin: 0; }
@@ -180,12 +284,15 @@
         .sort-btn-down:active { background: #dc2626; }
 
         /* TABELAS */
-        .table-container { background: white; border-radius: 10px; overflow-x: auto; border: 1px solid var(--border-color); width: 100%; color: var(--text-main); }
+        .table-container { background: #1a0404; border-radius: 10px; overflow-x: auto; border: 1px solid var(--border-color); width: 100%; color: #fbeee3; }
         table { width: 100%; border-collapse: collapse; }
-        th { background: #fffaf7; padding: 0.8rem 0.5rem; text-align: left; border-bottom: 2px solid var(--border-color); font-size: 0.75rem; color: #64748b; font-weight: 700; white-space: nowrap; text-transform: uppercase; }
-        td { padding: 0.8rem 0.5rem; border-bottom: 1px solid var(--border-color); vertical-align: middle; font-size: 0.85rem; }
-        tbody tr:nth-child(even) { background-color: var(--row-even); }
-        .col-item { font-weight: 600; min-width: 120px; }
+        th { background: #0a0101; padding: 0.8rem 0.5rem; text-align: left; border-bottom: 2px solid var(--border-color); font-size: 0.75rem; color: #fbeee3; font-weight: 700; white-space: nowrap; text-transform: uppercase; }
+        td { padding: 0.8rem 0.5rem; border-bottom: 1px solid var(--border-color); vertical-align: middle; font-size: 0.85rem; color: #fbeee3; }
+        tr:nth-child(even) { background-color: #280606; } /* Cria a listra levemente mais clara */
+        tr:hover { background-color: rgba(255, 255, 255, 0.08); } /* Efeito de destaque ao passar o mouse */
+        
+        td, th { border-bottom: 1px solid rgba(251, 238, 227, 0.1); }
+        .col-item { font-weight: 600; min-width: 120px; color: #fbeee3; }
         .total-container { display: flex; flex-direction: column; line-height: 1.2; text-align: right; }
         .total-fardos { font-weight: 800; color: var(--primary); font-size: 0.95rem; white-space: nowrap; }
         .total-unidades { font-weight: 600; color: #64748b; font-size: 0.75rem; white-space: nowrap; }
@@ -298,52 +405,51 @@
         }
 
         @media (max-width: 768px) { 
-            body { background-size: cover; background-position: top center; } /* Corrige o espaço vazio no celular */
-            .mobile-topbar { display: flex; justify-content: center; align-items: center; position: fixed; top: 0; left: 0; width: 100%; height: 75px; background: var(--bg-sidebar); z-index: 1500; box-shadow: 0 2px 8px rgba(0,0,0,0.25); }
-            .mobile-topbar img { height: 75px; max-height: 100%; width: auto; object-fit: contain; padding: 0; }
-            
-            aside { width: 100%; height: 65px; bottom: 0; top: auto; left: 0; padding: 0; display: flex; flex-direction: row; box-shadow: 0 -2px 10px rgba(0,0,0,0.2); } 
-            aside nav { flex-direction: row; justify-content: space-around; height: 100%; align-items: center; }
-            .logo-container { display: none; } 
-            .nav-btn { flex-direction: column; justify-content: center; align-items: center; gap: 4px; padding: 5px; margin-bottom: 0; border-radius: 0; border-left: none; border-bottom: 3px solid transparent; height: 100%; }
-            .nav-btn.active { border-bottom: 3px solid var(--primary); background: var(--bg-sidebar-active); }
-            .nav-btn span { display: block !important; font-size: 0.60rem; font-weight: normal; text-align: center; }
-            
-            .btn-config { top: 28px; left: 10px; width: 42px; height: 42px; font-size: 1.5rem; font-weight: bold; background: white; color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.2); border-radius: 50%; }
-            
-            .fab-main { display: none !important; }
-            .btn-novo-top { display: flex; position: fixed; top: 16px; right: 10px; z-index: 2001; font-size: 1.8rem; color: white; background: var(--primary); border: none; cursor: pointer; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-            .fab-options { top: 70px; bottom: auto; right: 10px; width: calc(100% - 20px); }
-            .fab-item { width: 100%; justify-content: center; padding: 15px; border-radius: 12px; }
+            body { background-size: cover; background-position: top center; } 
 
-            main { margin-left: 0; width: 100%; padding: 6rem 0.5rem 85px 0.5rem; overflow-x: hidden; }
-            h1 { font-size: 2rem; }
-
-            /* ESTILO BOTTOM SHEET PARA MODAIS */
-            .modal-overlay { align-items: flex-end; }
-            .modal-box { 
-                max-width: none; 
-                width: 100%; 
-                border-radius: 24px 24px 0 0; 
-                padding: 2rem 1.5rem;
-                animation: slideUp 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-                border-bottom: none;
+            .mobile-topbar { 
+                display: flex; justify-content: center; align-items: center; 
+                position: fixed; top: 0; left: 0; width: 100%; height: 70px; 
+                background: var(--bg-sidebar); z-index: 1500; box-shadow: 0 2px 10px rgba(0,0,0,0.3); 
             }
-            @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+            .mobile-topbar img { height: 35px; width: auto; object-fit: contain; }
+
+            /* Engrenagem no mobile - Centralizada verticalmente na barra de 70px */
+            .btn-config { 
+                position: fixed; top: 14px; left: 15px; width: 42px; height: 42px; 
+                z-index: 1600; display: flex !important; margin: 0; 
+                background: white; color: var(--primary); border-radius: 50%;
+            }
+
+            /* Reduzido o padding-top de 90px para 75px para o conteúdo subir mais */
+            main { margin-left: 0; width: 100%; padding: 75px 1rem 85px 1rem; min-height: 100vh; }
+            h1 { font-size: 2rem; margin-top: 10px; }
+
+            aside { width: 100%; height: 65px; bottom: 0; top: auto; left: 0; padding: 0; display: flex; flex-direction: row; box-shadow: 0 -2px 10px rgba(0,0,0,0.2); position: fixed; z-index: 1500; } 
+            aside nav { flex-direction: row; justify-content: space-around; height: 100%; align-items: center; width: 100%; }
+            .logo-container { display: none; } 
+            .nav-btn { flex-direction: column; justify-content: center; align-items: center; gap: 4px; padding: 5px; margin-bottom: 0; border-radius: 0; border-left: none; border-bottom: 3px solid transparent; height: 100%; flex: 1; }
+            .nav-btn span { display: block !important; font-size: 0.60rem; font-weight: normal; text-align: center; }
+
+            /* FAB de opções flutuando acima do menu inferior */
+            /* Joga o (+) para o topo direito e ajusta o menu */
+.fab-container { bottom: auto; top: 14px; right: 15px; flex-direction: column; z-index: 1600; }
+.fab-main { width: 42px; height: 42px; font-size: 26px; }
+.fab-options { top: 60px; bottom: auto; right: 15px; width: auto; }
         }
+            @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        
     </style>
 </head>
 <body class="role-visualizador">
     <div id="fab-overlay" onclick="toggleFab()"></div>
 
     <!-- TOPO MOBILE COM LOGO -->
-    <div class="mobile-topbar"><img src="contamais.svg" alt="ContaMais Logo" style="height: 75px; width: auto;"></div>
+    <div class="mobile-topbar"><img src="contamais.svg" alt="ContaMais Logo" style="height: 50px; width: auto;"></div>
 
     <!-- BOTÃO TOPO ESQUERDA (ENGRENAGEM OU CARGO) -->
     <button id="btn-top-role" class="btn-config" onclick="if(currentRole==='dono') abrirConfig()"></button>
     
-    <!-- BOTÃO TOPO DIREITA (+) APENAS NO MOBILE PARA DONO -->
-    <button id="btn-novo-top" class="btn-novo-top req-dono" onclick="event.stopPropagation(); toggleFab()">+</button>
 
     <!-- MODAL DE AUTENTICAÇÃO -->
     <div id="modalAuth" class="modal-overlay">
@@ -1011,9 +1117,9 @@
                 btnLogin.innerHTML = '👤 <span>Entrar / Cadastrar</span>';
             }
             
-            if (currentRole === 'dono') btnRole.innerHTML = '⚙️';
-            else if (currentRole === 'contribuidor') btnRole.innerHTML = '✏️';
-            else btnRole.innerHTML = '👁️';
+            if (currentRole === 'dono') btnRole.innerHTML = '<i class="ph ph-gear-six" style="color: var(--bg-sidebar); font-weight: bold;"></i>';
+            else if (currentRole === 'contribuidor') btnRole.innerHTML = '<i class="ph ph-pencil-simple" style="color: var(--bg-sidebar); font-weight: bold;"></i>';
+            else btnRole.innerHTML = '<i class="ph ph-eye" style="color: var(--bg-sidebar); font-weight: bold;"></i>';
 
             if(currentRole !== 'dono' && document.getElementById('configuracoes').classList.contains('active')) navegar('inicio');
             
@@ -1847,7 +1953,7 @@
                     let colPadrao = '';
                     if(usaPadrao) {
                         const qtdP = (areaObj.config.padroes && areaObj.config.padroes[pk]) ? areaObj.config.padroes[pk] : 0;
-                        colPadrao = `<td style="text-align:center; font-weight:bold; color:#10b981; background:#f0fdf4;">${qtdP}</td>`;
+                        colPadrao = `<td style="text-align:center; font-weight:bold; color:#10b981; background:#0a2414;">${qtdP}</td>`;
                     }
 
                     const fardoInput = t > 1 ? getQtyHTML(`f-${pk}`, v.f||0, pk, nome, t) : '';
@@ -2559,10 +2665,10 @@
             }
             
             grid.innerHTML = chaves.map(k => {
-                const r = receitasDB[k];
+                const r = Object.assign({ ingredientes: [], foto: "", configEnquadramento: { x: 50, y: 50, scale: 1 } }, receitasDB[k]);
                 
                 let custoTotal = 0;
-                (r.ingredientes || []).forEach(ing => {
+                r.ingredientes.forEach(ing => {
                     let p = produtos[ing.idProduto];
                     if(p) {
                         if(ing.unidade === 'ml' && p.detalhesDestilado && p.detalhesDestilado.ml) {
@@ -2573,18 +2679,23 @@
                     }
                 });
 
-                let imgOrIcon = '';
+                let imgHtml = '';
                 if(r.foto) {
                     const cfg = r.configEnquadramento || { x: 50, y: 50, scale: 1 };
-                    imgOrIcon = `<div style="width:60px; height:60px; border-radius:10px; overflow:hidden; margin-bottom:8px; display:flex; align-items:center; justify-content:center; background:#f8fafc;"><img src="${r.foto}" style="width:100%; height:100%; object-fit:cover; object-position: ${cfg.x}% ${cfg.y}%; transform-origin: ${cfg.x}% ${cfg.y}%; transform: scale(${cfg.scale});"></div>`;
+                    imgHtml = `<div style="width:60px; height:60px; border-radius:10px; overflow:hidden; flex-shrink:0; border:1px solid #e2e8f0; display:block !important;">
+                                    <img src="${r.foto}" style="width:100%; height:100%; object-fit:cover; object-position: ${cfg.x}% ${cfg.y}%; transform-origin: ${cfg.x}% ${cfg.y}%; transform: scale(${cfg.scale}); display:block !important;">
+                               </div>`;
                 } else {
-                    imgOrIcon = `<i style="font-size: 2.2rem; display: block; margin-bottom: 8px; font-style: normal;">🍹</i>`;
+                    imgHtml = `<div style="width:60px; height:60px; border-radius:10px; background:rgba(0,0,0,0.05); display:flex !important; align-items:center; justify-content:center; color:var(--primary); font-size:1.5rem; flex-shrink:0;"><i class="ph ph-martini"></i></div>`;
                 }
 
-                return `<div class="card-nav" onclick="verDetalhesReceita('${k}')">
-                    ${imgOrIcon}
-                    <h3 style="font-size: 0.95rem; color: var(--bg-sidebar);">${r.nome}</h3>
-                    <span class="req-dono" style="font-size:0.85rem; color:#10b981; font-weight:bold; margin-top:5px;">R$ ${custoTotal.toFixed(2).replace('.', ',')}</span>
+                return `
+                <div class="card-nav" onclick="verDetalhesReceita('${k}')" style="display:flex !important;">
+                    ${imgHtml}
+                    <div style="display:flex; flex-direction:column; gap:4px;">
+                        <h3 style="font-size:1.05rem; color:var(--text-main); margin:0; display:block !important;">${r.nome}</h3>
+                        <span class="req-dono" style="font-size:0.85rem; color:#10b981; font-weight:800; display:block !important;">R$ ${custoTotal.toFixed(2).replace('.', ',')}</span>
+                    </div>
                 </div>`;
             }).join('');
         }
@@ -2600,7 +2711,6 @@
             let ingredientesHtml = (r.ingredientes || []).map(ing => {
                 let p = produtos[ing.idProduto];
                 let custoIng = 0;
-                let detalheCusto = "";
                 if(p) {
                     if(ing.unidade === 'ml' && p.detalhesDestilado && p.detalhesDestilado.ml) {
                         custoIng = (Number(p.detalhesDestilado.precoGarrafa) / Number(p.detalhesDestilado.ml)) * Number(ing.qtd);
@@ -2608,35 +2718,38 @@
                         custoIng = Number(p.precoCusto || 0) * Number(ing.qtd);
                     }
                     custoTotal += custoIng;
-                    detalheCusto = ` <span class="req-dono" style="color:#10b981; font-size:0.75rem;">(R$ ${custoIng.toFixed(2).replace('.', ',')})</span>`;
-                } else {
-                    detalheCusto = ` <span class="req-dono" style="color:red; font-size:0.75rem;">(Produto excluído)</span>`;
                 }
-                return `<li style="margin-bottom:5px; border-bottom:1px solid #e2e8f0; padding-bottom:5px;"><strong>${ing.qtd} ${ing.unidade}</strong> de ${ing.nome}${detalheCusto}</li>`;
+                return `<li style="margin-bottom:8px; color:var(--text-main); font-size:0.9rem; list-style:none; border-bottom:1px solid rgba(0,0,0,0.05); padding-bottom:5px;">
+                            <strong>${ing.qtd} ${ing.unidade}</strong> de ${ing.nome}
+                        </li>`;
             }).join('');
 
             let fotoHtml = '';
             if(r.foto) {
                 const cfg = r.configEnquadramento || { x: 50, y: 50, scale: 1 };
-                fotoHtml = `<div class="receita-detail-img-wrapper"><img src="${r.foto}" class="receita-detail-img" style="object-position: ${cfg.x}% ${cfg.y}%; transform-origin: ${cfg.x}% ${cfg.y}%; transform: scale(${cfg.scale});" alt="Foto da Receita"></div>`;
+                fotoHtml = `<div style="width:135px; height:240px; border-radius:12px; overflow:hidden; flex-shrink:0; border:2px solid var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                                <img src="${r.foto}" style="width:100%; height:100%; object-fit:cover; object-position: ${cfg.x}% ${cfg.y}%; transform-origin: ${cfg.x}% ${cfg.y}%; transform: scale(${cfg.scale});">
+                            </div>`;
             }
-            let preparoHtml = r.preparo ? `<div style="margin-top:15px; padding:10px; background:#f8fafc; border-radius:8px; font-size:0.9rem; line-height:1.5; border:1px solid var(--border-color);"><strong>Modo de Preparo:</strong><br>${r.preparo.replace(/\n/g, '<br>')}</div>` : '';
-            
+
             document.getElementById('detalhe-receita-content').innerHTML = `
-                <div id="receita-info-painel" class="req-dono" style="display:none; background:#f0fdf4; border:1px solid #10b981; border-radius:8px; padding:12px; margin-bottom:15px;">
-                    <h3 style="color:#047857; margin:0; font-size:1.1rem;">Custo de Produção: R$ ${custoTotal.toFixed(2).replace('.', ',')}</h3>
-                </div>
-                
-                <div class="receita-detail-flex">
-                    <div class="receita-detail-ingredientes">
+                <div style="display:flex; gap:15px; align-items:flex-start;">
+                    <div style="flex:1;">
+                        <div id="receita-info-painel" class="req-dono" style="background:#f0fdf4; border:1px solid #10b981; border-radius:8px; padding:10px; margin-bottom:15px;">
+                            <h3 style="color:#047857; margin:0; font-size:1rem; font-weight:800;">Custo: R$ ${custoTotal.toFixed(2).replace('.', ',')}</h3>
+                        </div>
                         <h3 style="color:var(--primary); font-size:1rem; margin-bottom:10px;">Ingredientes:</h3>
-                        <ul style="list-style:none; padding:0; margin:0; font-size:0.9rem;">
-                            ${ingredientesHtml}
-                        </ul>
+                        <ul style="padding:0; margin:0;">${ingredientesHtml}</ul>
                     </div>
+                    
                     ${fotoHtml}
                 </div>
-                ${preparoHtml}
+
+                ${r.preparo ? `
+                <div style="margin-top:20px; padding:15px; background:rgba(0,0,0,0.03); border-radius:12px; border:1px solid rgba(0,0,0,0.05);">
+                    <strong style="display:block; margin-bottom:8px; color:var(--primary); font-size:0.95rem;"><i class="ph ph-book-open"></i> Modo de Preparo:</strong>
+                    <p style="margin:0; font-size:0.85rem; line-height:1.6; color:var(--text-main); white-space:pre-wrap;">${r.preparo}</p>
+                </div>` : ''}
             `;
             
             navegar('detalhe-receita');
