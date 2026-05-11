@@ -45,40 +45,15 @@
         /* Idea 4: Inputs Premium (Sem outline azul, com aura suave) */
         input:focus, select:focus, textarea:focus, button:focus { outline: none; box-shadow: 0 0 0 3px rgba(183, 41, 41, 0.15); border-color: rgba(183, 41, 41, 0.4); transition: var(--transition-fluid); }
         
-        html { background-color: var(--bg-body); }
         body { 
-            background-color: transparent; /* Deixa a textura aparecer! */
-            color: var(--text-main); 
+            background-color: var(--bg-sidebar); /* Cor base escura de segurança */
+            background-image: url('backg_dark.svg');
+            background-repeat: no-repeat; /* Proíbe de multiplicar */
+            background-size: 100vw auto; /* Ajusta o zoom para ficar mais distante, mas cobrindo a tela */
+            background-position: center; /* Centraliza o desenho */
+            background-attachment: fixed;
+            color: var(--bg-body); /* Deixa o texto geral claro (bege) para dar leitura */
             line-height: 1.5; 
-            position: relative; 
-            z-index: 0; 
-        }
-
-        /* O Fundo Trançado Orgânico */
-        body::before {
-            content: "";
-            position: fixed; /* O fundo fica estático enquanto você rola a página */
-            top: -50%; 
-            left: -50%;
-            width: 200%; /* Criamos uma área gigante para poder girar sem cortar as bordas */
-            height: 200%;
-            background-image: url('fundo-trancado.jpeg'); /* Sua imagem aqui */
-            background-repeat: repeat;
-            
-            /* 1. Melhora a qualidade (compacta a imagem para os fios ficarem finos e em alta resolução) */
-            background-size: 120px; 
-            
-            /* 4. Inclinação orgânica (Gira o trançado em 10 graus) */
-            transform: rotate(-10deg);
-            
-            /* 2 e 3. Mágica de Cores e Sombras */
-            /* contrast(0.4): Mata as sombras fortes, deixando o desenho mais plano e suave */
-            /* sepia(1) + hue-rotate(320deg) + saturate(3): Transforma o bege/marrom em tom de Vinho/Bordeaux */
-            filter: contrast(0.4) sepia(1) hue-rotate(320deg) saturate(3) brightness(0.8);
-            
-            opacity: 0.05; /* O segredo do luxo: quase invisível, apenas uma marca d'água tátil */
-            pointer-events: none; /* Impede que o fundo atrapalhe os cliques dos botões */
-            z-index: -1; /* Joga a textura para a camada mais profunda da tela */
         }
 
         /* Idea 3: Container de Notificações (Toasts) */
@@ -117,15 +92,17 @@
 
         /* GERAL */
        main { margin-left: 260px; padding: 1.5rem; width: calc(100% - 260px); position: relative; padding-bottom: 100px; transition: 0.3s; min-height: 100vh; overflow-x: hidden; }
-        h1 { margin-bottom: 1.5rem; color: var(--bg-sidebar); font-weight: 800; font-size: 1.8rem; letter-spacing: -0.5px; }
-        h2, h3, th, strong { font-weight: 800; }
+        h1 { margin-bottom: 1.5rem; color: var(--bg-body); font-weight: 800; font-size: 3.1rem; letter-spacing: -0.5px; text-shadow: 0 2px 8px rgba(0,0,0,0.4); }
         
         /* Layout em Lista (Barras Horizontais) para Áreas e Itens */
         .grid-areas-layout { display: flex !important; flex-direction: column !important; gap: 0.8rem; }
         .grid-areas-layout .card-nav { flex-direction: row; padding: 1rem 1.5rem; justify-content: flex-start; text-align: left; gap: 15px; }
-        .grid-areas-layout .card-nav i { margin-bottom: 0; font-size: 1.8rem; color: var(--primary); }
-        .grid-areas-layout .card-nav h3 { font-size: 1.05rem; flex-grow: 1; }
-        .grid-areas-layout .card-nav img { margin: 0; width: 32px !important; height: 32px !important; }
+        .grid-areas-layout .card-nav h3 { font-size: 1.05rem; flex-grow: 1; text-align: left; }
+        
+        /* Esconde ícones nas listas de áreas/itens para um visual mais limpo */
+        .grid-areas-layout .card-nav i, 
+        .grid-areas-layout .card-nav img, 
+        .grid-areas-layout .card-nav span { display: none !important; }
 
         .header-com-acao { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px; }
         .btn-toggle-grupo { background: var(--primary); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s; font-size: 0.85rem; }    
@@ -136,17 +113,37 @@
             to { opacity: 1; transform: translateY(0); } 
         }
 
+        /* Estilo Premium e Translúcido para as Janelas/Cards */
         .card { 
-            background: var(--card-bg); 
+            background: rgba(251, 238, 227, 0.8); /* Bege translúcido suave */
+            color: var(--text-main); /* Garante que o texto DENTRO da janela fique escuro */
             padding: 1.5rem; 
             border-radius: var(--radius-lg); 
-            box-shadow: var(--shadow-premium); 
+            box-shadow: 0 8px 32px rgba(0,0,0,0.25); /* Sombra mais difusa */
             margin-bottom: 1.5rem; 
-            border: 1px solid rgba(40, 6, 6, 0.03); 
+            border: 1px solid rgba(255,255,255,0.1); 
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
             transition: var(--transition-fluid);
         }
         .card:hover { transform: translateY(-2px); }
-
+        
+        .card-nav { 
+            background: rgba(251, 238, 227, 0.8); 
+            color: var(--text-main);
+            padding: 2rem; 
+            border-radius: 16px; /* Borda mais redondinha e amigável */
+            text-align: center; 
+            cursor: pointer; 
+            transition: var(--transition-fluid); 
+            box-shadow: 0 8px 32px rgba(0,0,0,0.25); 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            border: 1px solid rgba(255,255,255,0.1); 
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+        }
+        .card-nav:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.35); }
         .btn-back-styled { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: var(--bg-sidebar); color: var(--primary); border-radius: 10px; border: 2px solid var(--primary); cursor: pointer; margin-bottom: 1rem; }
         .btn-back-styled svg { width: 25px; height: 25px; fill: currentColor; }
 
@@ -316,7 +313,7 @@
             .fab-item { width: 100%; justify-content: center; padding: 15px; border-radius: 12px; }
 
             main { margin-left: 0; width: 100%; padding: 5rem 0.5rem 85px 0.5rem; overflow-x: hidden; } 
-            h1 { font-size: 1.2rem; }
+            h1 { font-size: 2rem; }
 
             /* ESTILO BOTTOM SHEET PARA MODAIS */
             .modal-overlay { align-items: flex-end; }
@@ -411,10 +408,9 @@
         <!-- 1. GUIA: INÍCIO -->
         <section id="inicio" class="section active">
             <h1>Início</h1>
-            <p style="color:#64748b; margin-bottom:20px;">Bem-vindo ao AdmiNiran. Selecione um dos módulos abaixo ou no menu lateral.</p>
             <div class="grid-home">
-                <div class="card-nav" onclick="navegar('produtos-hub', document.getElementById('nav-produtos-hub'))"><i>🍾</i><h3>Produtos e Pedidos</h3></div>
-                <div class="card-nav" onclick="navegar('reservas-hub', document.getElementById('nav-reservas-hub'))"><i>📅</i><h3>Reservas e Mapa</h3></div>
+                <div class="card-nav" onclick="navegar('produtos-hub', document.getElementById('nav-produtos-hub'))"><i class="ph ph-beer-bottle" style="font-size:2.5rem; margin-bottom:10px; color:var(--primary);"></i><h3>Produtos e Pedidos</h3></div>
+                <div class="card-nav" onclick="navegar('reservas-hub', document.getElementById('nav-reservas-hub'))"><i class="ph ph-calendar-blank" style="font-size:2.5rem; margin-bottom:10px; color:var(--primary);"></i><h3>Reservas e Mapa</h3></div>
             </div>
         </section>
 
@@ -422,10 +418,10 @@
         <section id="produtos-hub" class="section">
             <h1>Produtos e Logística</h1>
             <div class="grid-home">
-                <div class="card-nav" onclick="navegar('areas-lista')"><i>📍</i><h3>Áreas</h3></div>
-                <div class="card-nav" onclick="navegar('produtos-categorias')"><i>📦</i><h3>Itens</h3></div>
-                <div class="card-nav" onclick="navegar('pedidos-metodos')"><i>🛒</i><h3>Pedidos</h3></div>
-                <div class="card-nav" onclick="abrirReceitas()"><i>🍹</i><h3>Receitas</h3></div>
+                <div class="card-nav" onclick="navegar('areas-lista')"><i class="ph ph-map-pin" style="font-size:2.5rem; margin-bottom:10px; color:var(--primary);"></i><h3>Áreas</h3></div>
+                <div <div class="card-nav" onclick="navegar('produtos-categorias')"><i class="ph ph-tag" style="font-size:2.5rem; margin-bottom:10px; color:var(--primary);"></i><h3>Itens</h3></div>
+                <div class="card-nav" onclick="navegar('pedidos-metodos')"><i class="ph ph-shopping-cart" style="font-size:2.5rem; margin-bottom:10px; color:var(--primary);"></i><h3>Pedidos</h3></div>
+                <div class="card-nav" onclick="abrirReceitas()"><i class="ph ph-martini" style="font-size:2.5rem; margin-bottom:10px; color:var(--primary);"></i><h3>Receitas</h3></div>
             </div>
         </section>
 
@@ -433,8 +429,8 @@
         <section id="reservas-hub" class="section">
             <h1>Gestão de Reservas</h1>
             <div class="grid-home">
-                <div class="card-nav" onclick="irParaAgenda()"><i>📅</i><h3>Agenda</h3></div>
-                <div class="card-nav" onclick="navegar('mapa-setup')"><i>🗺️</i><h3>Mapa de Salão</h3></div>
+                <div class="card-nav" onclick="irParaAgenda()"><i class="ph ph-calendar-check" style="font-size:2.5rem; margin-bottom:10px; color:var(--primary);"></i><h3>Agenda</h3></div>
+                <div class="card-nav" onclick="navegar('mapa-setup')"><i class="ph ph-map-trifold" style="font-size:2.5rem; margin-bottom:10px; color:var(--primary);"></i><h3>Mapa de Salão</h3></div>
             </div>
         </section>
 
@@ -1062,11 +1058,29 @@
         // ==========================================
         // NAVEGAÇÃO E FAB CLICK OUTSIDE
         // ==========================================
-        function navegar(id, btn) { 
+        function navegar(id, btn, doHistorico = false) { 
+            // Registra a tela no histórico do navegador/celular
+            if (!doHistorico) { history.pushState({ tela: id }, "", "#" + id); }
+
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); 
+            
+            // Busca a seção exatamente pelo ID que está no HTML
             const alvo = document.getElementById(id);
             if(alvo) alvo.classList.add('active'); 
-            if(btn) { document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); } 
+
+            // Sincroniza o menu lateral automaticamente baseado na tela atual
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            if (id.includes('reservas') || id.includes('mapa') || id.includes('agenda')) {
+                const btnRes = document.getElementById('nav-reservas-hub');
+                if(btnRes) btnRes.classList.add('active');
+            } else if (id === 'inicio') {
+                const btnIni = document.getElementById('nav-inicio');
+                if(btnIni) btnIni.classList.add('active');
+            } else if (id !== 'configuracoes' && id !== 'atribuir-categoria' && id !== 'atribuir-metodo' && id !== 'detalhe-categoria-admin') {
+                // Qualquer outra tela (Estoque, Pedidos, Receitas) acende o hub de Produtos
+                const btnProd = document.getElementById('nav-produtos-hub');
+                if(btnProd) btnProd.classList.add('active');
+            } 
             window.scrollTo(0, 0); 
             if(id === 'mapa-salao') ajustarEscalaMapa();
             
@@ -2831,7 +2845,19 @@
         function fecharModal() {
             document.getElementById('modalDelete').style.display = 'none';
         }
-
+        // --- CONTROLE DO BOTÃO DE VOLTAR NATIVO (MOBILE/MOUSE) ---
+        window.addEventListener('popstate', function(event) {
+            if (event.state && event.state.tela) {
+                // Navega para a tela anterior sem criar um loop no histórico
+                navegar(event.state.tela, null, true);
+            } else {
+                // Se não tiver histórico, volta pro Início por segurança
+                navegar('inicio', document.getElementById('nav-inicio'), true);
+            }
+        });
+        
+        // Registra a tela inicial quando o sistema abre
+        history.replaceState({ tela: 'inicio' }, "", "#inicio");
     </script>
 </body>
 </html>
