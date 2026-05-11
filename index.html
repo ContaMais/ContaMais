@@ -76,8 +76,8 @@
 
         /* MENU LATERAL E TOPBAR */
         aside { width: 260px; background: var(--bg-sidebar); color: var(--text-sidebar); padding: 2rem 0.5rem 1rem 0.5rem; position: fixed; height: 100vh; z-index: 1000; transition: 0.3s; display: flex; flex-direction: column; }
-        .logo-container { display: flex; justify-content: center; align-items: center; margin-bottom: 2.5rem; width: 100%; height: 70px; }
-        .logo-img { max-height: 100%; max-width: 90%; object-fit: contain; }
+        .logo-container { display: flex; justify-content: center; align-items: center; margin-bottom: 2.5rem; width: 100%; height: 120px; }
+        .logo-img { max-height: 100%; max-width: 100%; object-fit: contain; }
         aside nav { display: flex; flex-direction: column; width: 100%; flex-grow: 1; }
         .nav-btn { width: 100%; padding: 0.8rem 1rem; background: transparent; border: none; color: var(--text-sidebar); text-align: left; cursor: pointer; border-radius: 8px; margin-bottom: 0.5rem; font-size: 0.95rem; transition: 0.3s; display: flex; align-items: center; gap: 10px; border-left: 4px solid transparent; }
         .nav-btn.active { background: var(--bg-sidebar-active); border-left: 4px solid var(--primary); color: white; font-weight: 600; }
@@ -103,6 +103,9 @@
         .grid-areas-layout .card-nav i, 
         .grid-areas-layout .card-nav img, 
         .grid-areas-layout .card-nav span { display: none !important; }
+
+        /* Indicador de Estoque Padrão (Semáforo) */
+        .status-dot { width: 14px; height: 14px; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-right: 10px; border: 2px solid white; flex-shrink: 0; display: block !important; }
 
         .header-com-acao { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px; }
         .btn-toggle-grupo { background: var(--primary); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s; font-size: 0.85rem; }    
@@ -177,7 +180,7 @@
         .sort-btn-down:active { background: #dc2626; }
 
         /* TABELAS */
-        .table-container { background: white; border-radius: 10px; overflow-x: auto; border: 1px solid var(--border-color); width: 100%; }
+        .table-container { background: white; border-radius: 10px; overflow-x: auto; border: 1px solid var(--border-color); width: 100%; color: var(--text-main); }
         table { width: 100%; border-collapse: collapse; }
         th { background: #fffaf7; padding: 0.8rem 0.5rem; text-align: left; border-bottom: 2px solid var(--border-color); font-size: 0.75rem; color: #64748b; font-weight: 700; white-space: nowrap; text-transform: uppercase; }
         td { padding: 0.8rem 0.5rem; border-bottom: 1px solid var(--border-color); vertical-align: middle; font-size: 0.85rem; }
@@ -334,7 +337,7 @@
     <div id="fab-overlay" onclick="toggleFab()"></div>
 
     <!-- TOPO MOBILE COM LOGO -->
-    <div class="mobile-topbar"><img src="contamais.svg" alt="ContaMais Logo" style="height: 50px; width: auto;"></div>
+    <div class="mobile-topbar"><img src="contamais.svg" alt="ContaMais Logo" style="height: 75px; width: auto;"></div>
 
     <!-- BOTÃO TOPO ESQUERDA (ENGRENAGEM OU CARGO) -->
     <button id="btn-top-role" class="btn-config" onclick="if(currentRole==='dono') abrirConfig()"></button>
@@ -398,7 +401,7 @@
 
     <main>
        <div class="fab-container req-dono">
-            <button class="fab-main" id="fabMain" onclick="event.stopPropagation(); toggleFabclass="logo-container()">
+            <button class="fab-main" id="fabMain" onclick="event.stopPropagation(); toggleFab()">
                 <span style="font-weight: 900; font-size: 42px; color: white; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; margin: 0; padding: 0; line-height: 1;">+</span>
             </button>
             <div id="fabOptions" class="fab-options">
@@ -422,7 +425,7 @@
             <h1>Produtos e Logística</h1>
             <div class="grid-home">
                 <div class="card-nav" onclick="navegar('areas-lista')"><i class="ph ph-map-pin" style="font-size:2.5rem; margin-bottom:10px; color:var(--primary);"></i><h3>Áreas</h3></div>
-                <div <div class="card-nav" onclick="navegar('produtos-categorias')"><i class="ph ph-tag" style="font-size:2.5rem; margin-bottom:10px; color:var(--primary);"></i><h3>Itens</h3></div>
+                <div class="card-nav" onclick="navegar('produtos-categorias')"><i class="ph ph-tag" style="font-size:2.5rem; margin-bottom:10px; color:var(--primary);"></i><h3>Itens</h3></div>
                 <div class="card-nav" onclick="navegar('pedidos-metodos')"><i class="ph ph-shopping-cart" style="font-size:2.5rem; margin-bottom:10px; color:var(--primary);"></i><h3>Pedidos</h3></div>
                 <div class="card-nav" onclick="abrirReceitas()"><i class="ph ph-martini" style="font-size:2.5rem; margin-bottom:10px; color:var(--primary);"></i><h3>Receitas</h3></div>
             </div>
@@ -1197,7 +1200,7 @@
                 renderizarChecksConfig(); 
             } catch(e){ console.error("Erro Áreas:", e); } 
         });
-        db.ref('produtos').on('value', s => { try { produtos = s.val() || {}; renderizarGradeAgrupada(); if(document.getElementById('pedidos-lista').classList.contains('active')){ const metKey = Object.keys(metodosCompra).find(k => metodosCompra[k].nome === document.getElementById('titulo-pedido-metodo').innerText.replace('Pedidos: ', '')); if(metKey) verPedidoPorMetodo(metKey); } } catch(e){} });
+        db.ref('produtos').on('value', s => { try { produtos = s.val() || {}; renderizarGradeAgrupada(); renderizarAreas(); if(document.getElementById('pedidos-lista').classList.contains('active')){ const metKey = Object.keys(metodosCompra).find(k => metodosCompra[k].nome === document.getElementById('titulo-pedido-metodo').innerText.replace('Pedidos: ', '')); if(metKey) verPedidoPorMetodo(metKey); } } catch(e){} });
         db.ref('categorias').on('value', s => { 
             try { 
                 categorias = s.val() || {}; 
@@ -1666,28 +1669,45 @@
                     let semaforoHTML = '';
                     if (a.config && a.config.usaPadrao && a.config.padroes) {
                         let totalRegras = Object.keys(a.config.padroes).length;
-                        let itensNoPadrao = 0;
 
                         if (totalRegras > 0) {
+                            let somaPercentuais = 0;
+                            let regrasValidas = 0;
+
                             Object.keys(a.config.padroes).forEach(pk => {
                                 const p = produtos[pk];
                                 if (p) {
+                                    regrasValidas++;
                                     let t = 1; 
                                     getCategoriasProduto(p).forEach(cn => { 
                                         const c = Object.values(categorias).find(x => x.nome === cn); 
                                         if(c && c.unidadesFardo > t) t = Number(c.unidadesFardo); 
                                     });
                                     const v = p.estoque?.[a.nome] || {f:0,u:0};
+                                    
                                     const qtdAtual = t > 1 ? (Number(v.f) || 0) : (Number(v.f)*t + Number(v.u));
-                                    if (qtdAtual >= a.config.padroes[pk]) itensNoPadrao++;
+                                    const meta = Number(a.config.padroes[pk]) || 0;
+                                    
+                                    if (meta > 0) {
+                                        let pctItem = (qtdAtual / meta) * 100;
+                                        if (pctItem > 100) pctItem = 100; // Limita em 100% para não mascarar as faltas
+                                        somaPercentuais += pctItem;
+                                    } else {
+                                        somaPercentuais += 100; // Se a meta for 0, consideramos 100% ok
+                                    }
                                 }
                             });
 
-                            const pct = (itensNoPadrao / totalRegras) * 100;
-                            let cor = '#ef4444'; 
-                            if (pct === 100) cor = '#10b981'; 
-                            else if (pct > 40) cor = '#f59e0b'; 
-                            semaforoHTML = `<div class="status-dot" style="background-color: ${cor};"></div>`;
+                            if (regrasValidas > 0) {
+                                // Tira a média da saúde do estoque da área inteira
+                                const pctGeral = Math.floor(somaPercentuais / regrasValidas);
+                                
+                                let cor = '#ef4444'; // 0 a 40% (Vermelho)
+                                if (pctGeral >= 100) cor = '#10b981'; // 100% (Verde)
+                                else if (pctGeral >= 41) cor = '#f59e0b'; // 41 a 99% (Amarelo)
+                                
+                                semaforoHTML = `<div class="status-dot" style="background-color: ${cor};"></div>`;
+                            }
                         }
                     }
                     return `<div class="card-nav" onclick="verArea('${a.key}', '${a.nome}')">
@@ -2329,38 +2349,7 @@
                 const areaObj = areas.find(a => a.key === areaAtualKey);
                 if (!areaObj) return;
                 
-                let iA = Object.keys(produtos).filter(pk => produtos[pk] && (produtos[pk].locais||[]).includes(areaObj.nome)); 
-                
-                iA.sort((a, b) => {
-                    const prioA = getPrioridadeProduto(produtos[a]);
-                    const prioB = getPrioridadeProduto(produtos[b]);
-                    if (prioA !== prioB) return prioA - prioB;
-                    return (produtos[a].nome || "").localeCompare(produtos[b].nome || "");
-                });
-                
-                document.getElementById('lista-itens-padrao-area').innerHTML = iA.map(pk => {
-                    const p = produtos[pk];
-                    let t = 1; getCategoriasProduto(p).forEach(cn => { const c = Object.values(categorias).find(x => x.nome === cn); if(c && c.unidadesFardo > t) t = Number(c.unidadesFardo); }); 
-                    const labelQtd = t > 1 ? 'Fds.' : 'Un.';
-                    const valAtual = (areaObj.config && areaObj.config.padroes && areaObj.config.padroes[pk]) ? areaObj.config.padroes[pk] : 0;
-                    
-                    return `<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e2e8f0; padding:8px 0;">
-                        <span style="font-size:0.85rem; font-weight:bold;">${p.nome} <small style="color:#64748b;">(${labelQtd})</small></span>
-                        <input type="number" id="padrao-${pk}" value="${valAtual}" style="width:65px; padding:5px; text-align:center; margin:0;" min="0">
-                    </div>`;
-                }).join('') || '<p style="font-size:0.8rem; color:#64748b; padding:10px;">Nenhum item vinculado a esta área.</p>';
-            }
-        }
-
-        function toggleConfigEstoquePadrao() {
-            const isChecked = document.getElementById('area-usar-padrao').checked;
-            const painel = document.getElementById('div-config-estoque-padrao');
-            painel.style.display = isChecked ? 'block' : 'none';
-            if(isChecked) {
-                const areaObj = areas.find(a => a.key === areaAtualKey);
-                if (!areaObj) return;
-                
-                // Agora puxa baseado no que o usuário marcou na tela de edição
+                // Puxa baseado no que o usuário marcou AGORA na tela de edição
                 const checkedKeys = Array.from(document.querySelectorAll('.area-prod-checkbox:checked')).map(cb => cb.value);
                 let iA = checkedKeys.filter(pk => produtos[pk]); 
                 
@@ -2377,13 +2366,12 @@
                     const labelQtd = t > 1 ? 'Fds.' : 'Un.';
                     const valAtual = (areaObj.config && areaObj.config.padroes && areaObj.config.padroes[pk]) ? areaObj.config.padroes[pk] : 0;
                     return `<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e2e8f0; padding:8px 0;">
-                        <span style="font-size:0.85rem; font-weight:bold;">${p.nome} <small style="color:#64748b;">(${labelQtd})</small></span>
+                        <span style="font-size:0.85rem; font-weight:bold; color: var(--text-main);">${p.nome} <small style="color:#64748b;">(${labelQtd})</small></span>
                         <input type="number" id="padrao-${pk}" value="${valAtual}" style="width:65px; padding:5px; text-align:center; margin:0;" min="0">
                     </div>`;
-                }).join('') || '<p style="font-size:0.8rem; color:#64748b; padding:10px;">Nenhum item marcado.</p>';
+                }).join('') || '<p style="font-size:0.8rem; color:#64748b; padding:10px;">Marque os produtos acima primeiro.</p>';
             }
         }
-
         function habilitarEdicaoArea() { 
             const a = areas.find(x => x.key === areaAtualKey);
             document.getElementById('edit-area-input').value = a.nome;
