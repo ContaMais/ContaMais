@@ -629,7 +629,8 @@
             <button class="nav-btn active" id="nav-inicio" onclick="navegar('inicio', this)"><i class="ph ph-house" style="font-size:1.3rem;"></i> <span>Início</span></button>
             <button class="nav-btn" id="nav-produtos-hub" onclick="navegar('produtos-hub', this)"><i class="ph ph-package" style="font-size:1.3rem;"></i> <span>Produtos</span></button>
             <button class="nav-btn" id="nav-reservas-hub" onclick="navegar('reservas-hub', this)"><i class="ph ph-calendar-blank" style="font-size:1.3rem;"></i> <span>Reservas</span></button>
-            
+            <button class="nav-btn" id="nav-receitas-hub" onclick="abrirReceitas()"><i class="ph ph-martini" style="font-size:1.3rem;"></i> <span>Receitas</span></button>
+
             <div style="margin-top: auto;"></div> 
             <button class="nav-btn" onclick="abrirModalAuth()" id="btn-login-sidebar"><i class="ph ph-user" style="font-size:1.3rem;"></i> <span>Entrar</span></button>
         </nav>
@@ -653,20 +654,18 @@
             <div class="grid-home">
                 <div class="card-nav" onclick="navegar('produtos-hub', document.getElementById('nav-produtos-hub'))"><i class="ph ph-beer-bottle" style="font-size:2.5rem; margin-bottom:10px; color:var(--primary);"></i><h3>Produtos e Pedidos</h3></div>
                 <div class="card-nav" onclick="navegar('reservas-hub', document.getElementById('nav-reservas-hub'))"><i class="ph ph-calendar-blank" style="font-size:2.5rem; margin-bottom:10px; color:var(--primary);"></i><h3>Reservas e Mapa</h3></div>
+                <div class="card-nav" onclick="abrirReceitas()"><i class="ph ph-martini" style="font-size:2.5rem; margin-bottom:10px; color:var(--primary);"></i><h3>Receitas</h3></div>
             </div>
         </section>
-
-        <!-- 2. GUIA: HUB DE PRODUTOS -->
+      <!-- 2. GUIA: HUB DE PRODUTOS -->
         <section id="produtos-hub" class="section">
             <h1>Produtos e Logística</h1>
             <div class="grid-home">
                 <div class="card-nav" onclick="navegar('areas-lista')"><i class="ph ph-map-pin" style="font-size:2.5rem; margin-bottom:10px; color:var(--primary);"></i><h3>Áreas</h3></div>
                 <div class="card-nav" onclick="navegar('produtos-categorias')"><i class="ph ph-tag" style="font-size:2.5rem; margin-bottom:10px; color:var(--primary);"></i><h3>Itens</h3></div>
                 <div class="card-nav" onclick="navegar('pedidos-metodos')"><i class="ph ph-shopping-cart" style="font-size:2.5rem; margin-bottom:10px; color:var(--primary);"></i><h3>Pedidos</h3></div>
-                <div class="card-nav" onclick="abrirReceitas()"><i class="ph ph-martini" style="font-size:2.5rem; margin-bottom:10px; color:var(--primary);"></i><h3>Receitas</h3></div>
             </div>
         </section>
-
         <!-- 3. GUIA: HUB DE RESERVAS -->
         <section id="reservas-hub" class="section">
             <h1>Gestão de Reservas</h1>
@@ -861,7 +860,6 @@
              NOVA SEÇÃO DE RECEITAS
         =================================================== -->
         <section id="receitas-lista" class="section">
-            <div class="btn-back-styled" onclick="navegar('produtos-hub')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
             <h1>Receitas</h1>
             <div id="grid-receitas" class="grid-areas-layout"></div>
         </section>
@@ -1308,9 +1306,14 @@
             if(alvo) alvo.classList.add('active'); 
 
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            // Mantém os botões do menu sincronizados
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             if (id.includes('reservas') || id.includes('mapa') || id.includes('agenda')) {
                 const btnRes = document.getElementById('nav-reservas-hub');
                 if(btnRes) btnRes.classList.add('active');
+            } else if (id.includes('receita')) {
+                const btnRec = document.getElementById('nav-receitas-hub');
+                if(btnRec) btnRec.classList.add('active');
             } else if (id === 'inicio') {
                 const btnIni = document.getElementById('nav-inicio');
                 if(btnIni) btnIni.classList.add('active');
