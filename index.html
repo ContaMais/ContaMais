@@ -4,15 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AdmiNiran - Gestão Logística</title>
-        <meta name="theme-color" content="#1a0404">
-    
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="AdmiNiran">
-    <link rel="apple-touch-icon" href="logoproj.png">
-
-    <link rel="manifest" href="manifest.json">
-
     <link rel="icon" type="image/png" href="logoproj.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -222,11 +213,57 @@
 
         .header-com-acao { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px; }
         .btn-toggle-grupo { background: var(--primary); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s; font-size: 0.85rem; }    
-        .section { display: none; animation: slideIn 0.5s cubic-bezier(0.25, 1, 0.5, 1); }
-        .section.active { display: block; }
-        @keyframes slideIn { 
-            from { opacity: 0; transform: translateY(10px); } 
-            to { opacity: 1; transform: translateY(0); } 
+        /* --- ANIMAÇÕES DE NAVEGAÇÃO ENTRE JANELAS --- */
+        .section { display: none; }
+        .section.active { display: block; animation: fadeInSoft 0.3s ease-out forwards; }
+        
+        @keyframes fadeInSoft {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Efeito de Lançamento (Exclusivo para Computador) */
+        @media (min-width: 769px) {
+            .section.active { animation: none; } /* Remove padrão do mobile */
+            
+            /* Fantasma: Mantém a janela velha na tela durante o voo para não quebrar o layout */
+            .section.animating-out {
+                display: block !important;
+                position: absolute;
+                top: 1.5rem; left: 1.5rem; width: calc(100% - 3rem);
+                pointer-events: none; /* Impede cliques enquanto voa */
+                z-index: 10;
+            }
+            .section.animating-in {
+                position: relative;
+                z-index: 20;
+            }
+
+            /* INDO PARA BAIXO (Câmera desce -> Janelas voam para CIMA) */
+            .section.fly-out-up { animation: blurFlyOutUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+            .section.fly-in-up { animation: blurFlyInUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+            
+            /* INDO PARA CIMA (Câmera sobe -> Janelas caem para BAIXO) */
+            .section.fly-out-down { animation: blurFlyOutDown 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+            .section.fly-in-down { animation: blurFlyInDown 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+            /* Keyframes do voo com Blur */
+            @keyframes blurFlyOutUp {
+                0% { transform: translateY(0); filter: blur(0); opacity: 1; }
+                100% { transform: translateY(-100vh); filter: blur(15px); opacity: 0; }
+            }
+            @keyframes blurFlyInUp {
+                0% { transform: translateY(100vh); filter: blur(15px); opacity: 0; }
+                100% { transform: translateY(0); filter: blur(0); opacity: 1; }
+            }
+            @keyframes blurFlyOutDown {
+                0% { transform: translateY(0); filter: blur(0); opacity: 1; }
+                100% { transform: translateY(100vh); filter: blur(15px); opacity: 0; }
+            }
+            @keyframes blurFlyInDown {
+                0% { transform: translateY(-100vh); filter: blur(15px); opacity: 0; }
+                100% { transform: translateY(0); filter: blur(0); opacity: 1; }
+            }
         }
 
         /* Estilo Premium e Translúcido para as Janelas/Cards */
@@ -388,7 +425,11 @@
         .fab-main { width: 55px; height: 55px; background: var(--primary); color: white; border-radius: 50%; border: none; font-size: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 100; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .fab-options { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; opacity: 0; pointer-events: none; transition: 0.2s; transform: translateY(10px); position: fixed; bottom: 95px; right: 20px; z-index: 101; }
         .fab-options.active { opacity: 1; pointer-events: all; transform: translateY(0); }
-        .fab-item { background: white; border: 1px solid var(--primary); padding: 10px 16px; border-radius: 20px; cursor: pointer; font-weight: 700; font-size: 0.9rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); color: var(--text-main); }
+        .fab-item { background: white; border: 1px solid var(--primary); padding: 10px 16px; border-radius: 20px; cursor: pointer; font-weight: 800; font-size: 0.9rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); color: #1a0404; }
+        /* Garante que os ícones dentro das opções do (+) fiquem escuros */
+        .fab-item i, .fab-item .ph, .fab-item [class^="ph-"] { 
+            color: #1a0404 !important; 
+        }
 
         input[type="text"], input[type="number"], input[type="password"], input[type="email"], input[type="date"], select { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; margin: 6px 0; outline: none; font-size: 0.9rem; font-family: inherit; }
         .btn-submit { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; font-size: 0.95rem; }
@@ -447,10 +488,90 @@
 .fab-options { top: 60px; bottom: auto; right: 15px; width: auto; }
         }
             @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        
+        /* --- CSS DO SPLASH: RESPONSIVO (HORIZONTAL PC / VERTICAL MOBILE) --- */
+        #splash-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #1a0404; display: flex; justify-content: center; 
+            align-items: center; z-index: 9998;
+        }
+
+        .splash-logo {
+            width: 250px; /* Logo bem maior e destacada no PC */
+            height: auto; opacity: 0;
+            animation: fadeInLogo 1.2s ease-in-out forwards;
+        }
+
+        @keyframes fadeInLogo {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* ----------------------------------------------------
+           COMPORTAMENTO PADRÃO (PC) - Direita para Esquerda
+           ---------------------------------------------------- */
+        #splash-bands {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            z-index: 9999; display: flex; 
+            flex-direction: row; /* Coloca as faixas em pé (colunas) */
+            pointer-events: none;
+            
+            transform-origin: right; /* Começa escondido na borda direita */
+            transform: scaleX(0);
+        }
+
+        .band { flex: 1; height: 100%; } /* Ocupa 25% da LARGURA da tela */
+
+        .bands-animate {
+            animation: sanfonaHorizontal 1.8s cubic-bezier(0.645, 0.045, 0.355, 1) forwards;
+        }
+
+        @keyframes sanfonaHorizontal {
+            0%    { transform-origin: right; transform: scaleX(0); }
+            40%   { transform-origin: right; transform: scaleX(1); } /* Estica cobrindo a tela */
+            40.1% { transform-origin: left; transform: scaleX(1); }  /* Troca a âncora pra esquerda */
+            60%   { transform-origin: left; transform: scaleX(1); }  /* Pausa cobrindo tudo */
+            100%  { transform-origin: left; transform: scaleX(0); }  /* Encolhe sumindo pela esquerda */
+        }
+
+        /* ----------------------------------------------------
+           COMPORTAMENTO MOBILE - Baixo para Cima
+           ---------------------------------------------------- */
+        @media (max-width: 768px) {
+            .splash-logo { 
+                width: 130px; /* Fica menorzinha para não estourar no celular */
+            }
+            #splash-bands {
+                flex-direction: column; /* Coloca as faixas deitadas (linhas) */
+                transform-origin: bottom; /* Começa na borda de baixo */
+                transform: scaleY(0); /* Previne conflito com o X do PC */
+            }
+            .band { width: 100%; height: auto; } /* Ocupa 25% da ALTURA da tela */
+            
+            .bands-animate {
+                animation: sanfonaVertical 1.8s cubic-bezier(0.645, 0.045, 0.355, 1) forwards;
+            }
+        }
+
+        @keyframes sanfonaVertical {
+            0%    { transform-origin: bottom; transform: scaleY(0); }
+            40%   { transform-origin: bottom; transform: scaleY(1); } /* Estica até o topo */
+            40.1% { transform-origin: top; transform: scaleY(1); }    /* Troca âncora pro topo */
+            60%   { transform-origin: top; transform: scaleY(1); }    /* Pausa */
+            100%  { transform-origin: top; transform: scaleY(0); }    /* Some por cima */
+        }
     </style>
 </head>
 <body class="role-visualizador">
+    <!-- SPLASH SCREEN -->
+    <div id="splash-bg">
+        <img src="contamais.svg" alt="Logo" class="splash-logo">
+    </div>
+    <div id="splash-bands">
+        <div class="band" style="background-color: #FBEEE3;"></div>
+        <div class="band" style="background-color: #9F302C;"></div>
+        <div class="band" style="background-color: #6E0606;"></div>
+        <div class="band" style="background-color: #250902;"></div>
+    </div>
     <div id="fab-overlay" onclick="toggleFab()"></div>
 
     <!-- TOPO MOBILE COM LOGO -->
@@ -1180,16 +1301,12 @@
         // NAVEGAÇÃO E FAB CLICK OUTSIDE
         // ==========================================
         function navegar(id, btn, doHistorico = false) { 
-            // Registra a tela no histórico do navegador/celular
             if (!doHistorico) { history.pushState({ tela: id }, "", "#" + id); }
-
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); 
             
-            // Busca a seção exatamente pelo ID que está no HTML
             const alvo = document.getElementById(id);
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); 
             if(alvo) alvo.classList.add('active'); 
 
-            // Sincroniza o menu lateral automaticamente baseado na tela atual
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             if (id.includes('reservas') || id.includes('mapa') || id.includes('agenda')) {
                 const btnRes = document.getElementById('nav-reservas-hub');
@@ -1198,16 +1315,14 @@
                 const btnIni = document.getElementById('nav-inicio');
                 if(btnIni) btnIni.classList.add('active');
             } else if (id !== 'configuracoes' && id !== 'atribuir-categoria' && id !== 'atribuir-metodo' && id !== 'detalhe-categoria-admin') {
-                // Qualquer outra tela (Estoque, Pedidos, Receitas) acende o hub de Produtos
                 const btnProd = document.getElementById('nav-produtos-hub');
                 if(btnProd) btnProd.classList.add('active');
             } 
-            window.scrollTo(0, 0); 
-            if(id === 'mapa-salao') ajustarEscalaMapa();
             
-            if(id === 'agenda-view') {
-                setTimeout(() => { renderizarCalendario(); }, 100);
-            }
+            window.scrollTo(0, 0); 
+            
+            if(id === 'mapa-salao') ajustarEscalaMapa();
+            if(id === 'agenda-view') setTimeout(() => { renderizarCalendario(); }, 100);
         }
 
         function irParaAgenda() {
@@ -2971,6 +3086,29 @@
         
         // Registra a tela inicial quando o sistema abre
         history.replaceState({ tela: 'inicio' }, "", "#inicio");
+    </script>
+    <!-- Gatilho do Splash Screen: Efeito Sanfona -->
+    <script>
+        window.addEventListener('load', function() {
+            // 1. Inicia o movimento após o brilho da logo (2.2s)
+            setTimeout(() => {
+                const bands = document.getElementById('splash-bands');
+                if(bands) bands.classList.add('bands-animate');
+            }, 2200);
+
+            // 2. A MÁGICA: Some com o fundo exatamente aos 3.1s 
+            // (Neste exato milissegundo, a sanfona estará no auge da expansão, cobrindo tudo)
+            setTimeout(() => {
+                const bg = document.getElementById('splash-bg');
+                if(bg) bg.style.display = 'none';
+            }, 3100); 
+
+            // 3. Libera a tela aos 4.1s quando as linhas já sumiram por cima
+            setTimeout(() => {
+                const bands = document.getElementById('splash-bands');
+                if(bands) bands.style.display = 'none';
+            }, 4100);
+        });
     </script>
 </body>
 </html>
