@@ -352,13 +352,15 @@
         .check-item { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
         input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary); }
 
-        /* SUBGRUPOS TABS E CHIPS */
+       /* SUBGRUPOS TABS E CHIPS */
         .subgrupos-tabs-container { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 12px; padding-bottom: 5px; }
-        .sub-tab { padding: 6px 14px; background: #e2e8f0; color: #475569; border-radius: 20px; font-size: 0.85rem; font-weight: 700; cursor: pointer; white-space: nowrap; border: 1px solid transparent; transition: 0.2s; }
-        .sub-tab.active { background: var(--primary); color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
+        .sub-tab { padding: 6px 14px; background: #e2e8f0; color: #1a0404 !important; border-radius: 20px; font-size: 0.85rem; font-weight: 800; cursor: pointer; white-space: nowrap; border: 1px solid transparent; transition: 0.2s; }
+        .sub-tab.active { background: var(--primary) !important; color: white !important; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
         
-        .chip { background: #e2e8f0; padding: 8px 14px; border-radius: 15px; font-size: 0.85rem; cursor: pointer; font-weight: 600; margin: 3px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid transparent; transition: 0.2s; }
+        .chip { background: #e2e8f0; color: #1a0404 !important; padding: 8px 14px; border-radius: 15px; font-size: 0.85rem; cursor: pointer; font-weight: 800; margin: 3px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid transparent; transition: 0.2s; }
+        .chip i, .chip [class^="ph-"] { color: #1a0404 !important; }
         .active-chip { background: var(--primary) !important; color: white !important; border-color: var(--bg-sidebar-active) !important; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .active-chip i, .active-chip [class^="ph-"] { color: white !important; }
 
         /* IMAGENS DE RECEITA E ENQUADRAMENTO */
         .crop-container { width: 135px; height: 240px; overflow: hidden; border-radius: 8px; border: 2px dashed var(--primary); background: #f8fafc; position: relative; display: flex; align-items: center; justify-content: center; }
@@ -622,6 +624,27 @@
             </div>
         </div>
     </div>
+    <!-- MODAL ALOCAR MERCADORIAS PENDENTES -->
+    <div id="modalAlocar" class="modal-overlay" style="z-index: 4000;">
+        <div class="modal-box" style="max-width: 600px; background: #1a0404; border: 1px solid var(--border-color);">
+            <h3 style="color:var(--primary); margin-bottom:10px; font-size:1.2rem; text-align:left;"><i class="ph ph-box-arrow-down"></i> Itens aguardando armazenagem</h3>
+            <p style="font-size:0.85rem; color:#64748b; margin-bottom:15px; text-align:left;">Transfira os itens para seus determinados estoques</p>
+            <div id="lista-pendentes-alocar" style="max-height: 55vh; overflow-y:auto; text-align:left; display:flex; flex-direction:column; gap:10px; padding-right:5px;"></div>
+            <button class="btn-submit" onclick="document.getElementById('modalAlocar').style.display='none'" style="background: white; color: black; margin-top:20px;">FECHAR JANELA</button>
+        </div>
+    </div>
+
+    <!-- MODAL CONFIRMAÇÃO TRANSFERÊNCIA -->
+    <div id="modalConfirmTransfer" class="modal-overlay" style="z-index: 4001;">
+        <div class="modal-box" style="max-width: 350px; background: var(--bg-body); border: 2px solid var(--primary);">
+            <h3 style="color:var(--text-main); margin-bottom:15px; font-size:1.1rem;">Confirmar Transferência</h3>
+            <p id="msgConfirmTransfer" style="margin-bottom: 20px; font-size: 0.95rem; line-height: 1.5; color:var(--text-main);"></p>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="document.getElementById('modalConfirmTransfer').style.display='none'" style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: transparent; color: var(--text-main); font-weight: bold; cursor: pointer;">Cancelar</button>
+                <button id="btnConfirmTransferAction" style="flex: 1; padding: 10px; border-radius: 8px; background: #10b981; color: white; border: none; font-weight: bold; cursor: pointer;">Sim, Transferir</button>
+            </div>
+        </div>
+    </div>
 
  <aside>
         <div class="logo-container"><img src="contamais.svg" alt="ContaMais Logo" class="logo-img"></div>
@@ -664,7 +687,30 @@
                 <div class="card-nav" onclick="navegar('areas-lista')"><i class="ph ph-map-pin" style="font-size:2.5rem; margin-bottom:10px; color:var(--primary);"></i><h3>Áreas</h3></div>
                 <div class="card-nav" onclick="navegar('produtos-categorias')"><i class="ph ph-tag" style="font-size:2.5rem; margin-bottom:10px; color:var(--primary);"></i><h3>Itens</h3></div>
                 <div class="card-nav" onclick="navegar('pedidos-metodos')"><i class="ph ph-shopping-cart" style="font-size:2.5rem; margin-bottom:10px; color:var(--primary);"></i><h3>Pedidos</h3></div>
+                <div class="card-nav" onclick="abrirRecebimentos()"><i class="ph ph-truck" style="font-size:2.5rem; margin-bottom:10px; color:var(--primary);"></i><h3>Recebimentos</h3></div>
             </div>
+        </section>
+        <!-- ==============================================
+             SISTEMA DE RECEBIMENTO (PÁTIO)
+        =================================================== -->
+        <section id="recebimentos-lista" class="section">
+            <div class="btn-back-styled" onclick="navegar('produtos-hub')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
+            <h1>Entrada de Mercadoria</h1>
+            <p style="font-size:0.9rem; color:#64748b; margin-bottom:15px;">Selecione o fornecedor/método da carga que acabou de chegar:</p>
+            <div id="grid-recebimentos-metodos" class="grid-areas-layout"></div>
+        </section>
+
+        <section id="recebimento-entrada" class="section">
+            <div class="btn-back-styled" onclick="navegar('recebimentos-lista')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
+            <h1 id="titulo-recebimento-metodo" style="font-size: 1.3rem;">Recebendo</h1>
+            <p style="font-size:0.85rem; color:#64748b; margin-bottom:10px;">Aponte o que chegou. O estoque ficará retido como "Pendente" até ser guardado fisicamente.</p>
+            <div class="table-container">
+                <table>
+                    <thead id="head-recebimento"></thead>
+                    <tbody id="tabela-recebimento-itens"></tbody>
+                </table>
+            </div>
+            <button class="btn-submit req-contrib" style="margin-top:20px; font-size:1.1rem; padding:15px;" onclick="salvarRecebimentoEstoque()">CONFIRMAR ENTRADA</button>
         </section>
         <!-- 3. GUIA: HUB DE RESERVAS -->
         <section id="reservas-hub" class="section">
@@ -784,8 +830,33 @@
              SUB-TELAS DE LOGÍSTICA E ESTOQUE
         =================================================== -->
         <section id="areas-lista" class="section">
-            <div class="btn-back-styled" onclick="navegar('produtos-hub')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
-            <h1>Áreas de Estoque</h1><div id="grid-areas" class="grid-areas-layout"></div>
+            <div class="header-com-acao" style="margin-bottom: 1.5rem; align-items: stretch;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div class="btn-back-styled" style="margin:0;" onclick="navegar('produtos-hub')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
+                    <h1 style="margin:0;">Áreas</h1>
+                </div>
+                <!-- Banner Novo no Topo -->
+                <div id="banner-pendentes" class="req-contrib" style="display:none; background: var(--primary); color: white; padding: 8px 15px; border-radius: 12px; flex-direction: row; justify-content: space-between; align-items: center; cursor: pointer; box-shadow: 0 4px 15px rgba(183, 41, 41, 0.4); gap: 15px;" onclick="abrirAlocacaoModal()">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <i class="ph ph-warning-circle" style="font-size:1.6rem;"></i> 
+                        <div style="text-align: left;">
+                            <strong style="font-size:1rem; display:block;">Itens aguardando armazenagem</strong>
+                            <span style="font-size:0.75rem; opacity:0.9;" id="txt-qtd-pendentes">...</span>
+                        </div>
+                    </div>
+                    <i class="ph ph-arrow-right" style="font-size:1.2rem;"></i>
+                </div>
+            </div>
+            
+            <div id="grid-areas" class="grid-areas-layout"></div>
+            <!-- Banner de Alocação Pendente -->
+            <div id="banner-pendentes" class="req-contrib" style="display:none; background: var(--primary); color: white; padding: 12px 15px; border-radius: 12px; margin-bottom: 20px; flex-direction: row; justify-content: space-between; align-items: center; cursor: pointer; box-shadow: 0 8px 20px rgba(183, 41, 41, 0.4);" onclick="abrirAlocacaoModal()">
+                <div>
+                    <strong style="display:flex; align-items:center; gap:8px; font-size:1.1rem;"><i class="ph ph-warning-circle" style="font-size:1.5rem;"></i> Carga no Pátio!</strong>
+                    <span style="font-size:0.85rem; opacity:0.9; margin-top:2px; display:block;" id="txt-qtd-pendentes">Você tem itens aguardando alocação física.</span>
+                </div>
+                <i class="ph ph-arrow-right" style="font-size:1.5rem;"></i>
+            </div>
         </section>
         
         <section id="produtos-categorias" class="section">
@@ -1044,16 +1115,16 @@
                 <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">1. Assinale a Categoria <span style="font-size:0.75rem; font-weight:normal; color:var(--primary);">*(Apenas uma)*</span>:</p>
                 <div id="presets-container" style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"></div>
                 
-                <div id="wrap-subgrupo-novo" style="display:none; margin-bottom:10px; padding:10px; border:1px dashed var(--primary); border-radius:8px; background: #fff5f5;">
+                <div id="wrap-subgrupo-novo" style="display:none; margin-bottom:10px; padding:15px; border:1px dashed var(--primary); border-radius:8px; background: rgba(183, 41, 41, 0.1);">
                     <p style="font-size:0.9rem; margin: 0 0 8px 0; font-weight:700; color:var(--primary);">A qual Especificação pertence? <span style="font-size:0.75rem; font-weight:normal;">*(Apenas um)*</span></p>
                     <div id="prod-subgrupo-container" style="display:flex; flex-wrap:wrap; gap:5px;"></div>
                 </div>
 
-                <div id="wrap-destilados-novo" style="display:none; margin-bottom:10px; padding:10px; border:1px solid #10b981; border-radius:8px; background: #f0fdf4;">
-                    <p style="font-size:0.9rem; margin: 0 0 8px 0; font-weight:700; color:#047857;">Informações do Destilado:</p>
-                    <p style="font-size:0.8rem; margin: 5px 0;">Volume da Garrafa (ml):</p>
+                <div id="wrap-destilados-novo" style="display:none; margin-bottom:10px; padding:15px; border:1px solid #10b981; border-radius:8px; background: rgba(16, 185, 129, 0.1);">
+                    <p style="font-size:0.95rem; margin: 0 0 8px 0; font-weight:800; color:#10b981;">Informações do Destilado:</p>
+                    <p style="font-size:0.8rem; margin: 5px 0; color:var(--text-main);">Volume da Garrafa (ml):</p>
                     <input type="number" id="prod-ml-garrafa" placeholder="Ex: 1000">
-                    <p style="font-size:0.8rem; margin: 10px 0 5px 0;">Preço da Garrafa (R$):</p>
+                    <p style="font-size:0.8rem; margin: 10px 0 5px 0; color:var(--text-main);">Preço da Garrafa (R$):</p>
                     <input type="number" id="prod-preco-garrafa" placeholder="Ex: 85.00" step="0.01">
                 </div>
 
@@ -1081,16 +1152,16 @@
                 <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">1. Assinale a Categoria <span style="font-size:0.75rem; font-weight:normal; color:var(--primary);">*(Apenas uma)*</span>:</p>
                 <div id="edit-presets-container" style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"></div>
                 
-                <div id="wrap-subgrupo-edit" style="display:none; margin-bottom:10px; padding:10px; border:1px dashed var(--primary); border-radius:8px; background: #fff5f5;">
+                <div id="wrap-subgrupo-edit" style="display:none; margin-bottom:10px; padding:15px; border:1px dashed var(--primary); border-radius:8px; background: rgba(183, 41, 41, 0.1);">
                     <p style="font-size:0.9rem; margin: 0 0 8px 0; font-weight:700; color:var(--primary);">A qual Especificação pertence? <span style="font-size:0.75rem; font-weight:normal;">*(Apenas um)*</span></p>
                     <div id="edit-prod-subgrupo-container" style="display:flex; flex-wrap:wrap; gap:5px;"></div>
                 </div>
 
-                <div id="wrap-destilados-edit" style="display:none; margin-bottom:10px; padding:10px; border:1px solid #10b981; border-radius:8px; background: #f0fdf4;">
-                    <p style="font-size:0.9rem; margin: 0 0 8px 0; font-weight:700; color:#047857;">Informações do Destilado:</p>
-                    <p style="font-size:0.8rem; margin: 5px 0;">Volume da Garrafa (ml):</p>
+                <div id="wrap-destilados-edit" style="display:none; margin-bottom:10px; padding:15px; border:1px solid #10b981; border-radius:8px; background: rgba(16, 185, 129, 0.1);">
+                    <p style="font-size:0.95rem; margin: 0 0 8px 0; font-weight:800; color:#10b981;">Informações do Destilado:</p>
+                    <p style="font-size:0.8rem; margin: 5px 0; color:var(--text-main);">Volume da Garrafa (ml):</p>
                     <input type="number" id="edit-prod-ml-garrafa" placeholder="Ex: 1000">
-                    <p style="font-size:0.8rem; margin: 10px 0 5px 0;">Preço da Garrafa (R$):</p>
+                    <p style="font-size:0.8rem; margin: 10px 0 5px 0; color:var(--text-main);">Preço da Garrafa (R$):</p>
                     <input type="number" id="edit-prod-preco-garrafa" placeholder="Ex: 85.00" step="0.01">
                 </div>
 
@@ -1298,6 +1369,252 @@
         // ==========================================
         // NAVEGAÇÃO E FAB CLICK OUTSIDE
         // ==========================================
+        // ==========================================
+        // SISTEMA DE RECEBIMENTO E ALOCAÇÃO (PÁTIO)
+        // ==========================================
+        let recebimentoTemp = {};
+
+        function abrirRecebimentos() {
+            navegar('recebimentos-lista');
+            const grid = document.getElementById('grid-recebimentos-metodos');
+            const chaves = Object.keys(metodosCompra);
+            if(chaves.length === 0) { grid.innerHTML = `<p style="color:#64748b; grid-column:1/-1;">Nenhum método de compra cadastrado.</p>`; return; }
+            grid.innerHTML = chaves.map(k => `<div class="card-nav" onclick="iniciarRecebimento('${k}')">${obterIconeMetodo(metodosCompra[k].nome, true)}<h3 style="margin-top:5px;">${metodosCompra[k].nome}</h3></div>`).join('');
+        }
+
+        function iniciarRecebimento(keyMetodo) {
+            const met = metodosCompra[keyMetodo].nome;
+            document.getElementById('titulo-recebimento-metodo').innerText = `Carga: ${met}`;
+            recebimentoTemp = {};
+            
+            let prods = Object.keys(produtos).filter(k => produtos[k].metodoCompra === met);
+            prods.sort((a,b) => produtos[a].nome.localeCompare(produtos[b].nome));
+            
+            if(prods.length === 0) {
+                document.getElementById('tabela-recebimento-itens').innerHTML = `<tr><td colspan="3" style="text-align:center; color:#64748b;">Fornecedor não tem produtos vinculados.</td></tr>`;
+            } else {
+                let maxF = 1;
+                prods.forEach(pk => {
+                    let t = 1; getCategoriasProduto(produtos[pk]).forEach(cn => { const c = Object.values(categorias).find(x => x.nome === cn); if(c && c.unidadesFardo > t) t = Number(c.unidadesFardo); });
+                    if(t > maxF) maxF = t;
+                });
+                
+                let htmlHead = `<tr><th>Item</th><th style="text-align:center">${maxF>1?'Fds.':' '}</th><th style="text-align:center">Un.</th></tr>`;
+                document.getElementById('head-recebimento').innerHTML = htmlHead;
+                
+                document.getElementById('tabela-recebimento-itens').innerHTML = prods.map(pk => {
+                    const p = produtos[pk];
+                    let t = 1; getCategoriasProduto(p).forEach(cn => { const c = Object.values(categorias).find(x => x.nome === cn); if(c && c.unidadesFardo > t) t = Number(c.unidadesFardo); });
+                    
+                    recebimentoTemp[pk] = { f: 0, u: 0, t: t };
+                    const fardoInput = t > 1 ? `<div class="qty-box" style="background:#1a0404;"><input type="number" class="qty-input" style="background:#1a0404;" id="rec-f-${pk}" value="0" onchange="atualizarRecTemp('${pk}')"><div class="qty-ctrls"><button class="qty-btn-up" onclick="mudarRecQtd('${pk}','f',1)">▲</button><button class="qty-btn-down" onclick="mudarRecQtd('${pk}','f',-1)">▼</button></div></div>` : '';
+                    const unInput = `<div class="qty-box" style="background:#1a0404;"><input type="number" class="qty-input" style="background:#1a0404;" id="rec-u-${pk}" value="0" onchange="atualizarRecTemp('${pk}')"><div class="qty-ctrls"><button class="qty-btn-up" onclick="mudarRecQtd('${pk}','u',1)">▲</button><button class="qty-btn-down" onclick="mudarRecQtd('${pk}','u',-1)">▼</button></div></div>`;
+                    
+                    return `<tr><td class="col-item">${p.nome}</td><td style="text-align:center">${fardoInput}</td><td style="text-align:center">${unInput}</td></tr>`;
+                }).join('');
+            }
+            navegar('recebimento-entrada');
+        }
+
+        function mudarRecQtd(pk, tipo, delta) {
+            const el = document.getElementById(`rec-${tipo}-${pk}`);
+            let v = (parseInt(el.value)||0) + delta; if(v < 0) v = 0;
+            el.value = v; atualizarRecTemp(pk);
+        }
+
+        function atualizarRecTemp(pk) {
+            const elF = document.getElementById(`rec-f-${pk}`);
+            recebimentoTemp[pk].f = elF ? (parseInt(elF.value)||0) : 0;
+            recebimentoTemp[pk].u = parseInt(document.getElementById(`rec-u-${pk}`).value)||0;
+        }
+
+        // Função para mostrar Notificações do Sistema (Toasts)
+        function showToast(msg, type = 'success') {
+            let container = document.getElementById('toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toast-container';
+                document.body.appendChild(container);
+            }
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = msg;
+            container.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
+        }
+
+        // Função para mostrar Notificações do Sistema (Toasts)
+        function showToast(msg, type = 'success') {
+            let container = document.getElementById('toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toast-container';
+                document.body.appendChild(container);
+            }
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = msg;
+            container.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
+        }
+
+        function salvarRecebimentoEstoque() {
+            if(currentRole === 'visualizador') return;
+            let updates = {}; let qtdRecebida = 0;
+            
+            for(let pk in recebimentoTemp) {
+                const r = recebimentoTemp[pk];
+                if(r.f > 0 || r.u > 0) {
+                    qtdRecebida++;
+                    const p = produtos[pk];
+                    let estAntigo = p.estoque && p.estoque['_Pendente_'] ? p.estoque['_Pendente_'] : {f:0, u:0};
+                    let novoF = (Number(estAntigo.f)||0) + r.f; let novoU = (Number(estAntigo.u)||0) + r.u;
+                    if(r.t > 1 && novoU >= r.t) { novoF += Math.floor(novoU / r.t); novoU = novoU % r.t; }
+                    updates[`produtos/${pk}/estoque/_Pendente_`] = { f: novoF, u: novoU };
+                }
+            }
+            if(qtdRecebida > 0) {
+                db.ref().update(updates).then(() => { 
+                    showToast("Entrada registrada! Itens no pátio aguardando armazenagem.", "success"); 
+                    navegar('produtos-hub'); 
+                });
+            } else { alert("Informe pelo menos a quantidade de 1 produto."); }
+        }
+
+        function verificarPendentes() {
+            let temPendente = false; let qtdItens = 0; let htmlAlocar = '';
+            
+            for(let pk in produtos) {
+                const p = produtos[pk];
+                if(p.estoque && p.estoque['_Pendente_'] && (p.estoque['_Pendente_'].f > 0 || p.estoque['_Pendente_'].u > 0)) {
+                    temPendente = true; qtdItens++;
+                    const pend = p.estoque['_Pendente_'];
+                    let t = 1; getCategoriasProduto(p).forEach(cn => { const c = Object.values(categorias).find(x => x.nome === cn); if(c && c.unidadesFardo > t) t = Number(c.unidadesFardo); });
+                    
+                    let totalF = Number(pend.f) || 0;
+                    let totalU = Number(pend.u) || 0;
+
+                    // Proteção de Sistema: Se a categoria diz que NÃO usa fardo (t=1), mas tem fardo preso no histórico do Firebase, converte tudo para unidade automaticamente
+                    if (t === 1 && totalF > 0) {
+                        totalU += totalF;
+                        totalF = 0;
+                    }
+
+                    let txtQtd = t > 1 ? `${totalF} Fds e ${totalU} Un.` : `${totalU} Unidade(s)`;
+                    
+                    let optionsArea = (p.locais || []).map(loc => `<option value="${loc}">${loc}</option>`).join('');
+                    if(!optionsArea) optionsArea = `<option value="">⚠️ Sem área física assinalada!</option>`;
+                    
+                    let inputsQtd = '';
+                    if(t > 1) {
+                        // Se for produto de FARDO, mostra as duas caixas: Fardo e Unidade
+                        inputsQtd = `
+                        <div style="display:flex; gap:8px; flex:1;">
+                            <div style="flex:1;"><label style="font-size:0.7rem; color:#64748b;">Fardos (MÁX: ${totalF})</label><input type="number" id="transf-f-${pk}" value="${totalF}" min="0" max="${totalF}" style="margin:0; text-align:center; background:#000; color:var(--text-main); font-weight:bold;"></div>
+                            <div style="flex:1;"><label style="font-size:0.7rem; color:#64748b;">Un. (MÁX: ${totalU})</label><input type="number" id="transf-u-${pk}" value="${totalU}" min="0" max="${totalU}" style="margin:0; text-align:center; background:#000; color:var(--text-main); font-weight:bold;"></div>
+                        </div>`;
+                    } else {
+                        // Se for produto SÓ de UNIDADE, mostra apenas a caixa de unidade
+                        inputsQtd = `
+                        <div style="flex:1;"><label style="font-size:0.7rem; color:#64748b;">Unidades (MÁX: ${totalU})</label><input type="number" id="transf-u-${pk}" value="${totalU}" min="0" max="${totalU}" style="margin:0; text-align:center; background:#000; color:var(--text-main); font-weight:bold;"></div>`;
+                    }
+
+                    htmlAlocar += `
+                    <div style="padding:15px; border:1px solid rgba(251, 238, 227, 0.1); border-radius:10px; background:rgba(255,255,255,0.03);">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:12px; align-items:flex-start;">
+                            <strong style="color:var(--text-main); font-size:1.05rem;">${p.nome}</strong>
+                            <span style="color:var(--primary); font-weight:800; font-size:0.85rem; text-align:right;">Disponível:<br>${txtQtd}</span>
+                        </div>
+                        <div style="display:flex; align-items:flex-end; gap:10px; flex-wrap:wrap;">
+                            <div style="flex:1; min-width: 160px;">
+                                <label style="font-size:0.7rem; color:#64748b;">Área de Destino</label>
+                                <select id="aloc-area-${pk}" style="margin:0; background:#280606; color:#fbeee3; font-weight:bold; border-color:rgba(251, 238, 227, 0.2);">${optionsArea}</select>
+                            </div>
+                            ${inputsQtd}
+                            <button class="btn-submit req-contrib" style="margin:0; background:#10b981; width:auto; padding:10px 15px;" onclick="prepararEfetivacaoAlocacao('${pk}', '${p.nome.replace(/'/g, "\\'")}', ${totalF}, ${totalU}, ${t})">Transferir</button>
+                        </div>
+                    </div>`;
+                }
+            }
+            
+            const banner = document.getElementById('banner-pendentes'); const listaAlocar = document.getElementById('lista-pendentes-alocar');
+            if(banner && listaAlocar) {
+                if(temPendente && currentRole !== 'visualizador') {
+                    banner.style.display = 'flex';
+                    document.getElementById('txt-qtd-pendentes').innerText = `Contém ${qtdItens} itens pendentes.`;
+                    listaAlocar.innerHTML = htmlAlocar;
+                } else {
+                    banner.style.display = 'none';
+                    listaAlocar.innerHTML = '';
+                }
+            }
+        }
+
+        function abrirAlocacaoModal() { document.getElementById('modalAlocar').style.display = 'flex'; }
+
+        // Variável global para segurar a transferência enquanto aguarda o pop-up
+        let transferenciaPendente = null;
+
+        function prepararEfetivacaoAlocacao(pk, nomeProd, maxF, maxU, t) {
+            const areaSel = document.getElementById(`aloc-area-${pk}`).value;
+            if(!areaSel) { alert("Este produto não possui área assinalada para guardar."); return; }
+
+            const elF = document.getElementById(`transf-f-${pk}`);
+            const elU = document.getElementById(`transf-u-${pk}`);
+            
+            let f = elF ? parseInt(elF.value) || 0 : 0;
+            let u = elU ? parseInt(elU.value) || 0 : 0;
+
+            if(f < 0) f = 0; if(u < 0) u = 0;
+            if(f > maxF) f = maxF; if(u > maxU) u = maxU;
+            
+            if(f === 0 && u === 0) { 
+                showToast("Digite uma quantidade maior que zero.", "error"); 
+                return; 
+            }
+
+            // Monta o texto inteligente de confirmação (Plural/Singular e Ocultação Inteligente)
+            let msgArr = [];
+            if(f > 0) msgArr.push(`${f} ${f === 1 ? 'fardo' : 'fardos'}`);
+            if(u > 0) msgArr.push(`${u} ${u === 1 ? 'unidade' : 'unidades'}`);
+            let msgStr = msgArr.join(' e ');
+
+            document.getElementById('msgConfirmTransfer').innerHTML = `Você está transferindo <strong style="color:var(--primary);">${msgStr} de ${nomeProd}</strong> para a área <strong style="color:var(--primary);">${areaSel}</strong>.<br><br>Confirmar operação?`;
+            
+            transferenciaPendente = { pk, f, u, t, areaSel, maxF, maxU };
+            document.getElementById('modalConfirmTransfer').style.display = 'flex';
+        }
+
+        // Função disparada ao clicar no "Sim, Transferir" do modal
+        document.getElementById('btnConfirmTransferAction').onclick = function() {
+            if(!transferenciaPendente) return;
+            const { pk, f, u, t, areaSel, maxF, maxU } = transferenciaPendente;
+            
+            const p = produtos[pk];
+            let estAtualArea = p.estoque && p.estoque[areaSel] ? p.estoque[areaSel] : {f:0, u:0};
+            
+            let novoAreaF = (Number(estAtualArea.f)||0) + f; 
+            let novoAreaU = (Number(estAtualArea.u)||0) + u;
+            if(t > 1 && novoAreaU >= t) { novoAreaF += Math.floor(novoAreaU / t); novoAreaU = novoAreaU % t; }
+            
+            let novoPendF = maxF - f;
+            let novoPendU = maxU - u;
+
+            let updates = {};
+            updates[`produtos/${pk}/estoque/${areaSel}`] = { f: novoAreaF, u: novoAreaU };
+            
+            if(novoPendF <= 0 && novoPendU <= 0) {
+                updates[`produtos/${pk}/estoque/_Pendente_`] = null; 
+            } else {
+                updates[`produtos/${pk}/estoque/_Pendente_`] = { f: novoPendF, u: novoPendU };
+            }
+
+            db.ref().update(updates).then(() => {
+                document.getElementById('modalConfirmTransfer').style.display = 'none';
+                transferenciaPendente = null;
+                showToast("Transferência efetuada com sucesso!", "success");
+            });
+        };
         function navegar(id, btn, doHistorico = false) { 
             if (!doHistorico) { history.pushState({ tela: id }, "", "#" + id); }
             
@@ -1433,8 +1750,7 @@
                 renderizarChecksConfig(); 
             } catch(e){ console.error("Erro Áreas:", e); } 
         });
-        db.ref('produtos').on('value', s => { try { produtos = s.val() || {}; renderizarGradeAgrupada(); renderizarAreas(); if(document.getElementById('pedidos-lista').classList.contains('active')){ const metKey = Object.keys(metodosCompra).find(k => metodosCompra[k].nome === document.getElementById('titulo-pedido-metodo').innerText.replace('Pedidos: ', '')); if(metKey) verPedidoPorMetodo(metKey); } } catch(e){} });
-        db.ref('categorias').on('value', s => { 
+        db.ref('produtos').on('value', s => { try { produtos = s.val() || {}; renderizarGradeAgrupada(); renderizarAreas(); verificarPendentes(); if(document.getElementById('pedidos-lista').classList.contains('active')){ const metKey = Object.keys(metodosCompra).find(k => metodosCompra[k].nome === document.getElementById('titulo-pedido-metodo').innerText.replace('Pedidos: ', '')); if(metKey) verPedidoPorMetodo(metKey); } } catch(e){} });        db.ref('categorias').on('value', s => { 
             try { 
                 categorias = s.val() || {}; 
                 renderizarPresets(); 
