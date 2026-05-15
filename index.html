@@ -902,10 +902,10 @@
                     </div>
                     
                     <div style="display:flex; gap:8px;">
-                        <button id="btn-modo-contagem" class="btn-submit" style="margin:0; background:var(--primary); padding: 8px 12px; width:auto; font-size:0.75rem; font-weight:800;" onclick="ativarModoContagem()">
+                        <button id="btn-modo-contagem" class="btn-submit req-contrib" style="margin:0; background:var(--primary); padding: 8px 12px; width:auto; font-size:0.75rem; font-weight:800;" onclick="ativarModoContagem()">
                             <i class="ph ph-clipboard-text"></i> FAZER CONTAGEM
                         </button>
-                        <button id="btn-cancelar-contagem" class="btn-submit" style="margin:0; background:#444; padding: 8px 12px; width:auto; font-size:0.75rem; display:none;" onclick="cancelarModoContagem()">
+                        <button id="btn-cancelar-contagem" class="btn-submit req-contrib" style="margin:0; background:#444; padding: 8px 12px; width:auto; font-size:0.75rem; display:none;" onclick="cancelarModoContagem()">
                             CANCELAR
                         </button>
                     </div>
@@ -958,7 +958,6 @@
         <section id="timeline-estoque" class="section req-dono">
             <div class="btn-back-styled" onclick="navegar('produtos-hub')"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></div>
             <h1>Histórico Semanal</h1>
-            <p style="color:#64748b; font-size:0.85rem; margin-bottom:20px;">Linha do tempo de contagens (Domingos) e recebimentos.</p>
             
             <div id="container-timeline" style="position: relative; padding-left: 20px; border-left: 2px solid var(--primary); margin-left: 10px;">
                 </div>
@@ -1536,12 +1535,16 @@
         function salvarRecebimentoEstoque() {
             if(currentRole === 'visualizador') return;
             let updates = {}; let qtdRecebida = 0;
+            let itensRecebidosHist = {}; // NOVO: Para a Linha do Tempo
+            const met = document.getElementById('titulo-recebimento-metodo').innerText.replace('Carga: ', '');
             
             for(let pk in recebimentoTemp) {
                 const r = recebimentoTemp[pk];
                 if(r.f > 0 || r.u > 0) {
                     qtdRecebida++;
                     const p = produtos[pk];
+                    itensRecebidosHist[pk] = { f: r.f, u: r.u, nome: p.nome }; // Guarda pro histórico
+                    
                     let estAntigo = p.estoque && p.estoque['_Pendente_'] ? p.estoque['_Pendente_'] : {f:0, u:0};
                     let novoF = (Number(estAntigo.f)||0) + r.f; let novoU = (Number(estAntigo.u)||0) + r.u;
                     if(r.t > 1 && novoU >= r.t) { novoF += Math.floor(novoU / r.t); novoU = novoU % r.t; }
@@ -1550,6 +1553,13 @@
             }
             if(qtdRecebida > 0) {
                 db.ref().update(updates).then(() => { 
+                    // NOVO: Registra na Linha do Tempo
+                    const data = new Date();
+                    db.ref('historico_timeline').push({
+                        timestamp: data.getTime(), dataFormatada: data.toLocaleDateString('pt-BR'),
+                        tipo: 'recebimento', fornecedor: met, itens: itensRecebidosHist, usuario: currentUserName || "Equipe"
+                    });
+                    
                     showToast("Entrada registrada! Itens no pátio aguardando armazenagem.", "success"); 
                     navegar('produtos-hub'); 
                 });
@@ -1840,6 +1850,17 @@
             } catch(e){} 
         });
         db.ref('metodos').on('value', s => { try { metodosCompra = s.val() || {}; renderizarMetodosConfig(); renderizarPresetsMetodos(); renderizarGradeAgrupada(); renderizarPedidosMetodos(); } catch(e){} });
+        let eventosTimeline = [];
+        db.ref('historico_timeline').on('value', s => {
+            const val = s.val();
+            if(val) {
+                eventosTimeline = Object.keys(val).map(k => ({ id: k, ...val[k] }));
+                eventosTimeline.sort((a,b) => b.timestamp - a.timestamp); // Ordena do mais recente para o mais antigo
+            } else {
+                eventosTimeline = [];
+            }
+            if(document.getElementById('timeline-estoque') && document.getElementById('timeline-estoque').classList.contains('active')) renderizarTimeline();
+        });
         db.ref('reservas').on('value', s => { try { reservasApp = s.val() || {}; if(document.getElementById('agenda-view').classList.contains('active')) renderizarCalendario(); if(document.getElementById('agenda-detalhe').classList.contains('active')) renderizarReservasDia(); if(document.getElementById('mapa-salao').classList.contains('active')) carregarReservasMapa(); } catch(e){} });
         db.ref('mapas').on('value', s => { try { mapasApp = s.val() || {}; if(document.getElementById('mapa-salao').classList.contains('active')) { carregarMapa(); carregarReservasMapa(); } } catch(e){} });
         db.ref('receitas').on('value', s => { try { receitasDB = s.val() || {}; if(document.getElementById('receitas-lista').classList.contains('active')) renderizarReceitas(); if(document.getElementById('detalhe-receita').classList.contains('active')) verDetalhesReceita(receitaAtualKey); } catch(e){} });
@@ -2431,6 +2452,7 @@
                 areaAtualKey = key; 
                 navegar('detalhe-area'); 
                 document.getElementById('area-display-name').innerText = nome || 'Área'; 
+                
                 
                 const areaObj = areas.find(a => a.key === key);
                 if (!areaObj) return;
@@ -3228,13 +3250,28 @@
             renderizarReceitas();
         }
 
+        let receitasCarregadasFirstTime = false; // Controle de animação
+        
         function renderizarReceitas() {
             const grid = document.getElementById('grid-receitas');
             const chaves = Object.keys(receitasDB);
+            
             if(chaves.length === 0) {
-                grid.innerHTML = `<p style="color:#64748b; font-size:0.9rem; text-align:center;">Nenhuma receita cadastrada ainda.</p>`;
+                // Se for a primeira vez que abre, espera 1.2 segundos "Buscando dados"
+                if (!receitasCarregadasFirstTime) {
+                    grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding: 30px;"><p style="color:var(--primary); font-size:1.2rem; font-weight:bold; letter-spacing:1px; animation: pulse 1s infinite;">⏳ Sincronizando com o servidor...</p></div>`;
+                    setTimeout(() => { 
+                        receitasCarregadasFirstTime = true; 
+                        renderizarReceitas(); // Tenta desenhar de novo
+                    }, 1200);
+                    return;
+                }
+                // Se passou o tempo e continua vazio, é porque não tem mesmo.
+                grid.innerHTML = `<p style="color:#64748b; font-size:0.9rem; text-align:center; grid-column:1/-1;">Nenhuma receita cadastrada ainda.</p>`;
                 return;
             }
+            
+            receitasCarregadasFirstTime = true; // Se achou dados na hora, cancela a espera
             
             grid.innerHTML = chaves.map(k => {
                 const r = Object.assign({ ingredientes: [], foto: "", configEnquadramento: { x: 50, y: 50, scale: 1 } }, receitasDB[k]);
@@ -3254,17 +3291,17 @@
                 let imgHtml = '';
                 if(r.foto) {
                     const cfg = r.configEnquadramento || { x: 50, y: 50, scale: 1 };
-                    imgHtml = `<div style="width:60px; height:60px; border-radius:10px; overflow:hidden; flex-shrink:0; border:1px solid #e2e8f0; display:block !important;">
+                    imgHtml = `<div style="width:60px; height:60px; border-radius:10px; overflow:hidden; flex-shrink:0; border:1px solid rgba(255,255,255,0.1); display:block !important;">
                                     <img src="${r.foto}" style="width:100%; height:100%; object-fit:cover; object-position: ${cfg.x}% ${cfg.y}%; transform-origin: ${cfg.x}% ${cfg.y}%; transform: scale(${cfg.scale}); display:block !important;">
                                </div>`;
                 } else {
-                    imgHtml = `<div style="width:60px; height:60px; border-radius:10px; background:rgba(0,0,0,0.05); display:flex !important; align-items:center; justify-content:center; color:var(--primary); font-size:1.5rem; flex-shrink:0;"><i class="ph ph-martini"></i></div>`;
+                    imgHtml = `<div style="width:60px; height:60px; border-radius:10px; background:rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); display:flex !important; align-items:center; justify-content:center; color:var(--primary); font-size:1.5rem; flex-shrink:0;"><i class="ph ph-martini"></i></div>`;
                 }
 
                 return `
-                <div class="card-nav" onclick="verDetalhesReceita('${k}')" style="display:flex !important;">
+                <div class="card-nav" onclick="verDetalhesReceita('${k}')" style="display:flex !important; align-items:center; gap:12px; padding: 15px; flex-direction: row; justify-content:flex-start;">
                     ${imgHtml}
-                    <div style="display:flex; flex-direction:column; gap:4px;">
+                    <div style="display:flex; flex-direction:column; gap:4px; text-align:left;">
                         <h3 style="font-size:1.05rem; color:var(--text-main); margin:0; display:block !important;">${r.nome}</h3>
                         <span class="req-dono" style="font-size:0.85rem; color:#10b981; font-weight:800; display:block !important;">R$ ${custoTotal.toFixed(2).replace('.', ',')}</span>
                     </div>
@@ -3736,14 +3773,169 @@ function abrirTimeline() {
     renderizarTimeline();
 }
 
-function renderizarTimeline() {
-    const container = document.getElementById('container-timeline');
-    container.innerHTML = `
-        <div style="padding:20px; color:#64748b; text-align:center;">
-            <i class="ph ph-clock-counter-clockwise" style="font-size:2rem;"></i>
-            <p>Nenhuma contagem registrada ainda.<br>As contagens aparecerão aqui após o próximo domingo.</p>
-        </div>`;
-}
+let timelineNodesGlobais = [];
+
+        function renderizarTimeline() {
+            const container = document.getElementById('container-timeline');
+            if(eventosTimeline.length === 0) {
+                container.innerHTML = `
+                    <div style="padding:20px; color:#64748b; text-align:center;">
+                        <i class="ph ph-clock-counter-clockwise" style="font-size:2rem;"></i>
+                        <p>Nenhuma movimentação registrada ainda.<br>Faça uma contagem ou um recebimento.</p>
+                    </div>`;
+                return;
+            }
+
+            let timelineNodes = [];
+            let contagensPorData = {};
+
+            // Agrupa todas as contagens do mesmo dia e mantém os recebimentos avulsos
+            eventosTimeline.forEach(ev => {
+                if (ev.tipo === 'contagem') {
+                    if (!contagensPorData[ev.dataFormatada]) {
+                        contagensPorData[ev.dataFormatada] = {
+                            id: 'cont_' + ev.dataFormatada.replace(/\//g, ''),
+                            tipo: 'contagem_agrupada',
+                            dataFormatada: ev.dataFormatada,
+                            timestamp: ev.timestamp,
+                            areas: {}
+                        };
+                    }
+                    // Adiciona a área e seus itens dentro desse "dia"
+                    contagensPorData[ev.dataFormatada].areas[ev.area] = ev.itens;
+                    // Mantém o timestamp da última contagem desse dia para ordenação
+                    if (ev.timestamp > contagensPorData[ev.dataFormatada].timestamp) {
+                        contagensPorData[ev.dataFormatada].timestamp = ev.timestamp;
+                    }
+                } else {
+                    timelineNodes.push(ev); // Recebimentos entram soltos
+                }
+            });
+
+            // Junta os grupos de contagem com os recebimentos
+            Object.values(contagensPorData).forEach(agrupado => timelineNodes.push(agrupado));
+
+            // ORDENAÇÃO: Mais recentes no TOPO
+            timelineNodes.sort((a, b) => b.timestamp - a.timestamp);
+            timelineNodesGlobais = timelineNodes; // Salva pra gente poder puxar as gavetas
+
+            let html = '';
+            timelineNodes.forEach(ev => {
+                let isContagem = ev.tipo === 'contagem_agrupada';
+                let icone = isContagem ? '📋' : '📦';
+                let titulo = isContagem ? `Contagem de Estoque` : `Carga: ${ev.fornecedor}`;
+                
+                // Cores de distinção: Contagem (Vermelho AdmiNiran) | Recebimento (Verde Sucesso)
+                let corBase = isContagem ? 'var(--primary)' : '#10b981';
+                let bgCard = isContagem ? 'rgba(183, 41, 41, 0.1)' : 'rgba(16, 185, 129, 0.1)';
+                let borderColor = isContagem ? 'rgba(183, 41, 41, 0.3)' : 'rgba(16, 185, 129, 0.3)';
+                let nomeOperador = isContagem ? "Equipe" : (ev.usuario || "Equipe");
+
+                html += `
+                <div style="position:relative; margin-bottom: 25px; padding-left: 20px;">
+                    <div style="position:absolute; left: -14px; top: 15px; width:26px; height:26px; border-radius:50%; background:${corBase}; display:flex; align-items:center; justify-content:center; font-size:12px; border:4px solid var(--bg-body); z-index:2; color:white;">${icone}</div>
+                    
+                    <div class="card" style="margin:0; padding:15px; background:${bgCard}; border: 1px solid ${borderColor}; border-left: 4px solid ${corBase};">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <strong style="color:var(--text-main); font-size:1.05rem;">${titulo}</strong><br>
+                                <span style="font-size:0.85rem; color:#cbd5e1; font-weight:bold;">Dia ${ev.dataFormatada} <span style="color:#64748b; font-weight:normal;">• ${nomeOperador}</span></span>
+                            </div>
+                            <button class="action-icon info-btn" style="background:${corBase};" onclick="abrirDetalheTimeline('${ev.id}')">ⓘ</button>
+                        </div>
+                        
+                        <div id="detalhe-tl-${ev.id}" style="display:none; margin-top:15px; border-top:1px solid rgba(255,255,255,0.1); padding-top:10px;"></div>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function abrirDetalheTimeline(id) {
+            try {
+                const div = document.getElementById(`detalhe-tl-${id}`);
+                if(!div) return;
+                
+                // Se já estiver aberto, fecha
+                if(div.style.display === 'block') { div.style.display = 'none'; return; }
+                
+                const ev = timelineNodesGlobais.find(e => e.id === id);
+                if(!ev) return;
+
+                let html = '';
+                
+                if (ev.tipo === 'contagem_agrupada') {
+                    if(ev.areas) {
+                        Object.keys(ev.areas).sort().forEach(nomeArea => {
+                            const safeAreaId = nomeArea.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
+                            const divAreaId = `area-${id}-${safeAreaId}`;
+                            
+                            html += `
+                            <div style="margin-bottom:8px;">
+                                <div style="background:rgba(0,0,0,0.5); padding:10px 15px; border-radius:8px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; border:1px solid rgba(255,255,255,0.05);" onclick="document.getElementById('${divAreaId}').style.display = document.getElementById('${divAreaId}').style.display === 'none' ? 'block' : 'none'">
+                                    <strong style="color:var(--primary); font-size:0.95rem;">📍 ${nomeArea}</strong>
+                                    <span style="color:#64748b; font-size:0.8rem;">Ver itens ▼</span>
+                                </div>
+                                <div id="${divAreaId}" style="display:none; padding:10px; border:1px dashed rgba(255,255,255,0.1); border-top:none; border-radius: 0 0 8px 8px; background:rgba(0,0,0,0.2);">
+                                    ${renderItensHistorico(ev.areas[nomeArea])}
+                                </div>
+                            </div>`;
+                        });
+                    } else {
+                        html = '<p style="font-size:0.8rem; color:#64748b; padding: 10px;">Sem áreas registradas (Registro Antigo).</p>';
+                    }
+                } else {
+                    // Recebimento mostra direto os itens (Tenta ler itens novos ou detalhes antigos)
+                    html += renderItensHistorico(ev.itens || ev.detalhes, true);
+                }
+
+                div.innerHTML = html;
+                div.style.display = 'block';
+            } catch (e) {
+                console.error("Erro ao abrir gaveta da timeline:", e);
+            }
+        }
+
+        // Função auxiliar blindada contra dados antigos ou corrompidos do Firebase
+        function renderItensHistorico(itensObj, isRecebimento = false) {
+            // Se o dado não existir, devolve um texto de segurança em vez de travar o sistema
+            if (!itensObj || typeof itensObj !== 'object') {
+                return '<p style="font-size:0.8rem; color:#64748b; font-style:italic;">Itens não detalhados neste registro antigo.</p>';
+            }
+
+            let html = '';
+            let porCategoria = {};
+            
+            Object.keys(itensObj).forEach(pk => {
+                const item = itensObj[pk];
+                const p = produtos[pk];
+                let catName = "Sem Categoria";
+                if (p) {
+                    const cats = getCategoriasProduto(p);
+                    if (cats.length > 0) catName = cats[0];
+                }
+                if(!porCategoria[catName]) porCategoria[catName] = [];
+                porCategoria[catName].push(item);
+            });
+
+            Object.keys(porCategoria).sort().forEach(cat => {
+                html += `<p style="color:#cbd5e1; font-size:0.85rem; font-weight:bold; margin: 10px 0 5px 0; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:3px; text-transform:uppercase;">${cat}</p>`;
+                porCategoria[cat].forEach(i => {
+                    let sinal = isRecebimento ? '+' : '';
+                    let corNum = isRecebimento ? '#10b981' : 'var(--text-main)';
+                    // Puxa o nome salvo, ou se for tão antigo que não tem, avisa
+                    let nomeExibicao = i.nome || "Produto Antigo"; 
+                    let f = i.f || 0;
+                    let u = i.u || 0;
+
+                    html += `<div style="display:flex; justify-content:space-between; padding:4px 0; font-size:0.85rem;">
+                        <span style="color:#94a3b8;">${nomeExibicao}</span>
+                        <span style="color:${corNum}; font-weight:bold; letter-spacing: 0.5px;">${sinal} ${f}f | ${u}u</span>
+                    </div>`;
+                });
+            });
+            return html || '<p style="font-size:0.8rem; color:#64748b;">Nenhum item válido lido.</p>';
+        }
 
 function ativarModoContagem() {
     modoContagemAtivo = true;
@@ -3758,25 +3950,61 @@ function ativarModoContagem() {
 }
 
 function cancelarModoContagem() {
-    modoContagemAtivo = false;
-    
-    if(document.getElementById('btn-modo-contagem')) document.getElementById('btn-modo-contagem').style.display = 'block';
-    if(document.getElementById('btn-cancelar-contagem')) document.getElementById('btn-cancelar-contagem').style.display = 'none';
-    if(document.getElementById('btn-salvar-contagem-geral')) document.getElementById('btn-salvar-contagem-geral').style.display = 'none';
-    if(document.getElementById('btn-excluir-area-texto')) document.getElementById('btn-excluir-area-texto').style.display = 'block';
-    
-    if(document.getElementById('detalhe-area').classList.contains('active')) {
-        const area = areas.find(a => a.key === areaAtualKey);
-        if(area) verArea(area.key, area.nome);
-    }
-}
+            modoContagemAtivo = false;
+            
+            // Usar '' em vez de 'block' limpa o JS e deixa o CSS controlar a visibilidade e o layout com perfeição!
+            if(document.getElementById('btn-modo-contagem')) document.getElementById('btn-modo-contagem').style.display = '';
+            if(document.getElementById('btn-cancelar-contagem')) document.getElementById('btn-cancelar-contagem').style.display = 'none';
+            if(document.getElementById('btn-salvar-contagem-geral')) document.getElementById('btn-salvar-contagem-geral').style.display = 'none';
+            if(document.getElementById('btn-excluir-area-texto')) document.getElementById('btn-excluir-area-texto').style.display = '';
+            
+            if(document.getElementById('detalhe-area').classList.contains('active')) {
+                const area = areas.find(a => a.key === areaAtualKey);
+                if(area) verArea(area.key, area.nome);
+            }
+        }
 
 // Essa função será chamada quando você clicar no botão verde de salvar a contagem
 function salvarContagemAuditoria() {
-    // Aqui faremos a lógica de registrar no histórico de domingo (próximo passo)
-    showToast("Contagem salva com sucesso!", "success");
-    cancelarModoContagem();
-}
+            if(currentRole === 'visualizador') return;
+            const areaObj = areas.find(a => a.key === areaAtualKey);
+            if(!areaObj) return;
+
+            let updates = {};
+            let contagemRealizada = false;
+            let itensContadosHist = {}; // NOVO: Para a Linha do Tempo
+
+            const inputsFardo = document.querySelectorAll('input[id^="cont-f-"]');
+            inputsFardo.forEach(inputF => {
+                const pk = inputF.id.replace('cont-f-', '');
+                const inputU = document.getElementById(`cont-u-${pk}`);
+                const p = produtos[pk];
+                
+                let f = inputF.value !== "" ? parseInt(inputF.value) : 0;
+                let u = inputU && inputU.value !== "" ? parseInt(inputU.value) : 0;
+                if(f < 0) f = 0; if(u < 0) u = 0;
+
+                updates[`produtos/${pk}/estoque/${areaObj.nome}`] = { f: f, u: u };
+                itensContadosHist[pk] = { f: f, u: u, nome: p ? p.nome : "Desconhecido" };
+                contagemRealizada = true;
+            });
+
+            if (contagemRealizada) {
+                document.getElementById('btn-salvar-contagem-geral').innerText = "SALVANDO...";
+                db.ref().update(updates).then(() => {
+                    // NOVO: Registra na Linha do Tempo
+                    const data = new Date();
+                    db.ref('historico_timeline').push({
+                        timestamp: data.getTime(), dataFormatada: data.toLocaleDateString('pt-BR'),
+                        tipo: 'contagem', area: areaObj.nome, itens: itensContadosHist, usuario: currentUserName || "Equipe"
+                    });
+
+                    showToast("Contagem salva com sucesso!", "success");
+                    document.getElementById('btn-salvar-contagem-geral').innerText = "CONCLUIR CONTAGEM E SALVAR";
+                    cancelarModoContagem();
+                });
+            } else { cancelarModoContagem(); }
+        }
 
     </script>
 </body>
