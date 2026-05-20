@@ -1190,6 +1190,48 @@
                     <p style="font-size:0.8rem; margin: 10px 0 5px 0; color:var(--text-main);">Preço da Garrafa (R$):</p>
                     <input type="number" id="prod-preco-garrafa" placeholder="Ex: 85.00" step="0.01">
                 </div>
+                <div id="wrap-item-produzido-novo" style="display:none; margin-bottom:10px; padding:15px; border:1px solid #f59e0b; border-radius:8px; background: rgba(245, 158, 11, 0.1);">
+
+    <label class="check-item" style="font-weight:800; color:#f59e0b;">
+        <input type="checkbox" id="check-item-produzido" onchange="toggleItemProduzido()">
+        <span>Item Produzido</span>
+    </label>
+
+    <div id="box-composicao" style="display:none; margin-top:15px;">
+
+        <p style="font-size:0.85rem; margin-bottom:5px;">
+            Rendimento Final:
+        </p>
+
+        <input
+            type="number"
+            id="prod-rendimento-final"
+            placeholder="Ex: 600"
+        >
+
+        <div
+            id="lista-composicao"
+            style="margin-top:15px; display:flex; flex-direction:column; gap:10px;"
+        ></div>
+
+        <button
+            type="button"
+            onclick="adicionarLinhaComposicao()"
+            class="btn-submit"
+            style="background:#f59e0b;"
+        >
+            + Adicionar Ingrediente
+        </button>
+
+        <div style="margin-top:15px; font-weight:800;">
+            Custo Calculado:
+            <span id="custo-composicao">
+                R$ 0,00
+            </span>
+        </div>
+
+    </div>
+</div>
 
                 <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">2. Selecione o Método de Compra <span style="font-size:0.75rem; font-weight:normal; color:var(--primary);">*(Apenas um)*</span>:</p>
                 <div id="metodos-container" style="display:flex; flex-wrap:wrap; gap:5px;"></div>
@@ -2550,7 +2592,26 @@ function moverCategoriaAreaEdit(cat, direcao) {
                     getCategoriasProduto(p).forEach(cn => { const c = Object.values(categorias).find(x => x.nome === cn); if(c && c.unidadesFardo > t) t = Number(c.unidadesFardo); }); 
                     const tot = Object.values(p.estoque||{}).reduce((a,v)=>typeof v==='object'&&v!==null?a+((Number(v.f)||0)*t)+(Number(v.u)||0):a+Number(v||0),0); 
                     
-                    return `<tr data-subgrupo="${p.subgrupo || ''}"><td><div style="display:flex; align-items:center;"><button class="action-icon edit-btn req-dono" onclick="abrirEdicaoProduto('${k}')">✎</button><button class="action-icon info-btn" onclick="verDetalhesProduto('${k}')">ⓘ</button><span class="col-item">${p.nome||''}</span></div></td><td style="text-align:right">${renderizarTotalLinhaDupla(tot,t)}</td></tr>`; 
+                    return `<tr data-subgrupo="${p.subgrupo || ''}"><td><div style="display:flex; align-items:center;"><button class="action-icon edit-btn req-dono" onclick="abrirEdicaoProduto('${k}')">✎</button><button class="action-icon info-btn" onclick="verDetalhesProduto('${k}')">ⓘ</button><span class="col-item">
+    ${p.nome||''}
+
+    ${p.itemProduzido
+        ? `
+            <span style="
+                background:#f59e0b;
+                color:white;
+                font-size:0.65rem;
+                padding:2px 6px;
+                border-radius:999px;
+                margin-left:6px;
+                font-weight:800;
+            ">
+                PRODUZIDO
+            </span>
+        `
+        : ''
+    }
+</span></div></td><td style="text-align:right">${renderizarTotalLinhaDupla(tot,t)}</td></tr>`; 
                 }).join(''); 
                 
                 aplicarFiltrosProdutos(); 
@@ -3047,6 +3108,38 @@ function moverCatSub(index, direcao) {
             document.getElementById(wrapId).style.display = isDestilado ? 'block' : 'none';
         }
 
+        function checarItemProduzido(ctx) {
+
+    const cats = ctx === 'novo'
+        ? catsNovo
+        : catsEdit;
+
+    const wrap = document.getElementById(
+        ctx === 'novo'
+            ? 'wrap-item-produzido-novo'
+            : 'wrap-item-produzido-edit'
+    );
+
+    if(!wrap) return;
+
+    const ehIngrediente = cats.some(c =>
+        c.toLowerCase().includes('ingrediente')
+    );
+
+    wrap.style.display =
+        ehIngrediente
+            ? 'block'
+            : 'none';
+}
+
+function toggleItemProduzido() {
+
+    document.getElementById('box-composicao').style.display =
+        document.getElementById('check-item-produzido').checked
+            ? 'block'
+            : 'none';
+}
+
         function togglePreset(k, ctx) { 
             const n=categorias[k].nome;
             const t=ctx==='novo'?'checks-areas':'edit-checks-areas';
@@ -3124,6 +3217,7 @@ function moverCatSub(index, direcao) {
             renderizarPresetsMetodos(); 
             renderSubgrupos('novo');
             checarDestilado('novo');
+            checarItemProduzido('novo');
             navegar('novo-produto'); 
         }
 
@@ -3150,7 +3244,10 @@ function moverCatSub(index, direcao) {
 
                 db.ref('produtos').push({
                     nome:n, 
-                    precoCusto: pCusto,
+                    precoCusto:
+    document.getElementById('check-item-produzido')?.checked
+        ? calcularCustoComposicao()
+        : pCusto,
                     categorias:catsNovo.length?catsNovo:null, 
                     subgrupo: prodSubNovo || null,
                     detalhesDestilado: detDestilado,
@@ -3158,11 +3255,35 @@ function moverCatSub(index, direcao) {
                     estoqueMinimo:min, 
                     locais:s, 
                     estoque:e
+                    itemProduzido:
+    document.getElementById('check-item-produzido')?.checked || false,
+
+rendimentoFinal:
+    Number(
+        document.getElementById('prod-rendimento-final')?.value
+    ) || 0,
+
+composicao:
+    Array.from(
+        document.querySelectorAll('#lista-composicao > div')
+    ).map(linha => ({
+        produtoId:
+            linha.querySelector('.comp-prod').value,
+
+        quantidade:
+            Number(
+                linha.querySelector('.comp-qtd').value
+            ) || 0
+    })),
+
+custoCalculado:
+    calcularCustoComposicao()
                 }); 
                 document.getElementById('prod-nome').value=""; 
                 document.getElementById('prod-metodo-selecionado').value=""; 
                 document.getElementById('prod-estoque-minimo').value="0"; 
                 document.getElementById('prod-preco-custo').value="";
+                
                 navegar('produtos-categorias');
             } else alert("Assinale área vinculada."); 
         }
@@ -3190,6 +3311,7 @@ function moverCatSub(index, direcao) {
             renderizarPresetsMetodos(); 
             renderSubgrupos('edit');
             checarDestilado('edit');
+            checarItemProduzido('edit');
             
             const checksHTML = areas.length ? areas.map(a=>`<label class="check-item"><input type="checkbox" value="${a.nome}" ${(p.locais||[]).includes(a.nome)?'checked':''}> <span>${a.nome}</span></label>`).join('') : '<span style="color:#64748b; font-size:0.85rem;">Nenhuma área cadastrada. Cadastre uma área primeiro.</span>';
             document.getElementById('edit-checks-areas').innerHTML=checksHTML; 
@@ -3638,6 +3760,118 @@ document.getElementById('area-edit-box').style.display='block';
                 </div>
             `).join('');
         }
+
+        function adicionarLinhaComposicao() {
+
+    const container =
+        document.getElementById('lista-composicao');
+
+    const options =
+        Object.keys(produtos)
+            .map(k => `
+                <option value="${k}">
+                    ${produtos[k].nome}
+                </option>
+            `)
+            .join('');
+
+    const div = document.createElement('div');
+
+    div.style =
+        'display:flex; gap:10px; align-items:center;';
+
+    div.innerHTML = `
+        <select class="comp-prod" style="flex:1;">
+            ${options}
+        </select>
+
+        <input
+            type="number"
+            class="comp-qtd"
+            placeholder="Qtd"
+            style="width:100px;"
+        >
+
+        <button
+            type="button"
+            onclick="
+                this.parentElement.remove();
+                calcularCustoComposicao();
+            "
+            style="
+                background:red;
+                color:white;
+                border:none;
+                border-radius:50%;
+                width:28px;
+                height:28px;
+                cursor:pointer;
+            "
+        >
+            ×
+        </button>
+    `;
+
+    container.appendChild(div);
+
+    div.querySelector('.comp-prod')
+        .addEventListener(
+            'change',
+            calcularCustoComposicao
+        );
+
+    div.querySelector('.comp-qtd')
+        .addEventListener(
+            'input',
+            calcularCustoComposicao
+        );
+}
+
+function calcularCustoComposicao() {
+
+    let total = 0;
+
+    document
+        .querySelectorAll('#lista-composicao > div')
+        .forEach(linha => {
+
+            const prodId =
+                linha.querySelector('.comp-prod').value;
+
+            const qtd =
+                Number(
+                    linha.querySelector('.comp-qtd').value
+                ) || 0;
+
+            const prod = produtos[prodId];
+
+            if(!prod) return;
+
+            const custo =
+                Number(prod.precoCusto) || 0;
+
+            total += custo * qtd;
+        });
+
+    const rendimento =
+        Number(
+            document.getElementById(
+                'prod-rendimento-final'
+            ).value
+        ) || 1;
+
+    const final = total / rendimento;
+
+    document.getElementById(
+        'custo-composicao'
+    ).innerText =
+        final.toLocaleString('pt-BR', {
+            style:'currency',
+            currency:'BRL'
+        });
+
+    return final;
+}
 
         function removerIngrediente(idx) {
             receitaEmConstrucao.ingredientes.splice(idx, 1);
