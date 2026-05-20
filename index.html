@@ -3221,72 +3221,76 @@ function toggleItemProduzido() {
             navegar('novo-produto'); 
         }
 
-        function salvarArea() { const n=document.getElementById('area-nome').value; if(n){db.ref('areas').push({nome: n, config: {usaPadrao: false, padroes: {}}}); document.getElementById('area-nome').value=""; navegar('areas-lista');} }        
-        function salvarProduto() { 
-            const n=document.getElementById('prod-nome').value; 
-            const pCusto = Number(document.getElementById('prod-preco-custo').value) || 0;
-            const met=document.getElementById('prod-metodo-selecionado').value; 
-            const min=Number(document.getElementById('prod-estoque-minimo').value)||0; 
-            
-            if(!met){alert("Selecione um Método.");return;} 
-            const s=Array.from(document.querySelectorAll('#checks-areas input:checked')).map(i=>i.value); 
-            
-            if(n && s.length){
-                const e={}; s.forEach(x=>e[x]={f:0,u:0}); 
-                
-                let detDestilado = null;
-                if(catsNovo.some(c => c.toLowerCase().includes('destilado'))) {
-                    detDestilado = {
-                        ml: Number(document.getElementById('prod-ml-garrafa').value) || 0,
-                        precoGarrafa: Number(document.getElementById('prod-preco-garrafa').value) || 0
-                    };
-                }
+        function salvarArea() {
+    const n = document.getElementById('area-nome').value;
+    if (n) {
+        db.ref('areas').push({
+            nome: n,
+            config: { usaPadrao: false, padroes: {} }
+        });
+        document.getElementById('area-nome').value = "";
+        navegar('areas-lista');
+    }
+}
 
-                db.ref('produtos').push({
-                    nome:n, 
-                    precoCusto:
-    document.getElementById('check-item-produzido')?.checked
-        ? calcularCustoComposicao()
-        : pCusto,
-                    categorias:catsNovo.length?catsNovo:null, 
-                    subgrupo: prodSubNovo || null,
-                    detalhesDestilado: detDestilado,
-                    metodoCompra:met, 
-                    estoqueMinimo:min, 
-                    locais:s, 
-                    estoque:e
-                    itemProduzido:
-    document.getElementById('check-item-produzido')?.checked || false,
+function salvarProduto() {
+    const n = document.getElementById('prod-nome').value;
+    const pCusto = Number(document.getElementById('prod-preco-custo').value) || 0;
+    const met = document.getElementById('prod-metodo-selecionado').value;
+    const min = Number(document.getElementById('prod-estoque-minimo').value) || 0;
 
-rendimentoFinal:
-    Number(
-        document.getElementById('prod-rendimento-final')?.value
-    ) || 0,
+    if (!met) {
+        alert("Selecione um Método.");
+        return;
+    }
 
-composicao:
-    Array.from(
-        document.querySelectorAll('#lista-composicao > div')
-    ).map(linha => ({
-        produtoId:
-            linha.querySelector('.comp-prod').value,
+    const s = Array.from(document.querySelectorAll('#checks-areas input:checked')).map(i => i.value);
 
-        quantidade:
-            Number(
-                linha.querySelector('.comp-qtd').value
-            ) || 0
-    })),
+    if (!n || s.length === 0) {
+        alert("Assinale área vinculada.");
+        return;
+    }
 
-custoCalculado:
-    calcularCustoComposicao()
-                }); 
-                document.getElementById('prod-nome').value=""; 
-                document.getElementById('prod-metodo-selecionado').value=""; 
-                document.getElementById('prod-estoque-minimo').value="0"; 
-                document.getElementById('prod-preco-custo').value="";
-                
-                navegar('produtos-categorias');
-            } else alert("Assinale área vinculada."); 
-        }
+    const e = {};
+    s.forEach(x => e[x] = { f: 0, u: 0 });
+
+    let detDestilado = null;
+    if (catsNovo.some(c => c.toLowerCase().includes('destilado'))) {
+        detDestilado = {
+            ml: Number(document.getElementById('prod-ml-garrafa').value) || 0,
+            precoGarrafa: Number(document.getElementById('prod-preco-garrafa').value) || 0
+        };
+    }
+
+    const isProduzido = document.getElementById('check-item-produzido')?.checked || false;
+    const custoFinal = isProduzido ? calcularCustoComposicao() : pCusto;
+
+    db.ref('produtos').push({
+        nome: n,
+        precoCusto: custoFinal,
+        categorias: catsNovo.length ? catsNovo : null,
+        subgrupo: prodSubNovo || null,
+        detalhesDestilado: detDestilado,
+        metodoCompra: met,
+        estoqueMinimo: min,
+        locais: s,
+        estoque: e,
+        itemProduzido: isProduzido,
+        rendimentoFinal: Number(document.getElementById('prod-rendimento-final')?.value) || 0,
+        composicao: Array.from(document.querySelectorAll('#lista-composicao > div')).map(linha => ({
+            produtoId: linha.querySelector('.comp-prod').value,
+            quantidade: Number(linha.querySelector('.comp-qtd').value) || 0
+        })),
+        custoCalculado: custoFinal
+    });
+
+    document.getElementById('prod-nome').value = "";
+    document.getElementById('prod-metodo-selecionado').value = "";
+    document.getElementById('prod-estoque-minimo').value = "0";
+    document.getElementById('prod-preco-custo').value = "";
+
+    navegar('produtos-categorias');
+}
 
         function abrirEdicaoProduto(k) { 
             const p=produtos[k]; 
