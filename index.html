@@ -861,14 +861,7 @@
             </div>
             
             <div id="grid-areas" class="grid-areas-layout"></div>
-            <!-- Banner de Alocação Pendente -->
-            <div id="banner-pendentes" class="req-contrib" style="display:none; background: var(--primary); color: white; padding: 12px 15px; border-radius: 12px; margin-bottom: 20px; flex-direction: row; justify-content: space-between; align-items: center; cursor: pointer; box-shadow: 0 8px 20px rgba(183, 41, 41, 0.4);" onclick="abrirAlocacaoModal()">
-                <div>
-                    <strong style="display:flex; align-items:center; gap:8px; font-size:1.1rem;"><i class="ph ph-warning-circle" style="font-size:1.5rem;"></i> Carga no Pátio!</strong>
-                    <span style="font-size:0.85rem; opacity:0.9; margin-top:2px; display:block;" id="txt-qtd-pendentes">Você tem itens aguardando alocação física.</span>
-                </div>
-                <i class="ph ph-arrow-right" style="font-size:1.5rem;"></i>
-            </div>
+            
         </section>
         
         <section id="produtos-categorias" class="section">
@@ -915,6 +908,8 @@
                     <input type="text" id="edit-area-input">
                     <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">Quais itens ficam nesta área?</p>
                     <div id="area-edit-produtos-list" class="areas-check-list" style="max-height: 200px; overflow-y: auto; margin-bottom: 15px; padding: 10px;"></div>
+                    <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">Ordem das categorias nesta área:</p>
+<div id="area-edit-categorias-ordem" style="display:flex; flex-direction:column; gap:8px; margin-bottom:15px;"></div>
                     <p style="font-size:0.9rem; margin: 15px 0 5px 0; font-weight:700; color:var(--text-main);">Habilitar Estoque Padrão?</p>
                     <label style="display:flex; align-items:center; gap:8px; cursor:pointer; margin-bottom:10px;">
                         <input type="checkbox" id="area-usar-padrao" onchange="toggleConfigEstoquePadrao()"> Sim
@@ -1293,6 +1288,7 @@
         let prodSubEdit = "";
         let activeSubgroupFilter = "Todos";
         let activeAdminSubgroupFilter = "Todos"; 
+        let areaCatOrderTemp = [];
 
         // Estados das Receitas
         let receitaAtualKey = "";
@@ -1517,21 +1513,6 @@
             setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
-        // Função para mostrar Notificações do Sistema (Toasts)
-        function showToast(msg, type = 'success') {
-            let container = document.getElementById('toast-container');
-            if (!container) {
-                container = document.createElement('div');
-                container.id = 'toast-container';
-                document.body.appendChild(container);
-            }
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.innerHTML = msg;
-            container.appendChild(toast);
-            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
-        }
-
         function salvarRecebimentoEstoque() {
             if(currentRole === 'visualizador') return;
             let updates = {}; let qtdRecebida = 0;
@@ -1710,9 +1691,8 @@
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); 
             if(alvo) alvo.classList.add('active');
 
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             // Mantém os botões do menu sincronizados
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             if (id.includes('reservas') || id.includes('mapa') || id.includes('agenda')) {
                 const btnRes = document.getElementById('nav-reservas-hub');
                 if(btnRes) btnRes.classList.add('active');
@@ -2280,6 +2260,128 @@
             return minPrio;
         }
 
+        function getCategoriaPrincipalProduto(p) {
+    const cats = getCategoriasProduto(p);
+    return cats.length > 0 ? cats[0] : "Sem Categoria";
+}
+
+function getCategoriaObjPorNome(nome) {
+    return Object.values(categorias).find(c => c && c.nome === nome);
+}
+
+function ordenarCategoriasParaArea(nomesCategorias, areaObj) {
+    const ordemSalva = areaObj && areaObj.config && areaObj.config.ordemCategorias ? areaObj.config.ordemCategorias : [];
+
+    return [...nomesCategorias].sort((a, b) => {
+        const idxA = ordemSalva.indexOf(a);
+        const idxB = ordemSalva.indexOf(b);
+
+        if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+        if (idxA !== -1) return -1;
+        if (idxB !== -1) return 1;
+
+        const prioA = getPrioridadeCategoria(a);
+        const prioB = getPrioridadeCategoria(b);
+        if (prioA !== prioB) return prioA - prioB;
+
+        return a.localeCompare(b);
+    });
+}
+
+function compararProdutosDentroDaCategoria(pkA, pkB, nomeCategoria) {
+    const catObj = getCategoriaObjPorNome(nomeCategoria);
+    const ordemProdutos = catObj && catObj.ordem ? catObj.ordem : [];
+    const ordemSubgrupos = catObj && catObj.subgrupos ? catObj.subgrupos : [];
+
+    const subA = produtos[pkA]?.subgrupo || '';
+    const subB = produtos[pkB]?.subgrupo || '';
+
+    if (subA !== subB) {
+        if (!subA) return 1;
+        if (!subB) return -1;
+
+        const idxSubA = ordemSubgrupos.indexOf(subA);
+        const idxSubB = ordemSubgrupos.indexOf(subB);
+
+        if (idxSubA !== -1 && idxSubB !== -1) return idxSubA - idxSubB;
+        if (idxSubA !== -1) return -1;
+        if (idxSubB !== -1) return 1;
+
+        return subA.localeCompare(subB);
+    }
+
+    const idxA = ordemProdutos.indexOf(pkA);
+    const idxB = ordemProdutos.indexOf(pkB);
+
+    if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+    if (idxA !== -1) return -1;
+    if (idxB !== -1) return 1;
+
+    return (produtos[pkA]?.nome || "").localeCompare(produtos[pkB]?.nome || "");
+}
+
+function compararProdutosPorCategoriaEOrdem(pkA, pkB, areaObj = null) {
+    const catA = getCategoriaPrincipalProduto(produtos[pkA]);
+    const catB = getCategoriaPrincipalProduto(produtos[pkB]);
+
+    if (catA !== catB) {
+        const ordenadas = ordenarCategoriasParaArea([catA, catB], areaObj);
+        return ordenadas.indexOf(catA) - ordenadas.indexOf(catB);
+    }
+
+    return compararProdutosDentroDaCategoria(pkA, pkB, catA);
+}
+
+function atualizarOrdemCategoriasAreaEdit() {
+    const container = document.getElementById('area-edit-categorias-ordem');
+    if (!container) return;
+
+    const selecionados = Array.from(document.querySelectorAll('.area-prod-checkbox:checked')).map(cb => cb.value);
+    const catsSelecionadas = [];
+
+    selecionados.forEach(pk => {
+        const p = produtos[pk];
+        if (!p) return;
+        const cat = getCategoriaPrincipalProduto(p);
+        if (!catsSelecionadas.includes(cat)) catsSelecionadas.push(cat);
+    });
+
+    areaCatOrderTemp = areaCatOrderTemp.filter(cat => catsSelecionadas.includes(cat));
+
+    catsSelecionadas.forEach(cat => {
+        if (!areaCatOrderTemp.includes(cat)) areaCatOrderTemp.push(cat);
+    });
+
+    areaCatOrderTemp = ordenarCategoriasParaArea(areaCatOrderTemp, { config: { ordemCategorias: areaCatOrderTemp } });
+
+    if (areaCatOrderTemp.length === 0) {
+        container.innerHTML = `<p style="font-size:0.8rem; color:#64748b;">Marque produtos acima para organizar as categorias.</p>`;
+        return;
+    }
+
+    container.innerHTML = areaCatOrderTemp.map((cat, idx) => `
+        <div style="display:flex; align-items:center; background:rgba(0,0,0,0.4); padding:10px; border-radius:8px; border:1px solid var(--border-color);">
+            <div class="sort-wrapper">
+                <button class="sort-btn-up" onclick="moverCategoriaAreaEdit('${cat}', -1)" ${idx === 0 ? 'disabled style="opacity:0.3"' : ''}>▲</button>
+                <button class="sort-btn-down" onclick="moverCategoriaAreaEdit('${cat}', 1)" ${idx === areaCatOrderTemp.length - 1 ? 'disabled style="opacity:0.3"' : ''}>▼</button>
+            </div>
+            <strong style="font-size:0.95rem; color:var(--text-main);">${cat}</strong>
+        </div>
+    `).join('');
+}
+
+function moverCategoriaAreaEdit(cat, direcao) {
+    const idx = areaCatOrderTemp.indexOf(cat);
+    const novoIdx = idx + direcao;
+    if (idx === -1 || novoIdx < 0 || novoIdx >= areaCatOrderTemp.length) return;
+
+    const temp = areaCatOrderTemp[idx];
+    areaCatOrderTemp[idx] = areaCatOrderTemp[novoIdx];
+    areaCatOrderTemp[novoIdx] = temp;
+
+    atualizarOrdemCategoriasAreaEdit();
+}
+
         // ==========================================
         // ESTOQUE E GESTÃO DE PRODUTOS
         // ==========================================
@@ -2312,61 +2414,71 @@
         }
 
         function renderizarAreas() { 
-            try { 
-                const grid = document.getElementById('grid-areas'); 
-                if(!grid) return; 
-                
-                grid.innerHTML = areas.map(a => {
-                    let semaforoHTML = '';
-                    if (a.config && a.config.usaPadrao && a.config.padroes) {
-                        let totalRegras = Object.keys(a.config.padroes).length;
+    try { 
+        const grid = document.getElementById('grid-areas'); 
+        if(!grid) return; 
+        
+        grid.innerHTML = areas.map(a => {
+            let semaforoHTML = '';
 
-                        if (totalRegras > 0) {
-                            let somaPercentuais = 0;
-                            let regrasValidas = 0;
+            if (a.config && a.config.usaPadrao && a.config.padroes) {
+                let somaPercentuais = 0;
+                let regrasValidas = 0;
 
-                            Object.keys(a.config.padroes).forEach(pk => {
-                                const p = produtos[pk];
-                                if (p) {
-                                    regrasValidas++;
-                                    let t = 1; 
-                                    getCategoriasProduto(p).forEach(cn => { 
-                                        const c = Object.values(categorias).find(x => x.nome === cn); 
-                                        if(c && c.unidadesFardo > t) t = Number(c.unidadesFardo); 
-                                    });
-                                    const v = p.estoque?.[a.nome] || {f:0,u:0};
-                                    
-                                    const qtdAtual = t > 1 ? (Number(v.f) || 0) : (Number(v.f)*t + Number(v.u));
-                                    const meta = Number(a.config.padroes[pk]) || 0;
-                                    
-                                    if (meta > 0) {
-                                        let pctItem = (qtdAtual / meta) * 100;
-                                        if (pctItem > 100) pctItem = 100; // Limita em 100% para não mascarar as faltas
-                                        somaPercentuais += pctItem;
-                                    } else {
-                                        somaPercentuais += 100; // Se a meta for 0, consideramos 100% ok
-                                    }
-                                }
-                            });
+                Object.keys(a.config.padroes).forEach(pk => {
+                    const p = produtos[pk];
+                    if (!p) return;
 
-                            if (regrasValidas > 0) {
-                                // Tira a média da saúde do estoque da área inteira
-                                const pctGeral = Math.floor(somaPercentuais / regrasValidas);
-                                
-                                let cor = '#ef4444'; // 0 a 40% (Vermelho)
-                                if (pctGeral >= 100) cor = '#10b981'; // 100% (Verde)
-                                else if (pctGeral >= 41) cor = '#f59e0b'; // 41 a 99% (Amarelo)
-                                
-                                semaforoHTML = `<div class="status-dot" style="background-color: ${cor};"></div>`;
-                            }
-                        }
-                    }
-                    return `<div class="card-nav" onclick="verArea('${a.key}', '${a.nome}')">
-                        ${semaforoHTML}<i>${obterEmoji(a.nome)}</i><h3>${a.nome || 'Área'}</h3>
-                    </div>`;
-                }).join(''); 
-            } catch(e){ console.error(e); } 
-        }
+                    const produtoEstaNaArea = (p.locais || []).includes(a.nome);
+                    const temEstoqueNaArea = p.estoque && p.estoque[a.nome] !== undefined;
+
+                    // Ignora padrões antigos de produtos que não pertencem mais a essa área
+                    if (!produtoEstaNaArea && !temEstoqueNaArea) return;
+
+                    const meta = Number(a.config.padroes[pk]) || 0;
+                    if (meta <= 0) return;
+
+                    let t = 1; 
+                    getCategoriasProduto(p).forEach(cn => { 
+                        const c = Object.values(categorias).find(x => x.nome === cn); 
+                        if(c && c.unidadesFardo > t) t = Number(c.unidadesFardo); 
+                    });
+
+                    const v = p.estoque?.[a.nome] || {f:0, u:0};
+
+                    const fAtual = Number(v.f) || 0;
+                    const uAtual = Number(v.u) || 0;
+
+                    // Compara tudo em unidades para evitar erro com fardos + unidades soltas
+                    const qtdAtualEmUnidades = (fAtual * t) + uAtual;
+                    const metaEmUnidades = t > 1 ? meta * t : meta;
+
+                    let pctItem = (qtdAtualEmUnidades / metaEmUnidades) * 100;
+                    if (pctItem > 100) pctItem = 100;
+
+                    somaPercentuais += pctItem;
+                    regrasValidas++;
+                });
+
+                if (regrasValidas > 0) {
+                    const pctGeral = Math.floor(somaPercentuais / regrasValidas);
+                    
+                    let cor = '#ef4444';
+                    if (pctGeral >= 100) cor = '#10b981';
+                    else if (pctGeral >= 41) cor = '#f59e0b';
+                    
+                    semaforoHTML = `<div class="status-dot" title="${pctGeral}% do estoque padrão" style="background-color: ${cor};"></div>`;
+                }
+            }
+
+            return `<div class="card-nav" onclick="verArea('${a.key}', '${a.nome}')">
+                ${semaforoHTML}<i>${obterEmoji(a.nome)}</i><h3>${a.nome || 'Área'}</h3>
+            </div>`;
+        }).join(''); 
+    } catch(e){ 
+        console.error(e); 
+    } 
+}
         
         function renderizarGradeAgrupada() { 
             try {
@@ -2446,123 +2558,170 @@
         }
 
         function verArea(key, nome) { 
-            try {
-                document.getElementById('busca-area').value = '';
-                document.getElementById('area-edit-box').style.display = 'none'; 
-                areaAtualKey = key; 
-                navegar('detalhe-area'); 
-                document.getElementById('area-display-name').innerText = nome || 'Área'; 
-                
-                
-                const areaObj = areas.find(a => a.key === key);
-                if (!areaObj) return;
+    try {
+        document.getElementById('busca-area').value = '';
+        document.getElementById('area-edit-box').style.display = 'none'; 
+        areaAtualKey = key; 
+        navegar('detalhe-area'); 
+        document.getElementById('area-display-name').innerText = nome || 'Área'; 
+        
+        const areaObj = areas.find(a => a.key === key);
+        if (!areaObj) return;
 
-                const usaPadrao = (areaObj.config && areaObj.config.usaPadrao);
+        const usaPadrao = (areaObj.config && areaObj.config.usaPadrao);
+        const totalCols = modoContagemAtivo ? 3 : (usaPadrao ? 5 : 4);
 
-                // CONFIGURAÇÃO DO CABEÇALHO (THEAD)
-                let headHtml = `<tr>
-                    <th>Item</th>
-                    ${modoContagemAtivo ? '' : (usaPadrao ? '<th style="text-align:center; color:#10b981;">Pad.</th>' : '')}
-                    <th style="text-align:center">${modoContagemAtivo ? 'Contar Fds' : 'Estoque Fds'}</th>
-                    <th style="text-align:center">${modoContagemAtivo ? 'Contar Un.' : 'Estoque Un.'}</th>
-                    ${modoContagemAtivo ? '' : '<th style="text-align:right;">Total</th>'}
-                </tr>`;
-                document.getElementById('head-area-itens').innerHTML = headHtml;
+        let headHtml = `<tr>
+            <th>Item</th>
+            ${modoContagemAtivo ? '' : (usaPadrao ? '<th style="text-align:center; color:#10b981;">Pad.</th>' : '')}
+            <th style="text-align:center">${modoContagemAtivo ? 'Contar Fds' : 'Estoque Fds'}</th>
+            <th style="text-align:center">${modoContagemAtivo ? 'Contar Un.' : 'Estoque Un.'}</th>
+            ${modoContagemAtivo ? '' : '<th style="text-align:right;">Total</th>'}
+        </tr>`;
+        document.getElementById('head-area-itens').innerHTML = headHtml;
 
-                const lista = document.getElementById('tabela-area-itens');
-                lista.innerHTML = '';
+        const lista = document.getElementById('tabela-area-itens');
+        lista.innerHTML = '';
 
-                // Busca produtos
-                const prodsArea = Object.keys(produtos).filter(pk => {
-                    const p = produtos[pk];
-                    if (!p) return false;
-                    
-                    const vinculado = p.locais && p.locais.includes(nome);
-                    const temEstoqueSalvo = p.estoque && p.estoque[nome] !== undefined;
-                    
-                    return vinculado || temEstoqueSalvo;
-                });
+        const prodsArea = Object.keys(produtos).filter(pk => {
+            const p = produtos[pk];
+            if (!p) return false;
+            const vinculado = p.locais && p.locais.includes(nome);
+            const temEstoqueSalvo = p.estoque && p.estoque[nome] !== undefined;
+            return vinculado || temEstoqueSalvo;
+        });
 
-                if (prodsArea.length === 0) {
-                    lista.innerHTML = `<tr><td colspan="${modoContagemAtivo ? '3' : (usaPadrao ? '5' : '4')}" style="text-align:center; padding:20px; color:#64748b;">Nenhum item vinculado a esta área. Clique no ícone de lápis (✎) acima para adicionar.</td></tr>`;
-                    return;
+        if (prodsArea.length === 0) {
+            lista.innerHTML = `<tr><td colspan="${totalCols}" style="text-align:center; padding:20px; color:#64748b;">Nenhum item vinculado a esta área. Clique no ícone de lápis (✎) acima para adicionar.</td></tr>`;
+            return;
+        }
+
+        const grupos = {};
+        prodsArea.forEach(pk => {
+            const p = produtos[pk];
+            const cats = getCategoriasProduto(p);
+            const catNome = cats.length > 0 ? cats[0] : 'Sem Categoria';
+            if (!grupos[catNome]) grupos[catNome] = [];
+            grupos[catNome].push(pk);
+        });
+
+        const nomesCategorias = ordenarCategoriasParaArea(Object.keys(grupos), areaObj);
+
+nomesCategorias.forEach(catNome => {
+            lista.innerHTML += `<tr>
+                <td colspan="${totalCols}" style="background: rgba(183, 41, 41, 0.22); color:#fbeee3; font-weight:900; text-transform:uppercase; letter-spacing:1px; font-size:0.78rem; padding:10px;">
+                    ${catNome}
+                </td>
+            </tr>`;
+
+            grupos[catNome].sort((a, b) => compararProdutosDentroDaCategoria(a, b, catNome));
+
+            let subgruposDaCategoria = {};
+            grupos[catNome].forEach(pkGrupo => {
+                const pGrupo = produtos[pkGrupo];
+                const subNome = pGrupo && pGrupo.subgrupo ? pGrupo.subgrupo : '';
+                const chaveSub = subNome || '_sem_subgrupo_';
+
+                if (!subgruposDaCategoria[chaveSub]) subgruposDaCategoria[chaveSub] = [];
+                subgruposDaCategoria[chaveSub].push(pkGrupo);
+            });
+
+            const catObjSub = getCategoriaObjPorNome(catNome);
+const ordemSalvaSubgrupos = catObjSub && catObjSub.subgrupos ? catObjSub.subgrupos : [];
+
+const ordemSubgrupos = Object.keys(subgruposDaCategoria).sort((a, b) => {
+    if (a === '_sem_subgrupo_') return 1;
+    if (b === '_sem_subgrupo_') return -1;
+
+    const idxA = ordemSalvaSubgrupos.indexOf(a);
+    const idxB = ordemSalvaSubgrupos.indexOf(b);
+
+    if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+    if (idxA !== -1) return -1;
+    if (idxB !== -1) return 1;
+
+    return a.localeCompare(b);
+});
+
+            ordemSubgrupos.forEach(subKey => {
+                if (subKey !== '_sem_subgrupo_') {
+                    lista.innerHTML += `<tr>
+                        <td colspan="${totalCols}" style="background: rgba(0,0,0,0.35); color:#10b981; font-weight:900; text-transform:uppercase; letter-spacing:1px; font-size:0.72rem; padding:8px 10px 8px 22px;">
+                            ${subKey}
+                        </td>
+                    </tr>`;
                 }
 
-                // Ordena alfabeticamente
-                prodsArea.sort((a,b) => produtos[a].nome.localeCompare(produtos[b].nome));
+                subgruposDaCategoria[subKey].forEach(pk => {
+                const p = produtos[pk];
+                const est = (p.estoque && p.estoque[nome]) ? p.estoque[nome] : { f: 0, u: 0 };
+                const qtdF = Number(est.f) || 0;
+                const qtdU = Number(est.u) || 0;
 
-                prodsArea.forEach(pk => {
-                    const p = produtos[pk];
-                    const est = (p.estoque && p.estoque[nome]) ? p.estoque[nome] : { f: 0, u: 0 };
-                    const qtdF = Number(est.f) || 0;
-                    const qtdU = Number(est.u) || 0;
+                let t = 1;
+                getCategoriasProduto(p).forEach(cn => {
+                    const c = Object.values(categorias).find(x => x.nome === cn);
+                    if(c && c.unidadesFardo > t) t = Number(c.unidadesFardo);
+                });
 
-                    let t = 1;
-                    if (typeof getCategoriasProduto === 'function') {
-                        getCategoriasProduto(p).forEach(cn => {
-                            const c = Object.values(categorias).find(x => x.nome === cn);
-                            if(c && c.unidadesFardo > t) t = Number(c.unidadesFardo);
-                        });
-                    }
-                    const totalUnidades = (qtdF * t) + qtdU;
+                const totalUnidades = (qtdF * t) + qtdU;
 
-                    // CORREÇÃO: Puxa o valor do "Estoque Padrão" da chave exata 'padroes'
-                    let padraoTxt = '-';
-                    if (usaPadrao && areaObj.config && areaObj.config.padroes && areaObj.config.padroes[pk] !== undefined) {
-                        const val = areaObj.config.padroes[pk];
-                        padraoTxt = `<span style="color:#10b981; font-weight:900; font-size: 0.95rem;">${val} ${t > 1 ? 'Fds.' : 'Un.'}</span>`;
-                    } else if (usaPadrao) {
-                        padraoTxt = `<span style="color:#64748b;">-</span>`;
-                    }
+                let padraoTxt = '-';
+                if (usaPadrao && areaObj.config && areaObj.config.padroes && areaObj.config.padroes[pk] !== undefined) {
+                    const val = areaObj.config.padroes[pk];
+                    padraoTxt = `<span style="color:#10b981; font-weight:900; font-size: 0.95rem;">${val} ${t > 1 ? 'Fds.' : 'Un.'}</span>`;
+                } else if (usaPadrao) {
+                    padraoTxt = `<span style="color:#64748b;">-</span>`;
+                }
 
-                    // Caixas Customizadas
-                    let viewFardo = modoContagemAtivo 
-                        ? (t > 1 ? `<div class="qty-box" style="border: 1px solid var(--primary); background: #000; width: 75px;">
-                             <input type="number" class="qty-input" id="cont-f-${pk}" value="" style="background: #000; color: #fff;">
-                             <div class="qty-ctrls" style="border-left: 1px solid var(--primary);">
-                                 <button class="qty-btn-up" onclick="document.getElementById('cont-f-${pk}').value=(Number(document.getElementById('cont-f-${pk}').value)||0)+1">▲</button>
-                                 <button class="qty-btn-down" onclick="document.getElementById('cont-f-${pk}').value=Math.max(0,(Number(document.getElementById('cont-f-${pk}').value)||0)-1)">▼</button>
-                             </div>
-                           </div>` : `<span style="color:#64748b;">-</span>`)
-                        : `<span style="font-size:1.15rem; font-weight:800; color:var(--text-main);">${t > 1 ? qtdF : '-'}</span>`;
+                let viewFardo = modoContagemAtivo 
+                    ? (t > 1 ? `<div class="qty-box" style="border: 1px solid var(--primary); background: #000; width: 75px;">
+                         <input type="number" class="qty-input" id="cont-f-${pk}" value="" style="background: #000; color: #fff;">
+                         <div class="qty-ctrls" style="border-left: 1px solid var(--primary);">
+                             <button class="qty-btn-up" onclick="document.getElementById('cont-f-${pk}').value=(Number(document.getElementById('cont-f-${pk}').value)||0)+1">▲</button>
+                             <button class="qty-btn-down" onclick="document.getElementById('cont-f-${pk}').value=Math.max(0,(Number(document.getElementById('cont-f-${pk}').value)||0)-1)">▼</button>
+                         </div>
+                       </div>` : `<span style="color:#64748b;">-</span>`)
+                    : `<span style="font-size:1.15rem; font-weight:800; color:var(--text-main);">${t > 1 ? qtdF : '-'}</span>`;
 
-                    let viewUnidade = modoContagemAtivo 
-                        ? `<div class="qty-box" style="border: 1px solid var(--primary); background: #000; width: 75px;">
-                             <input type="number" class="qty-input" id="cont-u-${pk}" value="" style="background: #000; color: #fff;">
-                             <div class="qty-ctrls" style="border-left: 1px solid var(--primary);">
-                                 <button class="qty-btn-up" onclick="document.getElementById('cont-u-${pk}').value=(Number(document.getElementById('cont-u-${pk}').value)||0)+1">▲</button>
-                                 <button class="qty-btn-down" onclick="document.getElementById('cont-u-${pk}').value=Math.max(0,(Number(document.getElementById('cont-u-${pk}').value)||0)-1)">▼</button>
-                             </div>
-                           </div>`
-                        : `<span style="font-size:1.15rem; font-weight:800; color:var(--text-main);">${qtdU}</span>`;
+                let viewUnidade = modoContagemAtivo 
+                    ? `<div class="qty-box" style="border: 1px solid var(--primary); background: #000; width: 75px;">
+                         <input type="number" class="qty-input" id="cont-u-${pk}" value="" style="background: #000; color: #fff;">
+                         <div class="qty-ctrls" style="border-left: 1px solid var(--primary);">
+                             <button class="qty-btn-up" onclick="document.getElementById('cont-u-${pk}').value=(Number(document.getElementById('cont-u-${pk}').value)||0)+1">▲</button>
+                             <button class="qty-btn-down" onclick="document.getElementById('cont-u-${pk}').value=Math.max(0,(Number(document.getElementById('cont-u-${pk}').value)||0)-1)">▼</button>
+                         </div>
+                       </div>`
+                    : `<span style="font-size:1.15rem; font-weight:800; color:var(--text-main);">${qtdU}</span>`;
 
-                    // Coluna Total
-                    let txtTopTotal = t > 1 ? `${Math.floor(totalUnidades / t)} Fds | ${totalUnidades % t} Un.` : `${totalUnidades} Un.`;
-                    let viewTotal = modoContagemAtivo 
-                        ? ''
-                        : `<td style="text-align:right; border-left: 1px solid rgba(255,255,255,0.05);">
-                             <div style="display:flex; flex-direction:column; line-height:1.2;">
-                               <span style="font-weight:900; color:var(--primary); font-size:1.05rem;">${txtTopTotal}</span>
-                               ${t > 1 ? `<span style="font-size:0.75rem; color:#64748b; font-weight:700;">${totalUnidades} Un. Totais</span>` : ''}
-                             </div>
-                           </td>`;
+                let txtTopTotal = t > 1 ? `${Math.floor(totalUnidades / t)} Fds | ${totalUnidades % t} Un.` : `${totalUnidades} Un.`;
+                let viewTotal = modoContagemAtivo 
+                    ? ''
+                    : `<td style="text-align:right; border-left: 1px solid rgba(255,255,255,0.05);">
+                         <div style="display:flex; flex-direction:column; line-height:1.2;">
+                           <span style="font-weight:900; color:var(--primary); font-size:1.05rem;">${txtTopTotal}</span>
+                           ${t > 1 ? `<span style="font-size:0.75rem; color:#64748b; font-weight:700;">${totalUnidades} Un. Totais</span>` : ''}
+                         </div>
+                       </td>`;
 
-                    let tr = document.createElement('tr');
-                    tr.innerHTML = `
+                                lista.innerHTML += `
+                    <tr>
                         <td style="font-size: 0.95rem; font-weight:700;">${p.nome}</td>
                         ${modoContagemAtivo ? '' : (usaPadrao ? `<td style="text-align:center; border-right: 1px solid rgba(255,255,255,0.05);">${padraoTxt}</td>` : '')}
                         <td style="text-align:center">${viewFardo}</td>
                         <td style="text-align:center">${viewUnidade}</td>
                         ${viewTotal}
-                    `;
-                    lista.appendChild(tr);
+                    </tr>
+                `;
                 });
+            });
+        });
 
-            } catch (e) {
-                console.error("Erro ao abrir área:", e);
-                showToast("Erro ao carregar detalhes da área.", "error");
-            }
-        }
+    } catch (e) {
+        console.error("Erro ao abrir área:", e);
+        showToast("Erro ao carregar detalhes da área.", "error");
+    }
+}
 
         function attEst(pk, ar, tam) { 
             if(currentRole === 'visualizador') return; 
@@ -2635,7 +2794,7 @@
         function verPedidoPorMetodo(key) { 
             try {
                 navegar('pedidos-lista'); const met = metodosCompra[key]?.nome || 'Desconhecido'; document.getElementById('titulo-pedido-metodo').innerText = `Pedidos: ${met}`; 
-                const prodsFiltrados = Object.keys(produtos).filter(k => produtos[k] && produtos[k].metodoCompra === met).sort((a,b) => produtos[a].nome.localeCompare(produtos[b].nome));
+                const prodsFiltrados = Object.keys(produtos).filter(k => produtos[k] && produtos[k].metodoCompra === met).sort((a, b) => compararProdutosPorCategoriaEOrdem(a, b));
                 if(prodsFiltrados.length === 0) { document.getElementById('tabela-pedidos-filtrada').innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">Nenhum produto usa este método.</td></tr>`; return; }
                 document.getElementById('tabela-pedidos-filtrada').innerHTML = prodsFiltrados.map(k => { 
                     const p = produtos[k]; let t = 1; getCategoriasProduto(p).forEach(cn => { const c = Object.values(categorias).find(x => x.nome === cn); if(c && c.unidadesFardo > t) t = Number(c.unidadesFardo); }); 
@@ -2673,8 +2832,37 @@
         }
 
         function renderCatSubs() {
-            document.getElementById('list-cat-subs').innerHTML = currentCatSubgrupos.map(s => `<div class="chip" style="background:#e2e8f0;">${s} <span style="color:red; margin-left:5px; font-weight:bold; font-size:1rem;" onclick="removeCatSub('${s}')">×</span></div>`).join('');
-        }
+    const box = document.getElementById('list-cat-subs');
+
+    if (currentCatSubgrupos.length === 0) {
+        box.innerHTML = `<p style="font-size:0.8rem; color:#64748b;">Nenhuma especificação adicionada.</p>`;
+        return;
+    }
+
+    box.innerHTML = currentCatSubgrupos.map((s, idx) => `
+        <div style="display:flex; align-items:center; background:rgba(0,0,0,0.4); padding:8px; border-radius:8px; border:1px solid var(--border-color); width:100%;">
+            <div class="sort-wrapper" style="height:38px; margin-right:10px;">
+                <button class="sort-btn-up" onclick="moverCatSub(${idx}, -1)" ${idx === 0 ? 'disabled style="opacity:0.3"' : ''}>▲</button>
+                <button class="sort-btn-down" onclick="moverCatSub(${idx}, 1)" ${idx === currentCatSubgrupos.length - 1 ? 'disabled style="opacity:0.3"' : ''}>▼</button>
+            </div>
+
+            <strong style="color:var(--text-main); font-size:0.9rem; flex:1;">${s}</strong>
+
+            <button onclick="removeCatSub('${s}')" style="background:#ef4444; color:white; border:none; border-radius:50%; width:24px; height:24px; cursor:pointer; font-weight:900;">×</button>
+        </div>
+    `).join('');
+}
+
+function moverCatSub(index, direcao) {
+    const novoIndex = index + direcao;
+    if (novoIndex < 0 || novoIndex >= currentCatSubgrupos.length) return;
+
+    const temp = currentCatSubgrupos[index];
+    currentCatSubgrupos[index] = currentCatSubgrupos[novoIndex];
+    currentCatSubgrupos[novoIndex] = temp;
+
+    renderCatSubs();
+}
 
         function salvarCategoria() { 
             const id=document.getElementById('edit-cat-id').value;
@@ -3080,13 +3268,15 @@
             let htmlProds = Object.keys(produtos).sort((pa, pb) => (produtos[pa].nome || "").localeCompare(produtos[pb].nome || "")).map(pk => {
                 const p = produtos[pk];
                 const checked = (p.locais || []).includes(a.nome) ? 'checked' : '';
-                return `<label class="check-item" style="font-size:0.85rem; margin-bottom:5px;"><input type="checkbox" value="${pk}" class="area-prod-checkbox" ${checked} onchange="if(document.getElementById('area-usar-padrao').checked) toggleConfigEstoquePadrao()"> <span>${p.nome}</span></label>`;
+                return `<label class="check-item" style="font-size:0.85rem; margin-bottom:5px;"><input type="checkbox" value="${pk}" class="area-prod-checkbox" ${checked} onchange="atualizarOrdemCategoriasAreaEdit(); if(document.getElementById('area-usar-padrao').checked) toggleConfigEstoquePadrao()"> <span>${p.nome}</span></label>`;
             }).join('');
             document.getElementById('area-edit-produtos-list').innerHTML = htmlProds || '<p style="font-size:0.8rem; color:#64748b;">Nenhum produto cadastrado.</p>';
 
-            document.getElementById('area-usar-padrao').checked = (a.config && a.config.usaPadrao) ? true : false;
-            toggleConfigEstoquePadrao();
-            document.getElementById('area-edit-box').style.display='block'; 
+            areaCatOrderTemp = (a.config && a.config.ordemCategorias) ? [...a.config.ordemCategorias] : [];
+document.getElementById('area-usar-padrao').checked = (a.config && a.config.usaPadrao) ? true : false;
+atualizarOrdemCategoriasAreaEdit();
+toggleConfigEstoquePadrao();
+document.getElementById('area-edit-box').style.display='block';
         }
 
         function salvarNovoNomeArea() { 
@@ -3107,7 +3297,7 @@
             }
 
             // 1. Atualiza a Área no Banco
-            db.ref('areas/' + areaAtualKey).set({ nome: nv, config: { usaPadrao, padroes } }).then(() => { 
+            db.ref('areas/' + areaAtualKey).set({ nome: nv, config: { usaPadrao, padroes, ordemCategorias: areaCatOrderTemp } }).then(() => { 
                 
                 // 2. Sincroniza todos os produtos
                 const updatesGerais = {};
@@ -3696,6 +3886,7 @@
                             
                             // Guarda o cálculo mastigado para a gaveta de informações
                             detalhesPorArea[loc].push({
+                                id: pk,
                                 nome: p.nome,
                                 f: Math.floor(qtdTotal / t),
                                 u: qtdTotal % t,
@@ -3714,7 +3905,8 @@
                 const safeId = a.key; // ID seguro para fazer a gaveta abrir sem erro
                 
                 // Ordena os itens dentro da gaveta do mais CARO para o mais barato
-                detalhesPorArea[loc].sort((itemA, itemB) => itemB.valor - itemA.valor);
+                const areaObjFin = areas.find(x => x.nome === loc);
+                detalhesPorArea[loc].sort((itemA, itemB) => compararProdutosPorCategoriaEOrdem(itemA.id, itemB.id, areaObjFin));
                 
                 let detalhesHtml = detalhesPorArea[loc].map(d => {
                     let txtQtd = d.t > 1 ? `${d.f} Fds e ${d.u} Un.` : `${d.u} Un.`;
@@ -3752,19 +3944,6 @@
             const el = document.getElementById(`det-fin-${safeId}`);
             if(el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
         }
-
-function ativarModoContagem() {
-    modoContagemAtivo = true;
-    document.getElementById('btn-modo-contagem').style.display = 'none';
-    document.getElementById('btn-cancelar-contagem').style.display = 'block';
-    document.getElementById('btn-salvar-contagem-geral').style.display = 'block';
-    document.getElementById('btn-excluir-area-texto').style.display = 'none';
-    
-    // Força a atualização da tabela para o modo "cego"
-    const area = areas.find(a => a.key === areaAtualKey);
-    verArea(area.key, area.nome); 
-    showToast("Modo contagem ativado! Campos zerados.", "success");
-}
 
 let modoContagemAtivo = false;
 
@@ -3966,45 +4145,52 @@ function cancelarModoContagem() {
 
 // Essa função será chamada quando você clicar no botão verde de salvar a contagem
 function salvarContagemAuditoria() {
-            if(currentRole === 'visualizador') return;
-            const areaObj = areas.find(a => a.key === areaAtualKey);
-            if(!areaObj) return;
+    if(currentRole === 'visualizador') return;
+    const areaObj = areas.find(a => a.key === areaAtualKey);
+    if(!areaObj) return;
 
-            let updates = {};
-            let contagemRealizada = false;
-            let itensContadosHist = {}; // NOVO: Para a Linha do Tempo
+    let updates = {};
+    let contagemRealizada = false;
+    let itensContadosHist = {};
 
-            const inputsFardo = document.querySelectorAll('input[id^="cont-f-"]');
-            inputsFardo.forEach(inputF => {
-                const pk = inputF.id.replace('cont-f-', '');
-                const inputU = document.getElementById(`cont-u-${pk}`);
-                const p = produtos[pk];
-                
-                let f = inputF.value !== "" ? parseInt(inputF.value) : 0;
-                let u = inputU && inputU.value !== "" ? parseInt(inputU.value) : 0;
-                if(f < 0) f = 0; if(u < 0) u = 0;
+    const inputsUnidade = document.querySelectorAll('input[id^="cont-u-"]');
+    inputsUnidade.forEach(inputU => {
+        const pk = inputU.id.replace('cont-u-', '');
+        const inputF = document.getElementById(`cont-f-${pk}`);
+        const p = produtos[pk];
 
-                updates[`produtos/${pk}/estoque/${areaObj.nome}`] = { f: f, u: u };
-                itensContadosHist[pk] = { f: f, u: u, nome: p ? p.nome : "Desconhecido" };
-                contagemRealizada = true;
+        let f = inputF && inputF.value !== "" ? parseInt(inputF.value) : 0;
+        let u = inputU.value !== "" ? parseInt(inputU.value) : 0;
+
+        if(f < 0) f = 0;
+        if(u < 0) u = 0;
+
+        updates[`produtos/${pk}/estoque/${areaObj.nome}`] = { f: f, u: u };
+        itensContadosHist[pk] = { f: f, u: u, nome: p ? p.nome : "Desconhecido" };
+        contagemRealizada = true;
+    });
+
+    if (contagemRealizada) {
+        document.getElementById('btn-salvar-contagem-geral').innerText = "SALVANDO...";
+        db.ref().update(updates).then(() => {
+            const data = new Date();
+            db.ref('historico_timeline').push({
+                timestamp: data.getTime(),
+                dataFormatada: data.toLocaleDateString('pt-BR'),
+                tipo: 'contagem',
+                area: areaObj.nome,
+                itens: itensContadosHist,
+                usuario: currentUserName || "Equipe"
             });
 
-            if (contagemRealizada) {
-                document.getElementById('btn-salvar-contagem-geral').innerText = "SALVANDO...";
-                db.ref().update(updates).then(() => {
-                    // NOVO: Registra na Linha do Tempo
-                    const data = new Date();
-                    db.ref('historico_timeline').push({
-                        timestamp: data.getTime(), dataFormatada: data.toLocaleDateString('pt-BR'),
-                        tipo: 'contagem', area: areaObj.nome, itens: itensContadosHist, usuario: currentUserName || "Equipe"
-                    });
-
-                    showToast("Contagem salva com sucesso!", "success");
-                    document.getElementById('btn-salvar-contagem-geral').innerText = "CONCLUIR CONTAGEM E SALVAR";
-                    cancelarModoContagem();
-                });
-            } else { cancelarModoContagem(); }
-        }
+            showToast("Contagem salva com sucesso!", "success");
+            document.getElementById('btn-salvar-contagem-geral').innerText = "CONCLUIR CONTAGEM E SALVAR";
+            cancelarModoContagem();
+        });
+    } else {
+        cancelarModoContagem();
+    }
+}
 
     </script>
 </body>
